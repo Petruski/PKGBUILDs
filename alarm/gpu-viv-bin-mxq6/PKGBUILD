@@ -1,0 +1,68 @@
+# Maintainer: CruX <crux@project-insanity.org>
+pkgbase=gpu-viv-bin-mx6q
+pkgver=3.10.9_1.0.0
+_pkgver=${pkgver//_/-}-hfp
+pkgrel=1
+pkgdesc="Freescale proprietary Vivante GPU drivers for i.MX6 Quad SoC"
+url="https://community.freescale.com/docs/DOC-95560"
+arch=('armv7h')
+license=('proprietay')
+depends=('fsl-bsp-kernel=4.1.0' 'fsl-bsp-kernel-headers=4.1.0')
+source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${pkgbase}-${_pkgver}.bin")
+md5sums=('52f5ebbb6a9b5d0eafdb952246de584e')
+
+prepare() {
+  cd "${srcdir}"
+  #chmod for execution, library is packed as binary to accept EULA
+  chmod +x ${pkgbase}-${_pkgver}.bin
+  ./${pkgbase}-${_pkgver}.bin --force --auto-accept
+  sed -n '/EOEULA/,/EOEULA/p' ${pkgbase}-${_pkgver}.bin | grep -v EOEULA > LICENSE.$pkgbase
+}
+
+_package_common() {
+  provides=('gpu-viv-bin-mx6q=4.1.0' 'libegl' 'libgles' 'libgl' 'mesa' 'mesa-libgl')
+  conflicts=('gpu-viv-bin-mx6q')
+  cd "${pkgbase}-${_pkgver}"
+  mkdir -p "${pkgdir}/opt/fsl/include"  "${pkgdir}/opt/fsl/lib"
+  cp -r usr/include/* "${pkgdir}/opt/fsl/include"
+  cd usr/lib
+  cp -r dri libCLC* libVDK* *GLES* libGL.* libGLSLC* libOpenCL* libOpenVG* "${pkgdir}/opt/fsl/lib"
+  mkdir -p "${pkgdir}/opt/fsl/licenses"
+  cp "${srcdir}/LICENSE.$pkgbase" "$pkgdir/opt/fsl/licenses"
+  mkdir -p "${pkgdir}/etc/ld.so.conf.d"
+  echo "/opt/fsl/lib" > "${pkgdir}/etc/ld.so.conf.d/$pkgbase.conf"
+}
+
+package_gpu-viv-bin-mx6q-fb() {
+  _package_common
+  cp -r *-fb* "${pkgdir}/opt/fsl/lib"
+}
+
+
+package_gpu-viv-bin-mx6q-x11() {
+  _package_common
+  cp -r *-x11* "${pkgdir}/opt/fsl/lib"
+}
+
+package_gpu-viv-bin-mx6q-wl() {
+  _package_common
+  cp -r *wayland* "${pkgdir}/opt/fsl/lib"
+}
+
+
+package_gpu-viv-bin-mx6q-dfb() {
+  _package_common
+  cp -r *-dfb* directfb* "${pkgdir}/opt/fsl/lib"
+}
+
+
+package_gpu-viv-bin-mx6q-samples() {
+  cd "${pkgbase}-${_pkgver}"
+  mkdir -p "${pkgdir}/opt/fsl/viv_samples"
+  cp -r opt/viv_samples/* "${pkgdir}/opt/fsl/viv_samples"
+}
+
+
+pkgname=("${pkgbase}-x11" "${pkgbase}-fb" "${pkgbase}-dfb" "${pkgbase}-wl" "${pkgbase}-samples")
+
+# vim:set ts=2 sw=2 et:
