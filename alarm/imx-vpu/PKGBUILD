@@ -1,0 +1,43 @@
+# Maintainer: CruX <crux@project-insanity.org>
+pkgname=imx-vpu
+pkgver=3.10.9_1.0.0
+_pkgver=${pkgver/_/-}
+pkgrel=1
+pkgdesc="Freescale proprietary VPU extensions for i.MX6 SoC"
+url="https://community.freescale.com/docs/DOC-95560"
+arch=('armv7h')
+license=('proprietay')
+depends=('fsl-bsp-kernel=4.1.0' 'fsl-bsp-kernel-headers=4.1.0')
+source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${pkgname}-${_pkgver}.bin")
+md5sums=('61331c9ed2d4c1b3aeab9c35fd034ac3')
+
+prepare() {
+  cd "${srcdir}"
+  #chmod for execution, library is packed as binary to accept EULA
+  chmod +x ${pkgname}-${_pkgver}.bin
+  ./${pkgname}-${_pkgver}.bin --force --auto-accept
+  sed -n '/EOEULA/,/EOEULA/p' ${pkgname}-${_pkgver}.bin | grep -v EOEULA > LICENSE.$pkgname
+}
+
+build() {
+  cd "${pkgname}-${_pkgver}"
+  export PLATFORM="IMX6Q"
+  export KERNEL_SRC="/usr/src/linux-3.0.35_4.1.0-4-ARCH+/"  
+  export INCLUDE="-I$KERNEL_SRC/include -I$KERNEL_SRC/drivers/mxc/security/rng/include -I$KERNEL_SRC/drivers/mxc/security/sahara2/include"
+  make all
+}
+
+package() {
+  cd "${pkgname}-${_pkgver}"
+  make DEST_DIR="${pkgdir}" install
+  cd "${pkgdir}"
+  mkdir -p opt/fsl/include opt/fsl/lib
+  mv usr/include/* opt/fsl/include/
+  mv usr/lib/* opt/fsl/lib
+  rm -r usr
+
+  mkdir -p "${pkgdir}/etc/ld.so.conf.d"
+  echo "/opt/fsl/lib" > "${pkgdir}/etc/ld.so.conf.d/$pkgname.conf"
+}
+
+# vim:set ts=2 sw=2 et:
