@@ -8,8 +8,9 @@ url="https://community.freescale.com/docs/DOC-95560"
 arch=('armv7h')
 license=('proprietay')
 depends=('fsl-bsp-kernel=4.1.0' 'fsl-bsp-kernel-headers=4.1.0')
-source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${pkgbase}-${_pkgver}.bin")
-md5sums=('52f5ebbb6a9b5d0eafdb952246de584e')
+source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${pkgbase}-${_pkgver}.bin" "99-galcore.rules")
+md5sums=('52f5ebbb6a9b5d0eafdb952246de584e'
+         '954de15d387e456a60973f06278e661d')
 
 prepare() {
   cd "${srcdir}"
@@ -31,6 +32,9 @@ _package_common() {
   cp "${srcdir}/LICENSE.$pkgbase" "$pkgdir/opt/fsl/licenses"
   mkdir -p "${pkgdir}/etc/ld.so.conf.d"
   echo "/opt/fsl/lib" > "${pkgdir}/etc/ld.so.conf.d/$pkgbase.conf"
+
+  install -D -m0644 "${srcdir}/99-galcore.rules" "${pkgdir}/usr/lib/udev/rules.d/99-galcore.rules"
+
 }
 
 package_gpu-viv-bin-mx6q-fb() {
