@@ -8,8 +8,9 @@ url="https://community.freescale.com/docs/DOC-95560"
 arch=('armv7h')
 license=('proprietay')
 depends=('fsl-bsp-kernel=4.1.0' 'fsl-bsp-kernel-headers=4.1.0')
-source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${pkgname}-${_pkgver}.bin")
-md5sums=('61331c9ed2d4c1b3aeab9c35fd034ac3')
+source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${pkgname}-${_pkgver}.bin" "99-mxc-vpu.rules")
+md5sums=('61331c9ed2d4c1b3aeab9c35fd034ac3'
+         'b749d82b96a323d8f914c63c65de9f92')
 
 prepare() {
   cd "${srcdir}"
@@ -22,8 +23,6 @@ prepare() {
 build() {
   cd "${pkgname}-${_pkgver}"
   export PLATFORM="IMX6Q"
-  export KERNEL_SRC="/usr/src/linux-3.0.35_4.1.0-4-ARCH+/"  
-  export INCLUDE="-I$KERNEL_SRC/include -I$KERNEL_SRC/drivers/mxc/security/rng/include -I$KERNEL_SRC/drivers/mxc/security/sahara2/include"
   make all
 }
 
@@ -38,6 +37,8 @@ package() {
 
   mkdir -p "${pkgdir}/etc/ld.so.conf.d"
   echo "/opt/fsl/lib" > "${pkgdir}/etc/ld.so.conf.d/$pkgname.conf"
+
+  install -D -m0644 "${srcdir}/99-mxc-vpu.rules" "${pkgdir}/usr/lib/udev/rules.d/99-mxc-vpu.rules"
 }
 
 # vim:set ts=2 sw=2 et:
