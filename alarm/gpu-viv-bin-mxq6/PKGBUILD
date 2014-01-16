@@ -26,7 +26,7 @@ _package_common() {
   mkdir -p "${pkgdir}/opt/fsl/include"  "${pkgdir}/opt/fsl/lib"
   cp -r usr/include/* "${pkgdir}/opt/fsl/include"
   cd usr/lib
-  cp -r dri libCLC* libVDK* *GLES* libGL.* libGLSLC* libOpenCL* libOpenVG* "${pkgdir}/opt/fsl/lib"
+  cp -r dri libCLC* libVDK* *GLES* libGL.* libGLSLC* libOpenCL* libOpenVG_* "${pkgdir}/opt/fsl/lib"
   mkdir -p "${pkgdir}/opt/fsl/licenses"
   cp "${srcdir}/LICENSE.$pkgbase" "$pkgdir/opt/fsl/licenses"
   mkdir -p "${pkgdir}/etc/ld.so.conf.d"
