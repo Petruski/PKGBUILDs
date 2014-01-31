@@ -4,13 +4,13 @@
 # Maintainer CruX <CruX@project-insanity.org>
 
 pkgname=xbmc-imx-git
-pkgver=13.20140112
+pkgver=13.20140128
 pkgrel=1
 pkgdesc="A software media player and entertainment hub for digital media for the Wandboard"
 arch=('armv7h')
 url="http://xbmc.org"
 license=('GPL' 'custom')
-depends=('fribidi' 'lzo2' 'smbclient' 'libtiff' 'libpng' 'libcdio' 'yajl' 'libmariadbclient' 'libjpeg-turbo' 'libsamplerate' 'libssh' 'libmicrohttpd' 'sdl_image' 'python2' 'libass' 'libmpeg2' 'libmad' 'libmodplug' 'jasper' 'rtmpdump' 'unzip' 'libbluray' 'libnfs' 'afpfs-ng' 'libshairport' 'avahi' 'bluez-libs' 'tinyxml' 'libplist' 'swig' 'taglib' 'fsl-bsp-kernel=4.1.0' 'fsl-bsp-kernel-headers=4.1.0' 'libfslvpuwrap=3.10.9_1.0.0' 'gpu-viv-bin-mx6q-fb=3.10.9_1.0.0' 'libcec-imx6' 'firmware-imx=3.5.7_1.0.0')
+depends=('fribidi' 'lzo2' 'smbclient' 'libtiff' 'libpng' 'libcdio' 'yajl' 'libmariadbclient' 'libjpeg-turbo' 'libsamplerate' 'libssh' 'libmicrohttpd' 'sdl_image' 'python2' 'libass' 'libmpeg2' 'libmad' 'libmodplug' 'jasper' 'rtmpdump' 'unzip' 'libbluray' 'libnfs' 'afpfs-ng' 'libshairport' 'avahi' 'bluez-libs' 'tinyxml' 'libplist' 'swig' 'taglib' 'fsl-bsp-kernel=3.0.35_4.1.0' 'fsl-bsp-kernel-headers=3.0.35_4.1.0' 'libfslvpuwrap=3.10.17_1.0.0' 'gpu-viv-bin-mx6q-fb=3.10.17_1.0.0' 'libcec-imx6' 'firmware-imx=3.5.7_1.0.0')
 makedepends=('boost' 'cmake' 'gperf' 'nasm' 'zip' 'udisks' 'upower' 'git' 'autoconf' 'java-runtime-headless')
 optdepends=(
   'lirc: remote controller support'
@@ -28,7 +28,7 @@ md5sums=('36780e43d432c488259d9a899b1bcb28')
 # imx-wip branch by Stephan "wolfgar" Rafin
 _gitname="xbmc"
 _gitroot="git://github.com/wolfgar"
-_gitbranch="imx-next"
+_gitbranch="imx-wip"
 
 _prefix=/usr
 
@@ -65,12 +65,20 @@ build() {
   # Bootstrapping XBMC
   ./bootstrap
 
+
+  # dirty: copy headers from kernel as we need those but apart from that want to use the ones in /usr/include 
+  KERNELSRC=/usr/src/linux-`uname -r`
+  mkdir -p linux-includes/include/linux
+  for f in mxcfb.h mxc_v4l2.h; do
+    cp "${KERNELSRC}/include/linux/${f}" linux-includes/include/linux/
+  done
+
   # Configuring XBMC
   export PYTHON_VERSION=2  # external python v2
-  export KERNELSRC=/usr/src/linux-3.0.35_4.1.0-4-ARCH+
-  export CFLAGS="-Ofast -mfloat-abi=hard -mfpu=vfpv3-d16 -mtls-dialect=gnu -march=armv7-a -mtune=cortex-a9 -pipe -fstack-protector --param=ssp-buffer-size=4 -D_FORTIFY_SOURCE=2 -I$KERNELSRC/include -I/opt/fsl/include -Wl,-rpath,/opt/fsl/lib -L/opt/fsl/lib"
-  export CPPFLAGS="-Ofast -mfloat-abi=hard -mfpu=vfpv3-d16 -mtls-dialect=gnu -march=armv7-a -mtune=cortex-a9 -fstack-protector --param=ssp-buffer-size=4 -D_FORTIFY_SOURCE=2 -I$KERNELSRC/include -I/opt/fsl/include -Wl,-rpath,/opt/fsl/lib -L/opt/fsl/lib"
-  export CXXFLAGS="-Ofast -mfloat-abi=hard -mfpu=vfpv3-d16 -mtls-dialect=gnu -march=armv7-a -mtune=cortex-a9 -fstack-protector --param=ssp-buffer-size=4 -D_FORTIFY_SOURCE=2 -I$KERNELSRC/include -I/opt/fsl/include -Wl,-rpath,/opt/fsl/lib -L/opt/fsl/lib"
+  INCLUDES="-I${srcdir}/${_gitname}/linux-includes/include -I/opt/fsl/include" 
+  export CFLAGS="-Ofast -mfloat-abi=hard -mfpu=vfpv3-d16 -mtls-dialect=gnu -march=armv7-a -mtune=cortex-a9 -pipe -fstack-protector --param=ssp-buffer-size=4 -D_FORTIFY_SOURCE=2 $INCLUDES -Wl,-rpath,/opt/fsl/lib -L/opt/fsl/lib"
+  export CPPFLAGS="-Ofast -mfloat-abi=hard -mfpu=vfpv3-d16 -mtls-dialect=gnu -march=armv7-a -mtune=cortex-a9 -fstack-protector --param=ssp-buffer-size=4 -D_FORTIFY_SOURCE=2 $INCLUDES -Wl,-rpath,/opt/fsl/lib -L/opt/fsl/lib"
+  export CXXFLAGS="-Ofast -mfloat-abi=hard -mfpu=vfpv3-d16 -mtls-dialect=gnu -march=armv7-a -mtune=cortex-a9 -fstack-protector --param=ssp-buffer-size=4 -D_FORTIFY_SOURCE=2 $INCLUDES -Wl,-rpath,/opt/fsl/lib -L/opt/fsl/lib"
   export LDFLAGS="$LDFLAGS -L/opt/fsl/lib"
   ./configure --prefix=$_prefix --exec-prefix=$_prefix  \
    --disable-gl --enable-gles --disable-x11 --disable-sdl \
@@ -78,7 +86,7 @@ build() {
   --disable-pulse --disable-vaapi --disable-vdpau --disable-xrandr --enable-airplay \
   --enable-avahi --enable-libbluray --enable-dvdcss --disable-debug --disable-joystick --disable-mid \
   --enable-nfs --disable-profiling --disable-projectm --enable-rsxs --enable-rtmp --disable-vaapi \
-  --disable-vdadecoder --disable-external-ffmpeg --enable-optical-drive --enable-codec=imxvpu --enable-libcec
+  --disable-external-ffmpeg --enable-optical-drive --enable-codec=imxvpu --enable-libcec
 
   make
 }
@@ -112,3 +120,5 @@ package() {
   install -Dm0644 $srcdir/xbmc.service $pkgdir/usr/lib/systemd/system/xbmc.service
 
 }
+
+# vim:set ts=2 sw=2 et:
