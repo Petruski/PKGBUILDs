@@ -7,22 +7,22 @@ pkgbase=linux-wandboard-fsl
 _kernelname=${pkgbase#linux}
 _desc="i.MX6 Wandboard, patched by Freescale, John Weber and Stephan Rafin"
 _fslbspver=4.1.0
+_vivantever=3.10.17_1.0.0
 pkgver=3.0.35_${_fslbspver}
-pkgrel=4
+pkgrel=5
 arch=('armv7h')
 url="http://www.kernel.org/"
 license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-mkimage')
 options=('!strip')
-source=('config' 'sdio.patch')
+source=('config' 'https://raw.github.com/Freescale/meta-fsl-arm/1194a1a927b386c460dfc900a52a87b077d7dbb3/recipes-kernel/linux/linux-imx-3.0.35/drm-vivante-Add-00-sufix-in-returned-bus-Id.patch' 'https://raw.github.com/Freescale/meta-fsl-arm/1194a1a927b386c460dfc900a52a87b077d7dbb3/recipes-kernel/linux/linux-imx-3.0.35/ENGR00278350-gpu-viante-4.6.9p13-kernel-part-integra.patch')
 md5sums=('7f40ecc02d1ce469fd824dbd2639ca21'
-         'c01c0b211372b11e142ba86820a4a878')
-
+         'ea5933e994ecb47409a96c754d61a281'
+         '41941771adfed8b55574a7434d2c3393')
 
 _gitname="linux"
 _gitroot="git://github.com/wolfgar"
 _gitbranch="wandboard_imx_3.0.35_4.1.0"
-
 
 prepare() {
   cd "${srcdir}"
@@ -41,8 +41,10 @@ prepare() {
 
   cat "${srcdir}/config" > ./.config
 
-  # patch to enable the experimental wifi driver with ap mode from http://forums.wandboard.org/viewtopic.php?f=12&t=126
-  patch --ignore-whitespace -p1 < ../sdio.patch
+  # allow use of 3.10.17 gpu binaries
+  patch --ignore-whitespace -p1 < ../drm-vivante-Add-00-sufix-in-returned-bus-Id.patch
+  patch --ignore-whitespace -p1 < ../ENGR00278350-gpu-viante-4.6.9p13-kernel-part-integra.patch
+
 
   # add pkgrel to extraversion, reset the file first to avoid multiple suffixes
   git checkout Makefile
@@ -86,7 +88,7 @@ _package() {
   pkgdesc="The Linux Kernel and modules - ${_desc}"
   depends=('coreutils' 'linux-firmware' 'kmod' 'mkinitcpio>=0.7')
   optdepends=('crda: to set the correct wireless channels of your country')
-  provides=('kernel26' "linux=${pkgver}" 'aufs_friendly' "fsl-bsp-kernel=${_fslbspver}")
+  provides=('kernel26' "linux=${pkgver}" 'aufs_friendly' "fsl-bsp-kernel=${_fslbspver}" "vivante-kernel-driver=${_vivantever}")
   conflicts=('linux-omap' 'linux-imx6' 'linux-armada370')
   install=${pkgname}.install
 
