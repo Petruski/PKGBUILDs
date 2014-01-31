@@ -1,15 +1,15 @@
 # Maintainer: CruX <crux@project-insanity.org>
 pkgname=libfslvpuwrap
-pkgver=3.10.9_1.0.0
-_pkgver=${pkgver/_/-}
+pkgver=3.10.17_1.0.0
+_pkgver=1.0.45
 pkgrel=1
 pkgdesc="Wrapper library for the freescale proprietary VPU extensions"
 url="https://community.freescale.com/docs/DOC-95560"
 arch=('armv7h')
-license=('proprietay')
+license=('proprietary')
 depends=("imx-vpu=$pkgver")
 source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${pkgname}-${_pkgver}.bin")
-md5sums=('25891ef8d92e82d9b2e999a74a327971')
+md5sums=('99d866c979c8a798c843f32632293f14')
 
 prepare() {
   cd "${srcdir}"

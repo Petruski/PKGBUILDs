@@ -1,16 +1,17 @@
 # Maintainer: CruX <crux@project-insanity.org>
 pkgbase=gpu-viv-bin-mx6q
-pkgver=3.10.9_1.0.0
-_pkgver=${pkgver//_/-}-hfp
+pkgver=3.10.17_1.0.0
+_pkgver=${pkgver/_/-}-beta-hfp
 pkgrel=1
 pkgdesc="Freescale proprietary Vivante GPU drivers for i.MX6 Quad SoC"
 url="https://community.freescale.com/docs/DOC-95560"
 arch=('armv7h')
-license=('proprietay')
-depends=('fsl-bsp-kernel=4.1.0' 'fsl-bsp-kernel-headers=4.1.0')
-source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${pkgbase}-${_pkgver}.bin" "99-galcore.rules")
-md5sums=('52f5ebbb6a9b5d0eafdb952246de584e'
-         '954de15d387e456a60973f06278e661d')
+license=('proprietary')
+depends=("vivante-kernel-driver=${pkgver}")
+source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${pkgbase}-${_pkgver}.bin" '99-galcore.rules')
+md5sums=('11e844bb6ba04295cdcd78731076c96d'
+       '954de15d387e456a60973f06278e661d')
+
 
 prepare() {
   cd "${srcdir}"
@@ -34,7 +35,6 @@ _package_common() {
   echo "/opt/fsl/lib" > "${pkgdir}/etc/ld.so.conf.d/$pkgbase.conf"
 
   install -D -m0644 "${srcdir}/99-galcore.rules" "${pkgdir}/usr/lib/udev/rules.d/99-galcore.rules"
-
 }
 
 package_gpu-viv-bin-mx6q-fb() {
