@@ -1,0 +1,36 @@
+# Maintainer: CruX <CruX@project-insanity.org>
+
+buildarch=4
+
+pkgname=wandboard-bluetooth
+pkgdesc="bluetooth firmware and firware loading utility for the bcm4329 bluetooth on the wandboard"
+pkgver=1.0
+pkgrel=1
+arch=('armv7h')
+url="http://repository.timesys.com/buildsources/w/wandboard-firmware/wandboard-firmware-1.0/"
+license=('apache' 'custom')
+makedepends=('')
+backup=('etc/conf.d/bcm4329')
+install='wandboard-bluetooth.install'
+source=('bcm4329' 'bcm4329.service' 'load_bluetooth_firmware.sh' 'http://repository.timesys.com/buildsources/w/wandboard-firmware/wandboard-firmware-1.0/wandboard-firmware-1.0.tar.gz')
+md5sums=('b451823a02af741effdcf7454e288ca7'
+         'cccfbfd8730b86b7a17e2fd278a980f0'
+         'c05086dfdb66700e65e53e011371871a'
+         '4ec73b9f0bcd7b980e4ee6edd74b2079')
+
+build() {
+  cd "${srcdir}/wandboard-firmware-1.0/"
+  make
+}
+
+
+package() {
+  install -D -m0644 "${srcdir}/wandboard-firmware-1.0/lib/firmware/brcm/bcm4329.hcd" "${pkgdir}/usr/lib/firmware/brcm/bcm4329.hcd"
+  install -D -m0755 "${srcdir}/wandboard-firmware-1.0/brcm_patchram_plus" "${pkgdir}/usr/lib/firmware/brcm/brcm_patchram_plus" 
+  install -D -m0644 "${srcdir}/bcm4329" "${pkgdir}/etc/conf.d/bcm4329"
+  install -D -m0755 "${srcdir}/load_bluetooth_firmware.sh" "${pkgdir}/usr/lib/firmware/brcm/load_bluetooth_firmware.sh"
+  install -D -m0644 "${srcdir}/bcm4329.service" "${pkgdir}/usr/lib/systemd/system/bcm4329.service"
+}
+
+
+# vim:set ts=2 sw=2 et:

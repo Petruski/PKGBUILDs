@@ -1,0 +1,3 @@
+post_install() {
+	echo "Please define a MAC_ADDR in /etc/conf.d/bcm4329. Chip will not work properly without it."
+}

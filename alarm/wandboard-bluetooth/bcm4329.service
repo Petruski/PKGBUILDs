@@ -1,0 +1,14 @@
+[Unit]
+Description=Load bcm4329 bluetooth-firmware into device ram
+Before=bluetooth.service
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/conf.d/bcm4329
+ExecStart=/usr/lib/firmware/brcm/load_bluetooth_firmware.sh
+
+# Give a reasonable amount of time for the firmware to load
+TimeoutSec=10000
+
+[Install]
+WantedBy=multi-user.target

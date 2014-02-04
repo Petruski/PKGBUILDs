@@ -1,0 +1,4 @@
+# This is the MAC addr the bluetooth device should use.
+# Set this to something like  00:23:76:XX:XX:XX
+# This is a workaround for bluetooth services like PAND not working with the default MAC addr.
+MAC_ADDR=""
