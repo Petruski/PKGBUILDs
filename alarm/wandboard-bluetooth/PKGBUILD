@@ -10,6 +10,7 @@ arch=('armv7h')
 url="http://repository.timesys.com/buildsources/w/wandboard-firmware/wandboard-firmware-1.0/"
 license=('apache' 'custom')
 makedepends=('')
+depends=('bluez-utils')
 backup=('etc/conf.d/bcm4329')
 install='wandboard-bluetooth.install'
 source=('bcm4329' 'bcm4329.service' 'load_bluetooth_firmware.sh' 'http://repository.timesys.com/buildsources/w/wandboard-firmware/wandboard-firmware-1.0/wandboard-firmware-1.0.tar.gz')
