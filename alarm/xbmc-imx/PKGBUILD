@@ -10,7 +10,7 @@ pkgdesc="A software media player and entertainment hub for digital media for the
 arch=('armv7h')
 url="http://xbmc.org"
 license=('GPL' 'custom')
-depends=('fribidi' 'lzo2' 'smbclient' 'libtiff' 'libpng' 'libcdio' 'yajl' 'libmariadbclient' 'libjpeg-turbo' 'libsamplerate' 'libssh' 'libmicrohttpd' 'sdl_image' 'python2' 'libass' 'libmpeg2' 'libmad' 'libmodplug' 'jasper' 'rtmpdump' 'unzip' 'libbluray' 'libnfs' 'afpfs-ng' 'libshairport' 'avahi' 'bluez-libs' 'tinyxml' 'libplist' 'swig' 'taglib' 'fsl-bsp-kernel=3.0.35_4.1.0' 'fsl-bsp-kernel-headers=3.0.35_4.1.0' 'libfslvpuwrap=3.10.17_1.0.0' 'gpu-viv-bin-mx6q-fb=3.10.17_1.0.0' 'libcec-imx6' 'firmware-imx=3.5.7_1.0.0')
+depends=('fribidi' 'lzo2' 'smbclient' 'libtiff' 'libpng' 'libcdio' 'yajl' 'libmariadbclient' 'libjpeg-turbo' 'libsamplerate' 'libssh' 'libmicrohttpd' 'sdl_image' 'python2' 'libass' 'libmpeg2' 'libmad' 'libmodplug' 'jasper' 'rtmpdump' 'unzip' 'libbluray' 'libnfs' 'afpfs-ng' 'libshairport' 'avahi' 'bluez-libs' 'tinyxml' 'libplist' 'swig' 'taglib' 'fsl-bsp-kernel=4.1.0' 'fsl-bsp-kernel-headers=4.1.0' 'libfslvpuwrap=3.10.17_1.0.0' 'gpu-viv-bin-mx6q-fb=3.10.17_1.0.0' 'libcec-imx6' 'firmware-imx=3.5.7_1.0.0')
 makedepends=('boost' 'cmake' 'gperf' 'nasm' 'zip' 'udisks' 'upower' 'git' 'autoconf' 'java-runtime-headless')
 optdepends=(
   'lirc: remote controller support'
