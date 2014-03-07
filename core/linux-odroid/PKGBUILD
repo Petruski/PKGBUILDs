@@ -7,22 +7,22 @@ pkgbase=linux-odroid
 pkgname=('linux-odroid-x' 'linux-odroid-x2' 'linux-odroid-u2' 'linux-headers-odroid')
 _kernelname=${pkgname#linux}
 _basekernel=3.8
-pkgver=${_basekernel}.13.14
+pkgver=${_basekernel}.13.18
 pkgrel=2
 arch=('armv7h')
 url="http://github.com/hardkernel/linux/"
 license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl' 'kmod' 'git' 'inetutils' 'bc')
 options=('!strip')
-_commit=162ec2e1e61e8ca8dab23acb6c4b1e59d0c40701
+_commit=93ca552d47d5b16c4f16cee4357796aa4e3171c2
 source=("https://github.com/hardkernel/linux/archive/${_commit}.tar.gz"
         'config_x'
         'config_x2'
         'config_u2')
-md5sums=('6ba1be2c11ec76b4eced6ae43a7a5518'
-         'f6fc6bd8bb25c1c63a649d3b7c32957a'
-         '26b7f2c2f52f6672dac6d3239da77de2'
-         '059c11909de78246c750963f69dd594a')
+md5sums=('b59c21a39832e2a02740ba27a4689561'
+         '1a8fb9ec3ee501a58b5c0b9e9c2bc878'
+         '55d6b452ce29bed4386c963b1a6a3c32'
+         '4f8a17f286dd28f2971573be4f19d13d')
 
 build() {
   cd "${srcdir}/linux-${_commit}"
