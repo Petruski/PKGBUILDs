@@ -1,0 +1,57 @@
+# i.MX6 proprietary G2D drivers for VIVANTE GPU
+# Maintainer: RaumZeit <raumzeit@gmx.net>
+
+buildarch=4
+
+pkgbase=gpu-viv-g2d
+pkgver=3.10.9_1.0.0
+_pkgver=${pkgver/_/-}
+pkgrel=1
+pkgdesc="Freescale proprietary Vivante GPU G2D library and sample applications for imx6"
+
+# filesystem prefix for the include files and license
+_install_prefix=/opt/fsl
+# filesystem prefix for the libraries
+_install_exec_prefix=/opt/fsl
+# filesystem prefix for the samples
+_install_samples_prefix=/opt/fsl
+url="https://community.freescale.com/"
+arch=('armv7h')
+license=('proprietary')
+#depends=("vivante-kernel-driver=${pkgver}")
+source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${pkgbase}-${_pkgver}.bin")
+md5sums=('SKIP')
+
+prepare() {
+  cd "${srcdir}"
+  #chmod for execution, library is packed as binary to accept EULA
+  sh ${pkgbase}-${_pkgver}.bin --force --auto-accept
+  sed -n '/EOEULA/,/EOEULA/p' ${pkgbase}-${_pkgver}.bin | grep -v EOEULA > LICENSE.$pkgbase
+}
+
+package_gpu-viv-g2d() {
+  provides=('gmem_info' 'libg2d')
+  cd "${pkgbase}-${_pkgver}"
+  mkdir -p "${pkgdir}${_install_prefix}/include"  "${pkgdir}${_install_exec_prefix}/lib" "${pkgdir}${_install_exec_prefix}/bin"
+  cp -r usr/include/* "${pkgdir}${_install_prefix}/include"
+  cp usr/lib/libg2d.so "${pkgdir}${_install_exec_prefix}/lib"
+  #cp usr/bin/gmem_info "${pkgdir}${_install_exec_prefix}/bin"
+  mkdir -p "${pkgdir}${_install_prefix}/licenses"
+  cp "${srcdir}/LICENSE.$pkgbase" "$pkgdir${_install_prefix}/licenses"
+  mkdir -p "${pkgdir}/etc/ld.so.conf.d"
+  echo "${_install_prefix}/lib" > "${pkgdir}/etc/ld.so.conf.d/$pkgbase.conf"
+
+  find "${pkgdir}${_install_exec_prefix}/lib/" -type f -exec chmod 644 {} \;
+  find "${pkgdir}${_install_prefix}/include/" -type f -exec chmod 644 {} \;
+}
+
+package_gpu-viv-g2d-samples() {
+  cd "${pkgbase}-${_pkgver}"
+  mkdir -p "${pkgdir}${_install_samples_prefix}/fsl-samples"
+  cp -r opt/fsl-samples/* "${pkgdir}${_install_samples_prefix}/fsl-samples"
+}
+
+
+pkgname=("${pkgbase}" "${pkgbase}-samples")
+
+# vim:set ts=2 sw=2 et:
