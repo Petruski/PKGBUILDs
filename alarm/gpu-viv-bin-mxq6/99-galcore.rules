@@ -1,1 +1,0 @@
-KERNEL=="galcore", GROUP="video", MODE="0666"
