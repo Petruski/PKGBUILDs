@@ -4,6 +4,8 @@
 buildarch=4
 
 pkgbase=gpu-viv-g2d
+#pkgver=3.10.17_1.0.0
+#_pkgver=${pkgver/_/-}-beta
 pkgver=3.10.9_1.0.0
 _pkgver=${pkgver/_/-}
 pkgrel=1
@@ -30,7 +32,8 @@ prepare() {
 }
 
 package_gpu-viv-g2d() {
-  provides=('gmem_info' 'libg2d')
+#  provides=('gmem_info' 'libg2d')
+  provides=('libg2d')
   cd "${pkgbase}-${_pkgver}"
   mkdir -p "${pkgdir}${_install_prefix}/include"  "${pkgdir}${_install_exec_prefix}/lib" "${pkgdir}${_install_exec_prefix}/bin"
   cp -r usr/include/* "${pkgdir}${_install_prefix}/include"
