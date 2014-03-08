@@ -6,18 +6,21 @@ buildarch=4
 pkgbase=uboot-wandboard
 pkgname=('uboot-wandboard-solo' 'uboot-wandboard-dual' 'uboot-wandboard-quad')
 pkgver=2013.07
-pkgrel=2
+pkgrel=3
 arch=('armv7h')
 url="http://git.denx.de/u-boot.git/"
 license=('GPL')
 makedepends=('git')
 source=("uboot::git://git.denx.de/u-boot.git#tag=v${pkgver}"
-        'alarm.patch')
+        'uboot_hdmi.patch'
+	'alarm.patch')
 md5sums=('SKIP'
+         'b3ae989163ec99a4dc738cc979de19e8'
          '8a9f8214097fac0825911698b90986d3')
 
 prepare() {
   cd uboot
+  patch -p1 -i "${srcdir}"/uboot_hdmi.patch
   patch -p1 -i "${srcdir}"/alarm.patch
   rm -rf .git
 }

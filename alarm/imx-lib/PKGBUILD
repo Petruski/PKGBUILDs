@@ -1,0 +1,47 @@
+# i.MX6 proprietary G2D drivers for VIVANTE GPU
+# Maintainer: RaumZeit <raumzeit@gmx.net>
+
+buildarch=4
+
+pkgname=imx-lib
+pkgver=3.10.9_1.0.0
+_pkgver=${pkgver/_/-}
+pkgrel=1
+pkgdesc="Platform specific libraries for Freescale imx platform"
+
+# filesystem prefix for the include files and license
+_install_prefix=/opt/fsl
+# filesystem prefix for the libraries
+_install_exec_prefix=/opt/fsl
+
+url="https://community.freescale.com/"
+arch=('armv7h')
+license=('LGPLv2.1')
+source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${pkgname}-${_pkgver}.tar.gz")
+md5sums=('5cc9c8d09c7ba401cdab4a2ecbda89e2')
+
+build() {
+  cd "${pkgname}-${_pkgver}"
+  export PLATFORM="IMX6Q"
+#  INCLUDE_DIR="-I${STAGING_KERNEL_DIR}/include/uapi -I${STAGING_KERNEL_DIR}/include \
+#                 -I${STAGING_KERNEL_DIR}/drivers/mxc/security/rng/include \
+#                 -I${STAGING_KERNEL_DIR}/drivers/mxc/security/sahara2/include"
+#  make INCLUDE="${INCLUDE_DIR}" all
+
+  make all
+}
+
+package() {
+  cd "${pkgname}-${_pkgver}"
+  make DEST_DIR="${pkgdir}" install
+#  cd "${pkgdir}"
+#  mkdir -p "${_install_prefix}/include" "${_install_exec_prefix}/lib"
+#  mv usr/include/* "${_install_prefix}/include/"
+#  mv usr/lib/* "${_install_exec_prefix}/lib/"
+#  rm -r usr
+
+#  mkdir -p "${pkgdir}/etc/ld.so.conf.d"
+#  echo "${_install_exec_prefix}/lib" > "${pkgdir}/etc/ld.so.conf.d/$pkgname.conf"
+}
+
+# vim:set ts=2 sw=2 et:

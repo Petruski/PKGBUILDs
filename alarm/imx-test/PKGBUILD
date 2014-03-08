@@ -1,0 +1,50 @@
+# Test programs for IMX BSP
+# Maintainer: RaumZeit <raumzeit@gmx.net>
+
+buildarch=4
+
+pkgname=imx-test
+pkgver=3.10.9_1.0.0
+_pkgver=${pkgver/_/-}
+pkgrel=1
+pkgdesc="Unit tests for the i.MX6 - Platform specific libraries for Freescale imx platform"
+
+# filesystem prefix for the include files and license
+_install_prefix=/opt/imx
+
+url="https://community.freescale.com/"
+arch=('armv7h')
+license=('GPLv2')
+source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${pkgname}-${_pkgver}.tar.gz")
+md5sums=('fd3de6e882a7b5425853083ec8d4951e')
+depends=('imx-lib' 'imx-vpu')
+
+build() {
+  cd "${pkgname}-${_pkgver}"
+  export PLATFORM="IMX6Q"
+#INCLUDE_DIR="-I${STAGING_INCDIR} \
+#             -I${S}/include \
+#             -I${STAGING_KERNEL_DIR}/include/uapi \
+#             -I${STAGING_KERNEL_DIR}/include \
+#             -I${STAGING_KERNEL_DIR}/arch/arm/include \
+#             -I${STAGING_KERNEL_DIR}/drivers/mxc/security/rng/include \
+#             -I${STAGING_KERNEL_DIR}/drivers/mxc/security/sahara2/include"
+#  LDFLAGS="" make LINUXPATH=${STAGING_KERNEL_DIR} \
+#  KBUILD_OUTPUT=${STAGING_KERNEL_DIR} V=1 \
+#  INC="${INCLUDE_DIR}"
+  make all
+}
+
+package() {
+  cd "${pkgname}-${_pkgver}"
+  mkdir -p "${_install_prefix}/unit_tests"
+
+  install -m 755 test-utils.sh "${_install_prefix}/unit_tests"/unit_tests/test-utils.sh
+  install -m 755 "${srcdir}"/platform/IMX6Q/* ${_install_prefix}/unit_tests/
+  if [ -e ${WORKDIR}/clocks.sh ]; then
+    install -m 755 ${WORKDIR}/clocks.sh ${D}/unit_tests/clocks.sh
+  fi
+
+}
+
+# vim:set ts=2 sw=2 et:

@@ -6,7 +6,13 @@ pkgname=imx-vpu
 pkgver=3.10.9_1.0.0
 _pkgver=${pkgver/_/-}
 pkgrel=1
-pkgdesc="Freescale proprietary extensions for i.MX6 SoC"
+pkgdesc="Freescale VPU library - proprietary extensions for i.MX6q SoC"
+
+# filesystem prefix for the include files and license
+_install_prefix=/usr
+# filesystem prefix for the libraries
+_install_exec_prefix=/usr
+
 url="https://community.freescale.com/docs/DOC-95560"
 arch=('armv7h')
 license=('proprietary')
@@ -33,13 +39,13 @@ package() {
   cd "${pkgname}-${_pkgver}"
   make DEST_DIR="${pkgdir}" install
   cd "${pkgdir}"
-  mkdir -p opt/fsl/include opt/fsl/lib
-  mv usr/include/* opt/fsl/include/
-  mv usr/lib/* opt/fsl/lib
+  mkdir -p "${_install_prefix}/include" "${_install_exec_prefix}/lib"
+  mv usr/include/* "${_install_prefix}/include/"
+  mv usr/lib/* "${_install_exec_prefix}/lib/"
   rm -r usr
 
   mkdir -p "${pkgdir}/etc/ld.so.conf.d"
-  echo "/opt/fsl/lib" > "${pkgdir}/etc/ld.so.conf.d/$pkgname.conf"
+  echo "${_install_exec_prefix}/lib" > "${pkgdir}/etc/ld.so.conf.d/$pkgname.conf"
 
   install -D -m0644 "${srcdir}/99-mxc-vpu.rules" "${pkgdir}/usr/lib/udev/rules.d/99-mxc-vpu.rules"
 }

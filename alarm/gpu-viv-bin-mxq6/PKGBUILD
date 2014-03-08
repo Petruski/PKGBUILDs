@@ -2,22 +2,25 @@
 # Contributor: pepedog at archlinuxarm dot com
 
 buildarch=4
+
 pkgbase=gpu-viv-bin-mx6q
+#pkgver=3.10.17_1.0.0
+#_pkgver=${pkgver/_/-}-beta-hfp
 pkgver=3.10.9_1.0.0
-_pkgver=${pkgver//_/-}-hfp
+_pkgver=${pkgver/_/-}-hfp
 pkgrel=1
 pkgdesc="Freescale proprietary Vivante GPU drivers for i.MX6 Quad SoC"
 
 # filesystem prefix for the include files and license
-_install_prefix=/opt/fsl
+_install_prefix=/usr
 # filesystem prefix for the libraries
-_install_exec_prefix=/opt/fsl
+_install_exec_prefix=/usr
 # filesystem prefix for the samples
 _install_samples_prefix=/opt/fsl
 url="https://community.freescale.com/docs/DOC-95560"
 arch=('armv7h')
 license=('proprietary')
-#depends=('fsl-bsp-kernel=4.1.0' 'fsl-bsp-kernel-headers=4.1.0')
+#depends=("vivante-kernel-driver=${pkgver}")
 source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${pkgbase}-${_pkgver}.bin"
 	"98-galcore.rules"
 	"egl.pc"
@@ -30,7 +33,10 @@ source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${pkgbase}-${_pkgver}.bi
 	"vg.pc"
 	"vg_x11.pc"
 	"wayland-egl.pc"
-	"wayland-viv.pc")
+	"wayland-viv.pc"
+	'0001-change-header-path-to-HAL.patch'
+	'fix-conflicting-TLS-definition.patch'
+	'gc_hal_eglplatform-remove-xlib-undefs.patch')
 md5sums=('52f5ebbb6a9b5d0eafdb952246de584e'
          'ab0afbd747e802f0bc95d31494d3b559'
          'd56637776b8fa659d7b84f45d006dad2'
@@ -43,7 +49,8 @@ md5sums=('52f5ebbb6a9b5d0eafdb952246de584e'
          '101994c11d92ff4bcd86ea25f3afa0f0'
          '36962675b16862e33f6d250865b0d6ba'
          '9e0ce33723aac9e9829a9322e38f6e32'
-         '8994b882eaad8ee95ccb759505bdcf58')
+         '8994b882eaad8ee95ccb759505bdcf58'
+	     'SKIP' 'SKIP' 'SKIP')
 
 prepare() {
   cd "${srcdir}"
@@ -54,6 +61,12 @@ prepare() {
   # adopt the prefix and exec_prefix variables in .pc files
   sed -i 's#^prefix=/usr#prefix='${_install_prefix}'#' *.pc
   sed -i 's#^exec_prefix=/usr#exec_prefix='${_install_exec_prefix}'#' *.pc
+
+  patch -d "${pkgbase}-${_pkgver}" -p1 < "${srcdir}"/0001-change-header-path-to-HAL.patch
+  patch -d "${pkgbase}-${_pkgver}" -p1 < "${srcdir}"/fix-conflicting-TLS-definition.patch
+  patch -d "${pkgbase}-${_pkgver}" -p1 < "${srcdir}"/gc_hal_eglplatform-remove-xlib-undefs.patch
+
+
 }
 
 _package_common() {
@@ -85,6 +98,9 @@ _package_common_post() {
   ln -sf libEGL.so.1.0 libEGL.so
   mv libGAL-${backend}.so libGAL.so
   mv libVIVANTE-${backend}.so libVIVANTE.so
+#  mv libGLESv2-${backend}.so libGLESv2.so.2.0.0
+  ln -sf libGLESv2.so.2.0.0 libGLESv2.so.2
+  ln -sf libGLESv2.so.2.0.0 libGLESv2.so
 
   ln -sf libOpenVG_3D.so libOpenVG.so
 
