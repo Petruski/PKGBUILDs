@@ -10,9 +10,9 @@ pkgrel=1
 pkgdesc="Platform specific libraries for Freescale imx platform"
 
 # filesystem prefix for the include files and license
-_install_prefix=/opt/fsl
+_install_prefix=/usr
 # filesystem prefix for the libraries
-_install_exec_prefix=/opt/fsl
+_install_exec_prefix=/usr
 
 url="https://community.freescale.com/"
 arch=('armv7h')

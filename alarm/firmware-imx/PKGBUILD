@@ -9,7 +9,7 @@ pkgrel=1
 pkgdesc="Freescale IMX firmware such as for the VPU - proprietary firmware for i.MX6 SoC"
 
 # filesystem prefix for the include files and license
-_install_prefix=/opt/fsl
+_install_prefix=/usr
 # filesystem prefix for the firmware
 _install_fw_prefix=/usr
 

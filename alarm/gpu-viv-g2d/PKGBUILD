@@ -10,9 +10,9 @@ pkgrel=1
 pkgdesc="Freescale proprietary Vivante GPU G2D library and sample applications for imx6"
 
 # filesystem prefix for the include files and license
-_install_prefix=/opt/fsl
+_install_prefix=/usr
 # filesystem prefix for the libraries
-_install_exec_prefix=/opt/fsl
+_install_exec_prefix=/usr
 # filesystem prefix for the samples
 _install_samples_prefix=/opt/fsl
 url="https://community.freescale.com/"
