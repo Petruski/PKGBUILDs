@@ -9,9 +9,9 @@ pkgrel=1
 pkgdesc="Freescale VPU library - proprietary extensions for i.MX6q SoC"
 
 # filesystem prefix for the include files and license
-_install_prefix=/usr
+#_install_prefix=/usr
 # filesystem prefix for the libraries
-_install_exec_prefix=/usr
+#_install_exec_prefix=/usr
 
 url="https://community.freescale.com/docs/DOC-95560"
 arch=('armv7h')
@@ -23,8 +23,6 @@ md5sums=('61331c9ed2d4c1b3aeab9c35fd034ac3'
 
 prepare() {
   cd "${srcdir}"
-  #chmod for execution, library is packed as binary to accept EULA
-#  chmod +x ${pkgname}-${_pkgver}.bin
   sh ${pkgname}-${_pkgver}.bin --force --auto-accept
   sed -n '/EOEULA/,/EOEULA/p' ${pkgname}-${_pkgver}.bin | grep -v EOEULA > LICENSE.$pkgname
 }
@@ -38,14 +36,13 @@ build() {
 package() {
   cd "${pkgname}-${_pkgver}"
   make DEST_DIR="${pkgdir}" install
-  cd "${pkgdir}"
-  mkdir -p "${_install_prefix}/include" "${_install_exec_prefix}/lib"
-  mv usr/include/* "${_install_prefix}/include/"
-  mv usr/lib/* "${_install_exec_prefix}/lib/"
-  rm -r usr
+#  mkdir -p "${pkgdir}/${_install_prefix}/include" "${pkgdir}/${_install_exec_prefix}/lib"
+#  mv "${pkgdir}/${pkgname}"/usr/include/* "${pkgdir}/${_install_prefix}/include/"
+#  mv "${pkgdir}/${pkgname}"/usr/lib/* "${pkgdir}/${_install_exec_prefix}/lib/"
+#  rm -r "${pkgdir}/${pkgname}"
 
-  mkdir -p "${pkgdir}/etc/ld.so.conf.d"
-  echo "${_install_exec_prefix}/lib" > "${pkgdir}/etc/ld.so.conf.d/$pkgname.conf"
+#  mkdir -p "${pkgdir}/etc/ld.so.conf.d"
+#  echo "${_install_exec_prefix}/lib" > "${pkgdir}/etc/ld.so.conf.d/$pkgname.conf"
 
   install -D -m0644 "${srcdir}/99-mxc-vpu.rules" "${pkgdir}/usr/lib/udev/rules.d/99-mxc-vpu.rules"
 }
