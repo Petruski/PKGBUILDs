@@ -70,7 +70,6 @@ prepare() {
 }
 
 _package_common() {
-  provides=('gpu-viv-bin-mx6q=4.1.0' 'libegl' 'libgles' 'libgl' 'mesa' 'mesa-libgl')
   conflicts=('gpu-viv-bin-mx6q')
   cd "${pkgbase}-${_pkgver}"
   mkdir -p "${pkgdir}${_install_prefix}/include"  "${pkgdir}${_install_exec_prefix}/lib"
@@ -113,6 +112,7 @@ _package_common_post() {
 }
 
 package_gpu-viv-bin-mx6q-fb() {
+  provides=('gpu-viv-bin-mx6q=4.1.0' 'gpu-viv-bin-mx6q-fb=4.1.0 'libegl' 'libgles' 'libgl')
   backend=fb
   _package_common
   cp -r *-fb* "${pkgdir}${_install_exec_prefix}/lib"
@@ -129,6 +129,8 @@ package_gpu-viv-bin-mx6q-fb() {
 
 
 package_gpu-viv-bin-mx6q-x11() {
+  conflicts=('mesa-libgl')
+  provides=('gpu-viv-bin-mx6q=4.1.0' 'gpu-viv-bin-mx6q-x11=4.1.0' 'libegl-x11' 'libgles-x11' 'libgl' 'libgal-x11')
   backend=x11
   _package_common
   cp -r dri "${pkgdir}${_install_exec_prefix}/lib"
@@ -146,6 +148,7 @@ package_gpu-viv-bin-mx6q-x11() {
 }
 
 package_gpu-viv-bin-mx6q-wl() {
+  provides=('gpu-viv-bin-mx6q=4.1.0' 'gpu-viv-bin-mx6q-wl=4.1.0' 'libegl' 'libgles' 'libgl')
   backend=wl
   _package_common
   cp -r *-wl* "${pkgdir}${_install_exec_prefix}/lib"
@@ -165,6 +168,7 @@ package_gpu-viv-bin-mx6q-wl() {
 
 
 package_gpu-viv-bin-mx6q-dfb() {
+  provides=('gpu-viv-bin-mx6q=4.1.0' 'gpu-viv-bin-mx6q-dfb=4.1.0' 'libegl' 'libgles' 'libgl')
   backend=dfb
   _package_common
   cp -r *-dfb* directfb* "${pkgdir}${_install_exec_prefix}/lib"
