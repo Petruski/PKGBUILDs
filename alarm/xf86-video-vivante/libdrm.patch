@@ -1,0 +1,12 @@
+diff -ur a/DRI_1.10.4/src/drm.h b/DRI_1.10.4/src/drm.h
+--- a/DRI_1.10.4/src/drm.h	2014-03-09 14:14:12.368064331 +0100
++++ b/DRI_1.10.4/src/drm.h	2014-03-09 14:19:29.817001891 +0100
+@@ -617,7 +617,7 @@
+     __u64 value;
+ };
+ 
+-#include <drm/drm_mode.h>
++#include <libdrm/drm_mode.h>
+ 
+ #define DRM_IOCTL_BASE            'd'
+ #define DRM_IO(nr)            _IO(DRM_IOCTL_BASE,nr)
