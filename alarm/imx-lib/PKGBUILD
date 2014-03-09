@@ -23,6 +23,9 @@ md5sums=('5cc9c8d09c7ba401cdab4a2ecbda89e2')
 build() {
   cd "${pkgname}-${_pkgver}"
   export PLATFORM="IMX6Q"
+#  export KERNEL_SRC="/usr/src/linux-3.0.35_4.1.0-4-ARCH+/"  
+#  export INCLUDE="-I$KERNEL_SRC/include -I$KERNEL_SRC/drivers/mxc/security/rng/include -I$KERNEL_SRC/drivers/mxc/security/sahara2/include"
+# or
 #  INCLUDE_DIR="-I${STAGING_KERNEL_DIR}/include/uapi -I${STAGING_KERNEL_DIR}/include \
 #                 -I${STAGING_KERNEL_DIR}/drivers/mxc/security/rng/include \
 #                 -I${STAGING_KERNEL_DIR}/drivers/mxc/security/sahara2/include"
