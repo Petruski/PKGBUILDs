@@ -4,10 +4,10 @@
 buildarch=4
 
 pkgbase=gpu-viv-g2d
-#pkgver=3.10.17_1.0.0
-#_pkgver=${pkgver/_/-}-beta
-pkgver=3.10.9_1.0.0
-_pkgver=${pkgver/_/-}
+pkgver=3.10.17_1.0.0
+_pkgver=${pkgver/_/-}-beta
+#pkgver=3.10.9_1.0.0
+#_pkgver=${pkgver/_/-}
 pkgrel=1
 pkgdesc="Freescale proprietary Vivante GPU G2D library and sample applications for imx6"
 
