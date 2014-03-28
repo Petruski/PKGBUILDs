@@ -13,7 +13,8 @@ pkgdesc="Xorg driver for proprietary VIVANTE GPU drivers"
 url="https://community.freescale.com/"
 arch=('armv7h')
 license=('MIT')
-#depends=('libgal-x11' 'libx11' 'libdrm-viv' 'gpu-viv-bin-mx6q-x11=4.1.0')
+makedepends=('xorg-server-devel')
+depends=('libdrm-viv' 'libx11' 'gpu-viv-bin-mx6q-x11=3.10.17_1.0.0_beta')
 source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${_yocto_pkgname}-${_pkgver}.tar.gz"
         'libdrm.patch'
         'fix-hdmi-preferred-mode.patch')
