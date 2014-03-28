@@ -5,24 +5,27 @@ buildarch=4
 
 pkgname=xf86-video-vivante
 _yocto_pkgname=xserver-xorg-video-imx-viv
-pkgver=3.5.7_1.0.0
-_pkgver=${pkgver/_/-}-alpha.2
+pkgver=3.10.17_1.0.0
+_pkgver=${pkgver/_/-}_beta
 pkgrel=1
 pkgdesc="Xorg driver for proprietary VIVANTE GPU drivers"
 
 url="https://community.freescale.com/"
 arch=('armv7h')
 license=('MIT')
-depends=('libgal-x11' 'libx11' 'libdrm-viv' 'gpu-viv-bin-mx6q-x11=4.1.0')
+#depends=('libgal-x11' 'libx11' 'libdrm-viv' 'gpu-viv-bin-mx6q-x11=4.1.0')
 source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${_yocto_pkgname}-${_pkgver}.tar.gz"
-        'libdrm.patch')
-md5sums=( '3fc3d355d721656144920afd06fb1bff'
-          'SKIP')
+        'libdrm.patch'
+        'fix-hdmi-preferred-mode.patch')
+md5sums=( 'fee0e4820fe3f89e5f36a0b343e4a33f'
+          '2f1ba8786bfc5fbc482fb0fbad6362ff'
+          '9ca87352aecc6b309aa5f5b2bb9d6e24')
 
 
 prepare() {
   cd "${_yocto_pkgname}-${_pkgver}"
   patch -p1 < "${srcdir}"/libdrm.patch
+  patch -p1 < "${srcdir}"/fix-hdmi-preferred-mode.patch
 }
 
 build() {
