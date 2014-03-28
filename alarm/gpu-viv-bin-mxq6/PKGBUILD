@@ -129,7 +129,8 @@ package_gpu-viv-bin-mx6q-fb() {
 
 
 package_gpu-viv-bin-mx6q-x11() {
-  conflicts=('gpu-viv-bin-mx6q' 'libgl')
+#  conflicts=('gpu-viv-bin-mx6q' 'libgl')
+  conflicts=('gpu-viv-bin-mx6q')
   replaces=('libgl')
   provides=('gpu-viv-bin-mx6q=4.1.0' 'gpu-viv-bin-mx6q-x11=4.1.0' 'libegl-x11' 'libgles-x11' 'libgl' 'libgal-x11')
   backend=x11
