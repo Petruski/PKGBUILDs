@@ -23,7 +23,7 @@ conflicts=('libdrm')
 provides=("libdrm=${pkgver}")
 url="http://dri.freedesktop.org/"
 groups=vivante-support
-source=(http://dri.freedesktop.org/$pkgname/$pkgbasename-$pkgver.tar.bz2
+source=(http://dri.freedesktop.org/$pkgbasename/$pkgbasename-$pkgver.tar.bz2
         COPYING
         drm-update-arm.patch)
 sha256sums=('fa693c2f1f61befcefbdcc396673e38481110bac9db610afa4b8afb2be0218c1'
