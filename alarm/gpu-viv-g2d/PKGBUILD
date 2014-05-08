@@ -5,10 +5,10 @@ buildarch=4
 
 pkgbase=gpu-viv-g2d
 pkgver=3.10.17_1.0.0
-_pkgver=${pkgver/_/-}-beta
+_pkgver=${pkgver/_/-}
 #pkgver=3.10.9_1.0.0
 #_pkgver=${pkgver/_/-}
-pkgrel=1
+pkgrel=2
 pkgdesc="Freescale proprietary Vivante GPU G2D library and sample applications for imx6"
 
 # filesystem prefix for the include files and license
@@ -32,13 +32,13 @@ prepare() {
 }
 
 package_gpu-viv-g2d() {
-#  provides=('gmem_info' 'libg2d')
-  provides=('libg2d')
+  provides=('gmem_info' 'libg2d')
+#  provides=('libg2d')
   cd "${pkgbase}-${_pkgver}"
   mkdir -p "${pkgdir}${_install_prefix}/include"  "${pkgdir}${_install_exec_prefix}/lib" "${pkgdir}${_install_exec_prefix}/bin"
   cp -r usr/include/* "${pkgdir}${_install_prefix}/include"
   cp usr/lib/libg2d.so "${pkgdir}${_install_exec_prefix}/lib"
-  #cp usr/bin/gmem_info "${pkgdir}${_install_exec_prefix}/bin"
+  cp usr/bin/gmem_info "${pkgdir}${_install_exec_prefix}/bin"
   mkdir -p "${pkgdir}${_install_prefix}/licenses"
   cp "${srcdir}/LICENSE.$pkgbase" "$pkgdir${_install_prefix}/licenses"
   mkdir -p "${pkgdir}/etc/ld.so.conf.d"
