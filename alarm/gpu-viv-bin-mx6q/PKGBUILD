@@ -6,7 +6,7 @@ buildarch=4
 pkgbase=gpu-viv-bin-mx6q
 pkgver=3.10.17_1.0.0
 _pkgver=${pkgver//_/-}-hfp
-pkgrel=1
+pkgrel=3
 pkgdesc="Freescale proprietary Vivante GPU drivers for i.MX6 Quad SoC"
 
 # filesystem prefix for the include files and license
@@ -49,7 +49,9 @@ md5sums=('8b9c4f6181acf46028e39508a970ecc1'
          '36962675b16862e33f6d250865b0d6ba'
          '9e0ce33723aac9e9829a9322e38f6e32'
          '8994b882eaad8ee95ccb759505bdcf58'
-         'SKIP' 'SKIP' 'SKIP'
+         '9bbe2a2883fbf51cbb12f658113d8d66'
+         '4dfab5abc7db37a0522fe9b0578b127f'
+         'd8a4253f9e376df3faac68ace3ab466a'
          '7e56b987de6a243023c3313c36df57c5')
 
 prepare() {
@@ -89,6 +91,7 @@ _package_common_post() {
 
   mv libGL.so.1.2 libGL.so.1.2.0
   ln -sf libGL.so.1.2.0 libGL.so.1.2
+  ln -sf libGL.so.1.2.0 libGL.so.1
   ln -sf libGL.so.1.2.0 libGL.so
   mv libEGL-${backend}.so libEGL.so.1.0
   ln -sf libEGL.so.1.0 libEGL.so.1
