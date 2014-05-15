@@ -4,7 +4,7 @@
 buildarch=4
 
 pkgname=imx-lib
-pkgver=3.10.9_1.0.0
+pkgver=3.10.17_1.0.0
 _pkgver=${pkgver/_/-}
 pkgrel=1
 pkgdesc="Platform specific libraries for Freescale imx platform"
@@ -18,12 +18,12 @@ url="https://community.freescale.com/"
 arch=('armv7h')
 license=('LGPLv2.1')
 source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${pkgname}-${_pkgver}.tar.gz")
-md5sums=('5cc9c8d09c7ba401cdab4a2ecbda89e2')
+md5sums=('8e3346d5f33b5aa5f915a0dd8aa99cc9')
 
 build() {
   cd "${pkgname}-${_pkgver}"
   export PLATFORM="IMX6Q"
-  export KERNEL_SRC="/usr/src/linux-3.0.35_4.1.0-6-ARCH+/"  
+  export KERNEL_SRC="/usr/src/linux-3.10.17-1-ARCH/"  
   export INCLUDE_DIR="-I${KERNEL_SRC}/include/uapi \
                       -I${KERNEL_SRC}/include \
                       -I${KERNEL_SRC}/drivers/mxc/security/rng/include \
