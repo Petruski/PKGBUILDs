@@ -16,7 +16,7 @@ source=("ftp://ftp.denx.de/pub/u-boot/u-boot-${pkgver}.tar.bz2"
         'alarm.patch')
 md5sums=('6d2116d1385a66e9a59742caa9d62a54'
          '07b1aba3db09dc86c2c3960baa4d77ad'
-         '8f749cdb50b4deddbfa92655610ad5f4')
+         'c6dbc33cd1be40aa23623ef5aa9aa9f0')
 
 prepare() {
   cd u-boot-${pkgver}
@@ -29,6 +29,7 @@ build() {
   
   unset CFLAGS CXXFLAGS LDFLAGS
   
+  mkdir bins
   for i in solo dl quad; do
     make distclean
     make wandboard_${i}_config

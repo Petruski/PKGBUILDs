@@ -4,11 +4,11 @@
 buildarch=4
 
 pkgbase=linux-odroid-xu-headless
-_commit=bbc8794877e7449bf141c14b827e66da0282d6ea
+_commit=31c5b91603da39997996cc6a314c9791533a5dce
 _srcname=linux-${_commit}
 _kernelname=${pkgbase#linux}
 _desc="ODROID-XU (headless)"
-pkgver=3.4.84
+pkgver=3.4.98
 pkgrel=1
 arch=('armv7h')
 url="http://www.kernel.org/"
@@ -18,8 +18,8 @@ options=('!strip')
 source=("https://github.com/hardkernel/linux/archive/${_commit}.tar.gz"
         'config'
         'size.patch')
-md5sums=('4af35b0895bf344723d67169f8152145'
-         '90f51d11411d790ec1ce927fcbd78b52'
+md5sums=('23e043166448281fc74614e769b98e01'
+         'a231c7d5685d67e016948d5f184ea13b'
          '45b9fd00c7cad62dcd5782b2ba9c4d34')
 
 prepare() {

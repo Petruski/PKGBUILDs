@@ -4,11 +4,11 @@
 buildarch=18
 
 pkgbase=linux-raspberrypi
-_commit=7ffa5f9398bf05fcfdec5c7f3c04c261fbcd2706
+_commit=377b5bfa4b277605004a3f514e5287d7cba377b1
 _srcname=linux-${_commit}
 _kernelname=${pkgbase#linux}
 _desc="Raspberry Pi"
-pkgver=3.12.19
+pkgver=3.12.24
 pkgrel=1
 arch=('arm armv6h')
 url="http://www.kernel.org/"
@@ -23,8 +23,8 @@ source=("https://github.com/raspberrypi/linux/archive/${_commit}.tar.gz"
         'imagetool-uncompressed.py'
         "git://git.code.sf.net/p/aufs/aufs3-standalone#branch=aufs${pkgver%.*}.x")
 
-md5sums=('4eb9f07fa4dfee3c598099465c66dcd0'
-         'f8f7e6a3065edf27a5c67eb5fa8cded3'
+md5sums=('cf561305e0ee195be8fcd800f5fd51f0'
+         '76a2bcba7382be9a7a7ffc1e3be9c972'
          '98beb36f9b8cf16e58de2483ea9985e3'
          '9335d1263fd426215db69841a380ea26'
          'a00e424e2fbb8c5a5f77ba2c4871bed4'
@@ -167,12 +167,10 @@ _package-headers() {
   done
 
   # copy arch includes for external modules
-  mkdir -p ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH
-  cp -a arch/$KARCH/include ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH/
-  mkdir -p ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH/mach-kirkwood
-  cp -a arch/$KARCH/mach-kirkwood/include ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH/mach-kirkwood/
-  mkdir -p ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH/plat-orion
-  cp -a arch/$KARCH/plat-orion/include ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH/plat-orion/
+  mkdir -p ${pkgdir}/usr/lib/modules/${_kernver}/build/arch/$KARCH
+  cp -a arch/$KARCH/include ${pkgdir}/usr/lib/modules/${_kernver}/build/arch/$KARCH/
+  mkdir -p ${pkgdir}/usr/lib/modules/${_kernver}/build/arch/$KARCH/mach-bcm2708
+  cp -a arch/$KARCH/mach-bcm2708/include ${pkgdir}/usr/lib/modules/${_kernver}/build/arch/$KARCH/mach-bcm2708/
 
   # copy files necessary for later builds, like nvidia and vmware
   cp Module.symvers "${pkgdir}/usr/lib/modules/${_kernver}/build"
