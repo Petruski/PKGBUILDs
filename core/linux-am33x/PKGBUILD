@@ -4,11 +4,11 @@
 buildarch=4
 
 pkgbase=linux-am33x
-_srcname=linux-3.14
+_srcname=linux-3.16
 _kernelname=${pkgbase#linux}
 _desc="TI AM335x Beaglebone (Black)"
-pkgver=3.14.4
-pkgrel=1
+pkgver=3.16.1
+pkgrel=2
 rcnrel=bone4
 arch=('armv7h')
 url="http://www.kernel.org/"
@@ -19,14 +19,12 @@ source=("http://www.kernel.org/pub/linux/kernel/v3.x/${_srcname}.tar.xz"
         "http://www.kernel.org/pub/linux/kernel/v3.x/patch-${pkgver}.xz"
         "http://rcn-ee.net/deb/sid-armhf/v${pkgver}-${rcnrel}/patch-${pkgver%.0}-${rcnrel}.diff.gz"
         "git://git.code.sf.net/p/aufs/aufs3-standalone#branch=aufs${pkgver%.*}"
-        '0001-Bluetooth-allocate-static-minor-for-vhci.patch'
         'config')
-md5sums=('b621207b3f6ecbb67db18b13258f8ea8'
-         '116f27cf17c3522716b6678b17516067'
-         'ea7ff785da31668415160dcaa42e02a7'
+md5sums=('5c569ed649a0c9711879f333e90c5386'
+         '9da4b0f5e343455b8141bcfa47e88cf5'
+         'c7838baffa417de5267e7372a56ec79c'
          'SKIP'
-         '1b276abe16d14e133f3f28d9c9e6bd68'
-         'b24944272e50e4756ada1a01b6856abb')
+         '9d0d67f5dba7b18c84a96160417b959c')
 
 prepare() {
   cd "${srcdir}/${_srcname}"
@@ -36,7 +34,6 @@ prepare() {
 
   # ALARM patches
   git apply "${srcdir}/patch-${pkgver%.0}-${rcnrel}.diff"
-  patch -p1 -i ../0001-Bluetooth-allocate-static-minor-for-vhci.patch
 
   # AUFS patches
   cp -ru "${srcdir}/aufs3-standalone/Documentation" .
