@@ -3,46 +3,54 @@
 
 buildarch=4
 
+_rcver=3.18
+_rcrel=4
+_rcnrel=armv7-x2
+
 pkgbase=linux-armv7-rc
-_srcname=linux-3.17-rc3
+_srcname=linux-3.$((${_rcver##*.}-1))
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 multi-platform"
-pkgver=3.17.0
-pkgrel=3
-rcnrel=armv7-x1
+pkgver=${_rcver}.rc${_rcrel}
+pkgrel=1
 arch=('armv7h')
 url="http://www.kernel.org/"
 license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-tools')
 options=('!strip')
-source=("http://www.kernel.org/pub/linux/kernel/v3.x/testing/${_srcname}.tar.xz"
-        "http://rcn-ee.net/deb/sid-armhf/v${pkgver}-${_srcname##*-}-${rcnrel}/patch-${pkgver%.0}-${_srcname##*-}-${rcnrel}.diff.gz"
+source=("http://www.kernel.org/pub/linux/kernel/v3.x/${_srcname}.tar.xz"
+        "https://www.kernel.org/pub/linux/kernel/v3.x/testing/patch-${_rcver}-rc${_rcrel}.xz"
+        "http://rcn-ee.net/deb/sid-armhf/v${_rcver}.0-rc${_rcrel}-${_rcnrel}/patch-${_rcver}-rc${_rcrel}-${_rcnrel}.diff.gz"
         "git://git.code.sf.net/p/aufs/aufs3-standalone#branch=aufs3.x-rcN"
-        '0001-atags-add-support-for-marvell-uboot.patch'
-        '0002-atags-retrieve-mac-addresses.patch'
-        '0003-smileplug-devicetree.patch'
-        '0004-emmc-timing-fix.patch'
+        '0001-ARM-atags-add-support-for-Marvell-s-u-boot.patch'
+        '0002-ARM-atags-fdt-retrieve-MAC-addresses-from-Marvell-bo.patch'
+        '0003-SMILE-Plug-device-tree-file.patch'
+        '0004-fix-mvsdio-eMMC-timing.patch'
         'config')
-md5sums=('644c6e133bddef3cd37411e4e8d6829f'
-         'b23a61a7f2e26ca918d494c189294b21'
+md5sums=('fb30d0f29214d75cddd2faa94f73d5cf'
+         '587ecff959eff7392c4977c513580f44'
+         'f162f3907c37e9e12d9e2117c01cc497'
          'SKIP'
-         '3ad860d0d6daedc82091ea29c9730b95'
-         '02cce6b8f88c4392f552b14d0bf2e71c'
-         '0a0c5691aea2503cd0c503cb50244f48'
-         '911bffe9c261ca5b91dd0a083d99e81f'
-         '49db805e26fbd59cf722e3adda2aa9f3')
+         'bf5c78900f42d0ae6b7f45d8b88ba7f8'
+         '4e54599d103d95f9eadd3a4c6a413da0'
+         '11889f6e6873f79059c5d9bf3fcc0cf8'
+         'e728042f0d32a7d2e0610ed3eaf4ad52'
+         'fef11931fa2f261058db82256e0ae1cb')
 
 prepare() {
   cd "${srcdir}/${_srcname}"
 
+  # add upstream patch
+  git apply --whitespace=nowarn ../patch-${_rcver}-rc${_rcrel}
+
   # RCN patch
-  git apply ../patch-${pkgver%.0}-${_srcname##*-}-${rcnrel}.diff
+  git apply ../patch-${_rcver}-rc${_rcrel}-${_rcnrel}.diff
 
   # ALARM patches
-  patch -p1 -i ../0001-atags-add-support-for-marvell-uboot.patch
-  patch -p1 -i ../0002-atags-retrieve-mac-addresses.patch
-  patch -p1 -i ../0003-smileplug-devicetree.patch
-  patch -p1 -i ../0004-emmc-timing-fix.patch
+  git apply ../0001-ARM-atags-add-support-for-Marvell-s-u-boot.patch
+  git apply ../0002-ARM-atags-fdt-retrieve-MAC-addresses-from-Marvell-bo.patch
+  git apply ../0003-SMILE-Plug-device-tree-file.patch
+  git apply ../0004-fix-mvsdio-eMMC-timing.patch
 
   # AUFS patches
   cp -ru "${srcdir}/aufs3-standalone/Documentation" .
@@ -50,10 +58,10 @@ prepare() {
   cp -ru "${srcdir}/aufs3-standalone/include/uapi/linux/aufs_type.h" ./include/linux
   cp -ru "${srcdir}/aufs3-standalone/include/uapi/linux/aufs_type.h" ./include/uapi/linux
 
-  patch -Np1 -i ../aufs3-standalone/aufs3-kbuild.patch
-  patch -Np1 -i ../aufs3-standalone/aufs3-base.patch
-  patch -Np1 -i ../aufs3-standalone/aufs3-mmap.patch
-  patch -Np1 -i ../aufs3-standalone/aufs3-standalone.patch
+  git apply ../aufs3-standalone/aufs3-kbuild.patch
+  git apply ../aufs3-standalone/aufs3-base.patch
+  git apply ../aufs3-standalone/aufs3-mmap.patch
+  git apply ../aufs3-standalone/aufs3-standalone.patch
 
   cat "${srcdir}/config" > ./.config
 

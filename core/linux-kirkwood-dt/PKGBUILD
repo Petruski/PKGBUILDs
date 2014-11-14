@@ -7,10 +7,10 @@ buildarch=2
 pkgbase=linux-kirkwood-dt
 _kernelname=${pkgbase#linux}
 _desc="Marvell Kirkwood DT"
-pkgver=3.16.1
-pkgrel=2
+pkgver=3.17.2
+pkgrel=1
 cryptodev_commit=6aa62a2c320b04f55fdfe0ed015c3d9b48997239
-bfqver=v7r5
+bfqver=v7r6
 
 arch=('arm')
 url="http://www.kernel.org/"
@@ -26,24 +26,24 @@ source=("ftp://ftp.kernel.org/pub/linux/kernel/v3.x/linux-${pkgver}.tar.xz"
 	'0001-disable-mv643xx_eth-TSO.patch'
 #        "git://git.code.sf.net/p/aufs/aufs3-standalone#branch=aufs3.x-rcN"
         "git://git.code.sf.net/p/aufs/aufs3-standalone#branch=aufs${pkgver:0:4}"
-        "https://github.com/cryptodev-linux/cryptodev-linux/archive/${cryptodev_commit}.tar.gz"
+        'cryptodev::https://github.com/cryptodev-linux/cryptodev-linux/archive/${cryptodev_commit}.tar.gz'
         "http://algo.ing.unimo.it/people/paolo/disk_sched/patches/${pkgver:0:4}.0-${bfqver}/0001-block-cgroups-kconfig-build-bits-for-BFQ-${bfqver}-${pkgver:0:4}.patch"
         "http://algo.ing.unimo.it/people/paolo/disk_sched/patches/${pkgver:0:4}.0-${bfqver}/0002-block-introduce-the-BFQ-${bfqver}-I-O-sched-for-${pkgver:0:4}.patch"
         "http://algo.ing.unimo.it/people/paolo/disk_sched/patches/${pkgver:0:4}.0-${bfqver}/0003-block-bfq-add-Early-Queue-Merge-EQM-to-BFQ-${bfqver}-for-${pkgver:0:4}.0.patch"
         'goflexhome_dtb.patch'
         'pogo_e02_dtb.patch')
 
-md5sums=('e7a985a243b7941b6bc6240fcbc797fc'
-         'dc106dfdecdcd95bb4ff3675ac6a76f6'
+md5sums=('87444e6f0906e2ec783cf0ed6aab1a56'
+         '9b7d775077cfdedcea3e77fa73fe99da'
          'e319a8e1a596a39a8951fc6454664b15'
-         'SKIP'
+         'd75a7fa1f615485cd27b232bc1391838'
          '9b5a265440abf57d2052838f31486a3a'
          '09d44b9f07abfaeaf4f688ee52034786'
          'SKIP'
          'ddf7876487c876f6676ef0e050e9d204'
-         '27b45e15c3f9855792808498af21f664'
-         '812c18775a53e337f1b2c7cd9078bff1'
-         'e903ed2c79546d2f0ec41e7e631c62f7'
+         '065dfb596e42d2c92a34936ae9e718cd'
+         'f5523479e045810acd2baf05f12f7b2c'
+         '0202585b76071b7ca1263515e2b4f23b'
          'e42c64b6f4b54f382cf3d7e8d82968f1'
          '341f8164dad19b6baf05d764a800862a')
 
@@ -80,7 +80,7 @@ msg2 "Add Arch Linux ARM patch for ARMv5te plug computers, mach-types"
 msg2 "Add BFQ patches"
   patch -Np1 -i "${srcdir}/0001-block-cgroups-kconfig-build-bits-for-BFQ-${bfqver}-${pkgver:0:4}.patch"
   patch -Np1 -i "${srcdir}/0002-block-introduce-the-BFQ-${bfqver}-I-O-sched-for-${pkgver:0:4}.patch"
-  patch -Np1 -i "${srcdir}/0003-block-bfq-add-Early-Queue-Merge-EQM-to-BFQ-${bfqver}-for-${pkgver:0:4}.0.patch"  
+  patch -Np1 -i "${srcdir}/0003-block-bfq-add-Early-Queue-Merge-EQM-to-BFQ-${bfqver}-for-${pkgver:0:4}.0.patch"
 
   cat "${srcdir}/config" > ./.config
 
@@ -209,8 +209,8 @@ _package-headers() {
   # copy arch includes for external modules
   mkdir -p ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH
   cp -a arch/$KARCH/include ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH/
-  mkdir -p ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH/mach-kirkwood
-  cp -a arch/$KARCH/mach-kirkwood/include ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH/mach-kirkwood/
+  mkdir -p ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH/mach-mvebu
+  cp -a arch/$KARCH/mach-mvebu/include ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH/mach-mvebu/
   mkdir -p ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH/plat-orion
   cp -a arch/$KARCH/plat-orion/include ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH/plat-orion/
 
@@ -293,7 +293,6 @@ _package-headers() {
   # add xfs and shmem for aufs building
   mkdir -p "${pkgdir}/usr/src/linux-${_kernver}/fs/xfs"
   mkdir -p "${pkgdir}/usr/src/linux-${_kernver}/mm"
-  cp fs/xfs/xfs_sb.h "${pkgdir}/usr/src/linux-${_kernver}/fs/xfs/xfs_sb.h"
 
   # copy in Kconfig files
   for i in `find . -name "Kconfig*"`; do

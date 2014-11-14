@@ -4,21 +4,21 @@
 buildarch=4
 
 pkgbase=linux-boundary
-_commit=a62848b1032ebb5ea31c86af260d359e1adcd85c
+_commit=9f710dadb26a40e0f2235db39e11c79149d7bcff
 _srcname=linux-imx6-${_commit}
 _kernelname=${pkgbase#linux}
 _desc="i.MX6 Nitrogen6X/Sabre Lite"
 pkgver=3.10.17
-pkgrel=10
+pkgrel=14
 arch=('armv7h')
-url="https://github.com/boundarydevices/linux-imx6/tree/boundary-imx_3.10.17_1.0.0_ga"
+url="https://github.com/boundarydevices/linux-imx6/tree/boundary-imx_3.10.17_1.0.1_ga"
 license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc')
 options=('!strip')
 source=("https://github.com/boundarydevices/linux-imx6/archive/${_commit}.tar.gz"
         'config')
-md5sums=('7e0e24c88d41158edf88df99c8587f17'
-         'fe732610cc8d1c7dfced5469e17e570a')
+md5sums=('81f09b8e3d4ba500dd51bb295d932ad7'
+         '8301ac70965fac93cafa9481607caef5')
 
 prepare() {
   cd "${srcdir}/${_srcname}"
