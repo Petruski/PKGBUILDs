@@ -4,50 +4,50 @@
 buildarch=4
 
 pkgbase=linux-am33x
-_srcname=linux-3.14
+_srcname=linux-4.1
 _kernelname=${pkgbase#linux}
 _desc="TI AM335x Beaglebone (Black)"
-pkgver=3.14.3
+pkgver=4.1.6
 pkgrel=1
-rcnrel=bone3
+rcnrel=bone15
 arch=('armv7h')
 url="http://www.kernel.org/"
 license=('GPL2')
-makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git')
+makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'dtc-overlay')
 options=('!strip')
-source=("http://www.kernel.org/pub/linux/kernel/v3.x/${_srcname}.tar.xz"
-        "http://www.kernel.org/pub/linux/kernel/v3.x/patch-${pkgver}.xz"
-        "http://rcn-ee.net/deb/sid-armhf/v${pkgver}-${rcnrel}/patch-${pkgver%.0}-${rcnrel}.diff.gz"
-        "git://git.code.sf.net/p/aufs/aufs3-standalone#branch=aufs${pkgver%.*}"
-        '0001-Bluetooth-allocate-static-minor-for-vhci.patch'
+source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
+        "http://www.kernel.org/pub/linux/kernel/v4.x/patch-${pkgver}.xz"
+        "http://rcn-ee.com/deb/sid-armhf/v${pkgver}-${rcnrel}/patch-${pkgver%.0}-${rcnrel}.diff.gz"
+        "git+https://github.com/sfjro/aufs4-standalone.git#branch=aufs${pkgver%.*}"
+        #"git+https://github.com/sfjro/aufs4-standalone.git#branch=aufs4.x-rcN"
+        "git+https://github.com/RobertCNelson/bb.org-overlays.git"
         'config')
-md5sums=('b621207b3f6ecbb67db18b13258f8ea8'
-         '92a784cdb150c798e122ac080dc0f455'
-         '0d906d34fce0fce628fa64aa1993e491'
+md5sums=('fe9dc0f6729f36400ea81aa41d614c37'
+         '7dea69f02c906206f88df48085069eb6'
+         'a16343c6e08048ec30f04ed836e41718'
          'SKIP'
-         '1b276abe16d14e133f3f28d9c9e6bd68'
-         'b24944272e50e4756ada1a01b6856abb')
+         'SKIP'
+         '9c6782c60f92aa673e4e442d73652a91')
 
 prepare() {
   cd "${srcdir}/${_srcname}"
 
   # add upstream patch
-  patch -p1 -i "${srcdir}/patch-${pkgver}"
+  git apply --whitespace=nowarn "${srcdir}/patch-${pkgver}"
 
   # ALARM patches
   git apply "${srcdir}/patch-${pkgver%.0}-${rcnrel}.diff"
-  patch -p1 -i ../0001-Bluetooth-allocate-static-minor-for-vhci.patch
 
   # AUFS patches
-  cp -ru "${srcdir}/aufs3-standalone/Documentation" .
-  cp -ru "${srcdir}/aufs3-standalone/fs" .
-  cp -ru "${srcdir}/aufs3-standalone/include/uapi/linux/aufs_type.h" ./include/linux
-  cp -ru "${srcdir}/aufs3-standalone/include/uapi/linux/aufs_type.h" ./include/uapi/linux
+  cp -ru "${srcdir}/aufs4-standalone/Documentation" .
+  cp -ru "${srcdir}/aufs4-standalone/fs" .
+  cp -ru "${srcdir}/aufs4-standalone/include/uapi/linux/aufs_type.h" ./include/linux
+  cp -ru "${srcdir}/aufs4-standalone/include/uapi/linux/aufs_type.h" ./include/uapi/linux
 
-  patch -Np1 -i ../aufs3-standalone/aufs3-kbuild.patch
-  patch -Np1 -i ../aufs3-standalone/aufs3-base.patch
-  patch -Np1 -i ../aufs3-standalone/aufs3-mmap.patch
-  patch -Np1 -i ../aufs3-standalone/aufs3-standalone.patch
+  git apply ../aufs4-standalone/aufs4-kbuild.patch
+  git apply ../aufs4-standalone/aufs4-base.patch
+  git apply ../aufs4-standalone/aufs4-mmap.patch
+  git apply ../aufs4-standalone/aufs4-standalone.patch
 
   cat "${srcdir}/config" > ./.config
 
@@ -86,6 +86,10 @@ build() {
 
   # build!
   make ${MAKEFLAGS} zImage modules dtbs
+
+  # build overlays
+  cd "${srcdir}/bb.org-overlays"
+  make
 }
 
 _package() {
@@ -94,6 +98,7 @@ _package() {
   optdepends=('crda: to set the correct wireless channels of your country')
   provides=('kernel26' "linux=${pkgver}" 'aufs_friendly')
   conflicts=('linux')
+  replaces=('linux-ti')
   install=${pkgname}.install
 
   cd "${srcdir}/${_srcname}"
@@ -134,12 +139,18 @@ _package() {
   # move module tree /lib -> /usr/lib
   mkdir -p "${pkgdir}/usr"
   mv "$pkgdir/lib" "$pkgdir/usr"
+
+  # install overlays
+  cd "${srcdir}/bb.org-overlays"
+  mkdir -p "${pkgdir}/usr/lib/firmware"
+  cp src/arm/*.dtbo "${pkgdir}/usr/lib/firmware"
 }
 
 _package-headers() {
   pkgdesc="Header files and scripts for building modules for linux kernel - ${_desc}"
   provides=("linux-headers=${pkgver}")
   conflicts=('linux-headers')
+  replaces=('linux-ti-headers')
 
   install -dm755 "${pkgdir}/usr/lib/modules/${_kernver}"
 
@@ -226,7 +237,6 @@ _package-headers() {
   # add xfs and shmem for aufs building
   mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/fs/xfs"
   mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/mm"
-  cp fs/xfs/xfs_sb.h "${pkgdir}/usr/lib/modules/${_kernver}/build/fs/xfs/xfs_sb.h"
 
   # copy in Kconfig files
   for i in $(find . -name "Kconfig*"); do

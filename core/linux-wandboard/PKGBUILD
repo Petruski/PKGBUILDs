@@ -4,30 +4,30 @@
 buildarch=4
 
 pkgbase=linux-wandboard
-_commit=9d567e4f285e80bc332e79f0636259bc05a4ee3b
+_commit=be8d6872b5eb4c94c15dac36b028ce7f60472409
 _srcname=linux-${_commit}
 _kernelname=${pkgbase#linux}
 _desc="i.MX6 Wandboard"
 pkgver=3.10.17
-pkgrel=2
+pkgrel=5
 arch=('armv7h')
-url="http://www.kernel.org/"
+url="https://github.com/wandboard-org/linux/tree/wandboard_imx_3.10.17_1.0.2_ga"
 license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git')
 options=('!strip')
 source=("https://github.com/wandboard-org/linux/archive/${_commit}.tar.gz"
         '0001-Swap-usdhc1-and-usdhc3.patch'
         'config')
-md5sums=('97d87f0d40873c0b1da12b616a2c4ee1'
-         '1edf745b39c715206fbe327c60f6cf76'
-         '81ec6ae7ff6967ca73f08775b9603387')
+md5sums=('9f7a696d009f81c1eabcc46c74288475'
+         '4b98962855628aeb8328c3636db37cdc'
+         '87706fcb5d01bf5a1722c6c9de5be83f')
 
 prepare() {
   cd "${srcdir}/${_srcname}"
 
   cat "${srcdir}/config" > ./.config
 
-  patch -p1 -i ../0001-Swap-usdhc1-and-usdhc3.patch
+  git apply ../0001-Swap-usdhc1-and-usdhc3.patch
 
   # add pkgrel to extraversion
   sed -ri "s|^(EXTRAVERSION =)(.*)|\1 \2-${pkgrel}|" Makefile

@@ -9,9 +9,9 @@
 #  - comment LIBS mistreatment of ARM in makefile
 
 pkgname=gradm
-_version=3.0
-_timestamp=201401291757
-pkgver=3.0.$_timestamp
+_version=3.1
+_timestamp=201507191652
+pkgver=$_version.$_timestamp
 pkgrel=1
 pkgdesc="Administration utility for grsecurity's Role Based Access Control (RBAC)"
 arch=(i686 x86_64)
@@ -19,11 +19,16 @@ url=https://grsecurity.net/
 license=(GPL2)
 depends=(pam)
 source=(https://grsecurity.net/stable/$pkgname-$_version-$_timestamp.tar.gz
+        https://grsecurity.net/stable/$pkgname-$_version-$_timestamp.tar.gz.sig
         learn_config
         policy)
-sha256sums=('9c99714e6d10797a7348c6ffe2561dfcfe5e7659c9d86118d381b8bdb09ae7a6'
-            '704ea6ba7f748761735cbe1cf52ef04f53eab1a1e9ea1bdcb6abaaf4a641e44d'
-            'c2fb8e696969530c4dc707c59cdc608df6c21d6226979dfeadef92c51deabc5e')
+sha256sums=('2f14c357bf0459e502a4e108b76c3f6240aa484762d07bb1687796b9b9297a50'
+            'SKIP'
+            '61c3042879ec2303b713f57f751fb66a95e2cc4737fbbd6d95879829c7b7d3c0'
+            '73cf31add3da55b539777d736764a40c6b30041cc259e1d0372c867b87070440')
+validpgpkeys=(
+              'DE9452CE46F42094907F108B44D1C0F82525FE49' # Bradley Spengler
+)
 
 prepare() {
   cd $pkgname

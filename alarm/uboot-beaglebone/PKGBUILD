@@ -4,31 +4,30 @@
 buildarch=4
 
 pkgname=uboot-beaglebone
-pkgver=2013.07
+pkgver=2015.04
 pkgrel=1
 pkgdesc="U-Boot for Beaglebone and Beaglebone Black"
 arch=('armv7h')
 url="http://git.denx.de/u-boot.git/"
+makedepends=('git' 'bc')
 license=('GPL')
-makedepends=('git')
-source=("git://git.denx.de/u-boot.git#tag=v${pkgver}"
-        'https://raw.github.com/eewiki/u-boot-patches/master/v2013.07/0001-am335x_evm-uEnv.txt-bootz-n-fixes.patch'
+install=${pkgname}.install
+source=("ftp://ftp.denx.de/pub/u-boot/u-boot-${pkgver}.tar.bz2"
+        '0001-arch-linux-arm-modifications.patch'
         'uEnv.txt')
-md5sums=('SKIP'
-         'dbc20ae3e48ae69fc2bbd35b96a6663e'
-         'd811e78f6df4bda2cc916be699f1c750')
+md5sums=('570bdc2c47270c2a98ca60ff6c5c74cd'
+         'b09551195d8c45ab7c0ec5df8d66e522'
+         'ccb79775b81654e16fca18825c7f2506')
 
 prepare() {
-  cd u-boot
-  patch -p1 -i "${srcdir}"/0001-am335x_evm-uEnv.txt-bootz-n-fixes.patch
-  rm -rf .git
+  cd u-boot-${pkgver}
+  git apply ../0001-arch-linux-arm-modifications.patch
 }
 
 build() {
-  cd u-boot
+  cd u-boot-${pkgver}
 
-  unset CFLAGS
-  unset CXXFLAGS
+  unset CFLAGS CXXFLAGS LDFLAGS
 
   make distclean 
   make am335x_evm_config
@@ -36,7 +35,7 @@ build() {
 }
 
 package() {
-  cd u-boot
+  cd u-boot-${pkgver}
   mkdir -p "${pkgdir}"/boot
   cp MLO u-boot.img "${srcdir}"/uEnv.txt "${pkgdir}"/boot
 }

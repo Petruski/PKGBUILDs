@@ -10,37 +10,38 @@
 #  - memory saving LDFLAGS
 #  - enable calendar in mozconfig
 
-buildarch=20
+buildarch=28
 
 pkgname=thunderbird
-pkgver=24.5.0
+pkgver=38.2.0
 pkgrel=1
 pkgdesc="Standalone Mail/News reader"
 arch=('i686' 'x86_64')
 license=('MPL' 'GPL')
 url="http://www.mozilla.org/thunderbird/"
-depends=('alsa-lib' 'dbus-glib' 'desktop-file-utils' 'gtk2' 'hicolor-icon-theme' 'hunspell' 'libevent' 'libvpx' 'libxt' 'mime-types' 'mozilla-common' 'nss' 'sqlite' 'startup-notification')
-makedepends=('unzip' 'zip' 'pkg-config' 'python2' 'wireless_tools' 'yasm' 'mesa' 'autoconf2.13')
+depends=('gtk2' 'mozilla-common' 'libxt' 'startup-notification' 'mime-types'
+         'dbus-glib' 'alsa-lib' 'desktop-file-utils' 'hicolor-icon-theme'
+         'libvpx' 'icu' 'libevent' 'nss' 'hunspell' 'sqlite')
+makedepends=('unzip' 'zip' 'python2' 'wireless_tools' 'yasm' 'mesa' 'libpulse')
 optdepends=('libcanberra: for sound support')
 install=thunderbird.install
-source=(https://ftp.mozilla.org/pub/mozilla.org/thunderbird/releases/$pkgver/source/thunderbird-$pkgver.source.tar.bz2{,.asc}
+source=(https://ftp.mozilla.org/pub/mozilla.org/thunderbird/releases/$pkgver/source/thunderbird-$pkgver.source.tar.bz2
         mozconfig
         thunderbird.desktop
         thunderbird-install-dir.patch
         vendor.js
         no-neon.patch)
-options=(!emptydirs)
-sha256sums=('971c48db11328613340ed97a92018403647b8cca6a692b3d6b4145aed124382a'
-            'SKIP'
-            '84adca3cc1ed19cd4fce8c5cdb21923f8266246595b53e5a469d0c4cf57680f2'
-            'd506b771e765e09e2e039b975e25befade8eec97e8950813a32463604955ab4e'
-            '929a7ceca0e90d0635a2099b7df24033e865fb5b5b8c5824468c4561c21c377d'
+options=('!emptydirs' '!makeflags')
+sha256sums=('4881cf0a721a9d0204a6cff01e20a6c54010f4b576df2820cd699d17892ac2d0'
+            '1f5ce57ba5531d533f34407010cfa5bb0fe09f9f1d3ed859cafbc5283b3a63d9'
+            '3fba13d88aeb003ab0811ef739463858172ce0662a1c7d62835df3d83ddbb8fb'
+            '24599eab8862476744fe1619a9a53a5b8cdcab30b3fc5767512f31d3529bd05d'
             'e4ea8e6788163d9f8db8f1f40023db3ea0a1358f9a4510169f2d4c4fe6a887ed'
-            'e9c75dbc86d96efec6f8bb4fea949fafe20d72bfefacc427decbd7fab801bd00')
+            'd46ac749f8be3250fa70a13cd67b5f9204bedf8ff8955d3a71e1b8b2f4f48382')
 
 prepare() {
-  cd comm-esr24
-  patch -Np1 -i "$srcdir/thunderbird-install-dir.patch"
+  cd comm-esr${pkgver%%.*}
+  patch -Np1 -i ../thunderbird-install-dir.patch
 
   patch -Np0 -i ../no-neon.patch
 
@@ -52,32 +53,37 @@ prepare() {
 }
 
 build() {
-  cd comm-esr24
+  cd comm-esr${pkgver%%.*}
 
-  export LDFLAGS="$LDFLAGS -Wl,-rpath,/usr/lib/thunderbird -Wl,--no-keep-memory -Wl,--reduce-memory-overheads"
+  export LDFLAGS="$LDFLAGS -Wl,--no-keep-memory -Wl,--reduce-memory-overheads"
   export PYTHON="/usr/bin/python2"
 
-  make -j1 -f client.mk build MOZ_MAKE_FLAGS="$MAKEFLAGS"
+  make -f client.mk build
 }
 
 package() {
-  cd comm-esr24
-  make -j1 -f client.mk DESTDIR="$pkgdir" install
+  cd comm-esr${pkgver%%.*}
+  make -f client.mk DESTDIR="$pkgdir" install
 
-  install -Dm644 "$srcdir"/vendor.js "$pkgdir/usr/lib/thunderbird/defaults/preferences/vendor.js"
+  install -Dm644 ../vendor.js "$pkgdir/usr/lib/thunderbird/defaults/preferences/vendor.js"
 
-  for i in 16x16 22x22 24x24 32x32 48x48 256x256; do
-      install -Dm644 other-licenses/branding/thunderbird/mailicon${i/x*/}.png \
-          "$pkgdir/usr/share/icons/hicolor/$i/apps/thunderbird.png"
+  for i in 16 22 24 32 48 256; do
+      install -Dm644 other-licenses/branding/thunderbird/mailicon$i.png \
+          "$pkgdir/usr/share/icons/hicolor/${i}x${i}/apps/thunderbird.png"
   done
 
-  install -Dm644 "$srcdir/thunderbird.desktop" \
+  install -Dm644 ../thunderbird.desktop \
       "$pkgdir/usr/share/applications/thunderbird.desktop"
 
+  # Use system-provided dictionaries
   rm -rf "$pkgdir"/usr/lib/thunderbird/{dictionaries,hyphenation}
   ln -sf /usr/share/hunspell "$pkgdir/usr/lib/thunderbird/dictionaries"
   ln -sf /usr/share/hyphen "$pkgdir/usr/lib/thunderbird/hyphenation"
 
-  # We don't want the development stuff
-  rm -r "$pkgdir"/usr/{include,lib/thunderbird-devel,share/idl}
+  # Replace duplicate binary with symlink
+  # https://bugzilla.mozilla.org/show_bug.cgi?id=658850
+  ln -sf thunderbird "$pkgdir/usr/lib/thunderbird/thunderbird-bin"
+
+  # Remove development stuff
+  rm -r "$pkgdir"/usr/{include,lib/thunderbird-devel-*,share/idl}
 }

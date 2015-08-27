@@ -4,32 +4,29 @@
 buildarch=4
 
 pkgname=uboot-pandaboard
-pkgver=2013.10
-pkgrel=2
+pkgver=2015.04
+pkgrel=1
 pkgdesc="U-Boot for Pandaboard and Pandaboard ES"
 arch=('armv7h')
 url="http://git.denx.de/u-boot.git/"
+makedepends=('git' 'bc')
 license=('GPL')
-makedepends=('git')
-source=("uboot::git://git.denx.de/u-boot.git#tag=v${pkgver}"
-        'http://raw.github.com/eewiki/u-boot-patches/master/v${pkgver}/0001-omap4_common-uEnv.txt-bootz-n-fixes.patch'
-        'alarm.patch'
+install=${pkgname}.install
+source=("ftp://ftp.denx.de/pub/u-boot/u-boot-${pkgver}.tar.bz2"
+        '0001-arch-linux-arm-modifications.patch'
         'uEnv.txt')
-md5sums=('SKIP'
-         '683bf12be7b0be3de60cf2f33e85a011'
-         '148982b955b96dfd16284181523df1a1'
-         'e311fff8d388e9a8f2672cb8c5c819ac')
+md5sums=('570bdc2c47270c2a98ca60ff6c5c74cd'
+         '6a4060a6cef75dd47b841c7a46a866e8'
+         '86004660f2912861a040e335c9c0e85b')
 
 prepare() {
-  cd uboot
+  cd u-boot-${pkgver}
 
-  rm -rf .git
-  patch -p1 -i "${srcdir}"/0001-omap4_common-uEnv.txt-bootz-n-fixes.patch
-  patch -p1 -i "${srcdir}"/alarm.patch
+  git apply ../0001-arch-linux-arm-modifications.patch
 }
 
 build() {
-  cd uboot
+  cd u-boot-${pkgver}
 
   unset LDFLAGS
 
@@ -39,7 +36,8 @@ build() {
 }
 
 package() {
-  cd uboot
+  cd u-boot-${pkgver}
+
   mkdir -p "${pkgdir}"/boot
   cp MLO u-boot.img "${srcdir}"/uEnv.txt "${pkgdir}"/boot
 }

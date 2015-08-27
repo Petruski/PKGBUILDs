@@ -1,67 +1,65 @@
-# ARMv5 based platforms
+# ARMv5 multi-platform
 # Maintainer: Kevin Mihelich <kevin@archlinuxarm.org>
 
 buildarch=2
 
 pkgbase=linux-armv5
-_srcname=linux-3.14
+_srcname=linux-4.1
 _kernelname=${pkgbase#linux}
-_desc="ARMv5 based platforms"
-pkgver=3.14.3
+_desc="ARMv5 multi-platform"
+pkgver=4.1.6
 pkgrel=1
-arch=('armv7h')
+arch=('arm')
 url="http://www.kernel.org/"
 license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git')
 options=('!strip')
-source=("http://www.kernel.org/pub/linux/kernel/v3.x/${_srcname}.tar.xz"
-        "http://www.kernel.org/pub/linux/kernel/v3.x/patch-${pkgver}.xz"
-        "git://git.code.sf.net/p/aufs/aufs3-standalone#branch=aufs${pkgver%.*}"
-        '0001-Revert-mmc-mxs-use-mmc_of_parse-to-parse-devicetree-.patch'
-        '0002-Revert-mmc-mxs-use-mmc_gpio_get_ro-for-detecting-rea.patch'
-        '0003-Revert-mmc-mxs-use-standard-flag-for-cd-inverted.patch'
-        '0004-Revert-mmc-mxs-use-standard-flag-for-broken-card-det.patch'
-        '0005-Bluetooth-allocate-static-minor-for-vhci.patch'
-        'imx23-olinuxino.patch'
-        'gpio-clamp.patch'
+source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
+        "http://www.kernel.org/pub/linux/kernel/v4.x/patch-${pkgver}.xz"
+        "git+https://github.com/sfjro/aufs4-standalone.git#branch=aufs${pkgver%.*}"
+        #"git+https://github.com/sfjro/aufs4-standalone.git#branch=aufs4.x-rcN"
+        '0001-Added-ASoC-driver-for-i.MX233-s-builtin-ADC-DAC-code.patch'
+        '0002-ARM-dts-imx23-olinuxino-enable-mxs-builtin-audio.patch'
+        '0003-imx23-I2C-fixes.patch'
+        '0004-Added-DTS-with-mxs-builtin-entries-for-testing-the-a.patch'
+        '0005-at91-ariag25-updates.patch'
+        '0006-at91-arietta-g25-support.patch'
         'config')
-md5sums=('b621207b3f6ecbb67db18b13258f8ea8'
-         '92a784cdb150c798e122ac080dc0f455'
+md5sums=('fe9dc0f6729f36400ea81aa41d614c37'
+         '7dea69f02c906206f88df48085069eb6'
          'SKIP'
-         '58ba9b8d74609d5256ed87ed4d53fd93'
-         'c819b56b5d6ebe32b9ef44a0ae8fc4c2'
-         '2233ffb1d01de896a74e5b08a7a19152'
-         '49a3db56af64668f9d0eddc5020cdc87'
-         '1b276abe16d14e133f3f28d9c9e6bd68'
-         'ef1497399f2d214eff4c40d36482120a'
-         'eb02814c2c46d5a8cf81361bbab9abbd'
-         '86f483af896a10938dc92b296d4b7f03')
+         '1576643242d4c2a4ef3f69c62cba953c'
+         'dc460708c043cac8c70e733fcd6e1a9b'
+         'e29707ad7bf5b2d357ad6d96cd9d88ac'
+         'decd45d4861dbf461196e6af4e34e423'
+         '8c926477e229099a35ce4b67c13dcc6a'
+         '069885e001c96ed6095dedd9bf840141'
+         'f9285ad149de34c9f9dd5e7c9941238e')
 
 prepare() {
   cd "${srcdir}/${_srcname}"
 
   # add upstream patch
-  git apply "${srcdir}/patch-${pkgver}"
+  git apply --whitespace=nowarn "${srcdir}/patch-${pkgver}"
 
   # ALARM patches
-  patch -Np1 -i ../imx23-olinuxino.patch
-  patch -Np1 -i ../gpio-clamp.patch
-  patch -Np1 -i ../0001-Revert-mmc-mxs-use-mmc_of_parse-to-parse-devicetree-.patch
-  patch -Np1 -i ../0002-Revert-mmc-mxs-use-mmc_gpio_get_ro-for-detecting-rea.patch
-  patch -Np1 -i ../0003-Revert-mmc-mxs-use-standard-flag-for-cd-inverted.patch
-  patch -Np1 -i ../0004-Revert-mmc-mxs-use-standard-flag-for-broken-card-det.patch
-  patch -Np1 -i ../0005-Bluetooth-allocate-static-minor-for-vhci.patch
+  git apply ../0001-Added-ASoC-driver-for-i.MX233-s-builtin-ADC-DAC-code.patch
+  git apply ../0002-ARM-dts-imx23-olinuxino-enable-mxs-builtin-audio.patch
+  git apply ../0003-imx23-I2C-fixes.patch
+  git apply ../0004-Added-DTS-with-mxs-builtin-entries-for-testing-the-a.patch
+  git apply ../0005-at91-ariag25-updates.patch
+  git apply ../0006-at91-arietta-g25-support.patch
 
   # AUFS patches
-  cp -ru "${srcdir}/aufs3-standalone/Documentation" .
-  cp -ru "${srcdir}/aufs3-standalone/fs" .
-  cp -ru "${srcdir}/aufs3-standalone/include/uapi/linux/aufs_type.h" ./include/linux
-  cp -ru "${srcdir}/aufs3-standalone/include/uapi/linux/aufs_type.h" ./include/uapi/linux
+  cp -ru "${srcdir}/aufs4-standalone/Documentation" .
+  cp -ru "${srcdir}/aufs4-standalone/fs" .
+  cp -ru "${srcdir}/aufs4-standalone/include/uapi/linux/aufs_type.h" ./include/linux
+  cp -ru "${srcdir}/aufs4-standalone/include/uapi/linux/aufs_type.h" ./include/uapi/linux
 
-  patch -Np1 -i ../aufs3-standalone/aufs3-kbuild.patch
-  patch -Np1 -i ../aufs3-standalone/aufs3-base.patch
-  patch -Np1 -i ../aufs3-standalone/aufs3-mmap.patch
-  patch -Np1 -i ../aufs3-standalone/aufs3-standalone.patch
+  git apply ../aufs4-standalone/aufs4-kbuild.patch
+  git apply ../aufs4-standalone/aufs4-base.patch
+  git apply ../aufs4-standalone/aufs4-mmap.patch
+  git apply ../aufs4-standalone/aufs4-standalone.patch
 
   cat "${srcdir}/config" > ./.config
 
@@ -106,7 +104,7 @@ _package() {
   pkgdesc="The Linux Kernel and modules - ${_desc}"
   depends=('coreutils' 'linux-firmware' 'kmod' 'mkinitcpio>=0.7')
   optdepends=('crda: to set the correct wireless channels of your country')
-  provides=('kernel26' 'linux=${pkgver}' 'aufs_friendly')
+  provides=('kernel26' "linux=${pkgver}" 'aufs_friendly')
   conflicts=('linux')
   install=${pkgname}.install
 
@@ -152,7 +150,7 @@ _package() {
 
 _package-headers() {
   pkgdesc="Header files and scripts for building modules for linux kernel - ${_desc}"
-  provides=('linux-headers=${pkgver}')
+  provides=("linux-headers=${pkgver}")
   conflicts=('linux-headers')
 
   install -dm755 "${pkgdir}/usr/lib/modules/${_kernver}"
@@ -173,12 +171,12 @@ _package-headers() {
   done
 
   # copy arch includes for external modules
-  mkdir -p ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH
-  cp -a arch/$KARCH/include ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH/
-  mkdir -p ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH/mach-kirkwood
-  cp -a arch/$KARCH/mach-kirkwood/include ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH/mach-kirkwood/
-  mkdir -p ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH/plat-orion
-  cp -a arch/$KARCH/plat-orion/include ${pkgdir}/usr/src/linux-${_kernver}/arch/$KARCH/plat-orion/
+  mkdir -p ${pkgdir}/usr/lib/modules/${_kernver}/build/arch/$KARCH
+  cp -a arch/$KARCH/include ${pkgdir}/usr/lib/modules/${_kernver}/build/arch/$KARCH/
+  mkdir -p ${pkgdir}/usr/lib/modules/${_kernver}/build/arch/$KARCH/mach-mvebu
+  cp -a arch/$KARCH/mach-mvebu/include ${pkgdir}/usr/lib/modules/${_kernver}/build/arch/$KARCH/mach-mvebu/
+  mkdir -p ${pkgdir}/usr/lib/modules/${_kernver}/build/arch/$KARCH/plat-orion
+  cp -a arch/$KARCH/plat-orion/include ${pkgdir}/usr/lib/modules/${_kernver}/build/arch/$KARCH/plat-orion/
 
   # copy files necessary for later builds, like nvidia and vmware
   cp Module.symvers "${pkgdir}/usr/lib/modules/${_kernver}/build"
@@ -241,7 +239,6 @@ _package-headers() {
   # add xfs and shmem for aufs building
   mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/fs/xfs"
   mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/mm"
-  cp fs/xfs/xfs_sb.h "${pkgdir}/usr/lib/modules/${_kernver}/build/fs/xfs/xfs_sb.h"
 
   # copy in Kconfig files
   for i in $(find . -name "Kconfig*"); do

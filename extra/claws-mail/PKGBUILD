@@ -2,18 +2,18 @@
 # Maintainer: Andreas Radke <andyrtr@archlinux.org>
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
-#  - removed valgrind from makedepends
+#  - drop valgrind makedepend
 
 pkgname=claws-mail
-pkgver=3.9.3
-pkgrel=4
+pkgver=3.12.0
+pkgrel=1
 pkgdesc="A GTK+ based e-mail client."
 arch=('i686' 'x86_64')
 license=('GPL3')
 url="http://www.claws-mail.org"
 depends=('gtk2' 'gnutls' 'startup-notification' 'enchant' 'gpgme' 'libetpan' 'compface'
          'libsm' 'dbus-glib' 'hicolor-icon-theme' 'desktop-file-utils')
-makedepends=('spamassassin' 'bogofilter' 
+makedepends=('spamassassin' 'bogofilter'
              # dependencies for plugins
              'libsoup' 'libgdata' 'webkitgtk2' 'libnotify' 'libcanberra' 'poppler-glib' 'pygtk') 
              #'libchamplain' needed for geolocation plugin, disabled for now - most time it's not compatible with current gnome releases
@@ -37,24 +37,11 @@ replaces=('sylpheed-claws' 'claws-mail-extra-plugins')
 conflicts=('claws-mail-extra-plugins')
 provides=('claws')
 install=claws-mail.install
-source=(http://downloads.sourceforge.net/sourceforge/sylpheed-claws/${pkgname}-${pkgver}.tar.bz2{,.asc}
-        claws-ssl-1.patch
-        claws-ssl-2.patch
-        claws-ssl-3.patch)
-md5sums=('0158b5e6b6d6866f9a75fd288a4edf04'
-         'SKIP'
-         '02e5fc5dba976208dfabf23d7666681d'
-         'dd53ff284cf802ef639bf92fac996d12'
-         'e8c2ce77c8df7a2c514a4547337304d8')
-
-prepare() {
-  cd ${pkgname}-${pkgver}
-  # fix ssl certificate verification with libetpan >= 1.4
-  patch -Np1 < ${srcdir}/claws-ssl-1.patch
-  patch -Np1 < ${srcdir}/claws-ssl-2.patch
-  patch -Np1 < ${srcdir}/claws-ssl-3.patch
-  autoreconf -vfi
-}
+source=(#http://downloads.sourceforge.net/sourceforge/claws-mail/${pkgname}-${pkgver}.tar.xz{,.asc}
+        http://www.claws-mail.org/download.php?file=releases/claws-mail-3.12.0.tar.xz{,.asc})
+md5sums=('73c11bf9f260473abe0e888af19e23b8'
+         'SKIP')
+validpgpkeys=('8B3B297A03468356692F8D592CD716D654D6BBD4') # Paul <paul@claws-mail.org>
 
 build() {
   cd ${pkgname}-${pkgver}
@@ -72,6 +59,7 @@ build() {
     --enable-pgpmime-plugin \
     --enable-spamassassin-plugin \
     --enable-bogofilter-plugin \
+    --enable-appdata
     #--help
   make
 }

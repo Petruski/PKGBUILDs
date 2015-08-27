@@ -7,25 +7,32 @@ pkgbase=linux-odroid
 pkgname=('linux-odroid-x' 'linux-odroid-x2' 'linux-odroid-u2' 'linux-headers-odroid')
 _kernelname=${pkgname#linux}
 _basekernel=3.8
-pkgver=${_basekernel}.13.21
-pkgrel=2
+pkgver=${_basekernel}.13.30
+pkgrel=1
 arch=('armv7h')
 url="http://github.com/hardkernel/linux/"
 license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl' 'kmod' 'git' 'inetutils' 'bc')
 options=('!strip')
-_commit=2f4e1c85cbb3cb20677784f9f3e1ad121faead5a
+_commit=1130f8761789bfe79de0db2b7f5013ff3eb1f978
 source=("https://github.com/hardkernel/linux/archive/${_commit}.tar.gz"
+        'add-gcc5-support.patch'
+	'gcc5-use-std89.patch'
         'config_x'
         'config_x2'
         'config_u2')
-md5sums=('930b4a5026be653926a899672b6342ac'
-         '566092b25c4ccdbe712dcfc944bbbd03'
-         '893db8bc80fec4d94062e86c14240d21'
-         '5140da2d874bb083923d15a851484d05')
+md5sums=('9eec4534016d3bd8dc6fb372ec7ab574'
+         '2873a50f4311434fd07d7d52bccaade7'
+         '407619b134dd00b453ebba9f23dcabf5'
+         '127765de828e8c58382bc9ee56d26b38'
+         '4bb9df433c1f1d674d8e60aefafeb4d2'
+         '7d39581d46fa59366a7253b581b40148')
 
 prepare() {
   cd "${srcdir}/linux-${_commit}"
+
+  patch -Np1 -i ${srcdir}/add-gcc5-support.patch
+  patch -Np1 -i ${srcdir}/gcc5-use-std89.patch
 
   # add pkgrel to extraversion
   sed -ri "s|^(EXTRAVERSION =)(.*)|\1 \2-${pkgrel}|" Makefile

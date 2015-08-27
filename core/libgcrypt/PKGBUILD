@@ -3,11 +3,10 @@
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - disable DRNG and NEON support
-#  - patch to fix --disable-neon-support, should be fixed in 1.6.2
 
 pkgname=libgcrypt
-pkgver=1.6.1
-pkgrel=1
+pkgver=1.6.3
+pkgrel=2
 pkgdesc="General purpose cryptographic library based on the code from GnuPG"
 arch=(i686 x86_64)
 url="http://www.gnupg.org"
@@ -15,16 +14,10 @@ license=('LGPL')
 depends=('libgpg-error>=1.10-2')
 options=('!emptydirs')
 install=$pkgname.install
-source=(ftp://ftp.gnupg.org/gcrypt/${pkgname}/${pkgname}-${pkgver}.tar.bz2
-        0001-cipher-Take-care-of-ENABLE_NEON_SUPPORT.patch)
-sha1sums=('f03d9b63ac3b17a6972fc11150d136925b702f02'
-          '6b7e9a735e27a0cf7331c3cb6b518ef0c6d5f345')
-
-prepare() {
-  cd ${pkgname}-${pkgver}
-
-  patch -Np1 -i ../0001-cipher-Take-care-of-ENABLE_NEON_SUPPORT.patch
-}
+source=(ftp://ftp.gnupg.org/gcrypt/${pkgname}/${pkgname}-${pkgver}.tar.bz2{,.sig})
+sha1sums=('9456e7b64db9df8360a1407a38c8c958da80bbf1'
+          'SKIP')
+validpgpkeys=('031EC2536E580D8EA286A9F22071B08A33BD3F06') # "NIIBE Yutaka (GnuPG Release Key) <gniibe@fsij.org>"
 
 build() {
   cd ${pkgname}-${pkgver}

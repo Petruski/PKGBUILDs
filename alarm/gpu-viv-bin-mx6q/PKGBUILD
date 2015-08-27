@@ -2,7 +2,6 @@
 # Contributor: pepedog at archlinuxarm dot com
 
 buildarch=4
-
 pkgbase=gpu-viv-bin-mx6q
 pkgver=3.10.17_1.0.0
 _pkgver=${pkgver//_/-}-hfp
@@ -18,7 +17,7 @@ _install_samples_prefix=/opt/fsl
 url="https://community.freescale.com/docs/DOC-95560"
 arch=('armv7h')
 license=('proprietary')
-#depends=("vivante-kernel-driver=${pkgver}")
+#depends=('fsl-bsp-kernel=4.1.0' 'fsl-bsp-kernel-headers=4.1.0')
 source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${pkgbase}-${_pkgver}.bin"
 	"98-galcore.rules"
 	"egl.pc"
@@ -71,6 +70,8 @@ prepare() {
 }
 
 _package_common() {
+  provides=('gpu-viv-bin-mx6q=4.1.0' 'libgl')
+  conflicts=('gpu-viv-bin-mx6q' 'mesa-libgl')
   cd "${pkgbase}-${_pkgver}"
   mkdir -p "${pkgdir}${_install_prefix}/include"  "${pkgdir}${_install_exec_prefix}/lib"
   cp -r usr/include/* "${pkgdir}${_install_prefix}/include"
@@ -113,8 +114,6 @@ _package_common_post() {
 }
 
 package_gpu-viv-bin-mx6q-fb() {
-  conflicts=('gpu-viv-bin-mx6q')
-  provides=('gpu-viv-bin-mx6q=4.1.0' 'gpu-viv-bin-mx6q-fb=4.1.0' 'libegl' 'libgles' 'libgl')
   backend=fb
   _package_common
   cp -r *-fb* "${pkgdir}${_install_exec_prefix}/lib"
@@ -131,10 +130,6 @@ package_gpu-viv-bin-mx6q-fb() {
 
 
 package_gpu-viv-bin-mx6q-x11() {
-#  conflicts=('gpu-viv-bin-mx6q' 'libgl')
-  conflicts=('gpu-viv-bin-mx6q')
-  replaces=('libgl')
-  provides=('gpu-viv-bin-mx6q=4.1.0' 'gpu-viv-bin-mx6q-x11=4.1.0' 'libegl-x11' 'libgles-x11' 'libgl' 'libgal-x11')
   backend=x11
   _package_common
   cp -r dri "${pkgdir}${_install_exec_prefix}/lib"
@@ -152,8 +147,6 @@ package_gpu-viv-bin-mx6q-x11() {
 }
 
 package_gpu-viv-bin-mx6q-wl() {
-  conflicts=('gpu-viv-bin-mx6q')
-  provides=('gpu-viv-bin-mx6q=4.1.0' 'gpu-viv-bin-mx6q-wl=4.1.0' 'libegl' 'libgles' 'libgl')
   backend=wl
   _package_common
   cp -r *-wl* "${pkgdir}${_install_exec_prefix}/lib"
@@ -173,8 +166,6 @@ package_gpu-viv-bin-mx6q-wl() {
 
 
 package_gpu-viv-bin-mx6q-dfb() {
-  conflicts=('gpu-viv-bin-mx6q')
-  provides=('gpu-viv-bin-mx6q=4.1.0' 'gpu-viv-bin-mx6q-dfb=4.1.0' 'libegl' 'libgles' 'libgl')
   backend=dfb
   _package_common
   cp -r *-dfb* directfb* "${pkgdir}${_install_exec_prefix}/lib"

@@ -1,10 +1,10 @@
 # $Id$
-# Maintainer: Andrea Scarpino <andrea@archlinux.org>
+# Maintainer: Felix Yan <felixonmars@archlinux.org>
+# Contributor: Andrea Scarpino <andrea@archlinux.org>
 # Contributor: Ronald van Haren <ronald.archlinux.org>
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - removed makedepend on vc - not for ARM
-#  - patch to fix qreal ARMisms
 
 pkgbase=calligra
 pkgname=('calligra-braindump'
@@ -12,6 +12,7 @@ pkgname=('calligra-braindump'
          'calligra-extras'
          'calligra-filters'
          'calligra-flow'
+         'calligra-gemini'
          'calligra-handbook'
          'calligra-karbon'
          'calligra-kexi'
@@ -22,28 +23,32 @@ pkgname=('calligra-braindump'
          'calligra-sheets'
          'calligra-stage'
          'calligra-words')
-pkgver=2.8.2
-pkgrel=2
+pkgver=2.9.6
+pkgrel=3
 arch=('i686' 'x86_64')
 url='http://www.calligra-suite.org/'
 license=('FDL1.2' 'GPL2' 'LGPL')
-makedepends=('cmake' 'automoc4' 'boost' 'kdepimlibs' 'eigen2' 'kdeedu-marble'
+makedepends=('cmake' 'automoc4' 'boost' 'kdepimlibs' 'eigen' 'libmarble4'
              'lcms2' 'libmariadbclient' 'freetds' 'xbase' 'libwpg' 'opencolorio'
              'libwps' 'gsl' 'glew' 'fftw' 'poppler-qt' 'libkdcraw' 'libodfgen'
              'openjpeg' 'kdegraphics-okular' 'pstoedit' 'libvisio'
-             'libetonyek' 'libpqxx' 'libspnav')
+             'libetonyek' 'libpqxx' 'libspnav' 'postgresql') # 'libqgit2'
 groups=('calligra')
-source=("http://download.kde.org/stable/${pkgbase}-${pkgver}/${pkgbase}-${pkgver}.tar.xz"
-        'arm.patch')
-md5sums=('adb7d386dd2ec0cafdb39ce474bba73a'
-         'dc5105bcc612560f46d27071aca69cba')
+source=("http://download.kde.org/stable/${pkgbase}-${pkgver}/${pkgbase}-${pkgver}.tar.xz" 'libwps-0.4.patch')
+md5sums=('a576450e8c0ea63b7dff50681a236d61'
+         '6ea15f8b3938838d89ea0aa08921afd1')
 
 prepare() {
   mkdir build
 
-   # fix openjpeg detection
-  sed -i "s:/usr/include/openjpeg:/usr/include/openjpeg-1.5:" \
-    ${pkgbase}-${pkgver}/cmake/modules/FindOpenJPEG.cmake
+# Fix build against libwps 0.4
+  cd $pkgbase-$pkgver
+  patch -p1 -i "$srcdir"/libwps-0.4.patch
+
+# Fix build against libmarble4
+  sed -e 's|PATH_SUFFIXES marble|PATH_SUFFIXES marble4|g' -i CMakeLists.txt
+  sed -e 's|#include <marble/|#include <marble4/|g' -e 's|#include "marble/|#include "marble4/|g' \
+    -i plugins/reporting/maps/{*.cpp,*.h,marble/*.h} -i kexi/plugins/forms/widgets/mapbrowser/{*.cpp,*.h}
 }
 
 build() {
@@ -53,7 +58,10 @@ build() {
     -DCMAKE_INSTALL_PREFIX=/usr \
     -DCMAKE_INSTALL_LIBDIR=lib \
     -DBUILD_active=OFF \
-    -DWITH_Soprano=OFF
+    -DWITH_Soprano=OFF \
+    -DMARBLE_INCLUDE_DIR=/usr/include/marble4 \
+    -DMARBLE_GLOBAL_HEADER=/usr/include/marble4/MarbleGlobal.h \
+    -DMARBLE_LIBRARIES=/usr/lib/libmarblewidget.so
   make
 }
 
@@ -74,7 +82,7 @@ package_calligra-filters() {
 
 package_calligra-libs() {
   pkgdesc="Libraries for the Calligra office suite"
-  depends=('kdepimlibs' 'kactivities')
+  depends=('kdepimlibs' 'kactivities' 'libkactivities4')
   conflicts=('koffice-interfaces' 'koffice-libs' 'koffice-pics'
              'koffice-servicetypes' 'calligra-interfaces'
              'calligra-pics' 'calligra-servicetypes')
@@ -91,7 +99,7 @@ package_calligra-libs() {
 package_calligra-plugins() {
   pkgdesc="Plugins for the Calligra office suite"
   depends=('calligra-libs' 'calligra-filters' 'libspnav')
-  optdepends=('kdeedu-marble: map shape for Calligra')
+  optdepends=('libmarble4: map shape for Calligra')
   conflicts=('koffice-plugins' 'koffice-kchart')
   replaces=('koffice-plugins' 'koffice-kchart' 'koffice-kformula')
   install=calligra-plugins.install
@@ -124,7 +132,7 @@ package_calligra-kexi() {
               'freetds: Sybase & MS SQL driver'
               'xbase: XBase driver'
               'calligra-sheets: Spreadsheet-to-Kexi-table import plugin'
-              'kdeedu-marble: map form widget'
+              'libmarble4: map form widget'
               'calligra-plugins: extra calligra plugins')
   conflicts=('koffice-kexi' 'koffice-kexi-doc' 'calligra-kexi-doc')
   replaces=('koffice-kexi' 'koffice-kexi-doc' 'calligra-kexi-doc')
@@ -166,7 +174,7 @@ package_calligra-stage() {
 package_calligra-krita() {
   pkgdesc="Edit and paint images"
   depends=('calligra-plugins' 'kdebase-runtime' 'opencolorio' 'libkdcraw'
-           'fftw' 'glew')
+           'fftw' 'glew' 'curl' 'gsl')
   conflicts=('koffice-krita' 'calligra-krita-doc')
   replaces=('koffice-krita' 'calligra-krita-doc')
   install=calligra-krita.install
@@ -193,7 +201,7 @@ package_calligra-sheets() {
 
 package_calligra-words() {
   pkgdesc="Word Processor"
-  depends=('calligra-plugins' 'kdegraphics-okular')
+  depends=('kdebase-runtime' 'calligra-plugins')
   optdepends=('calligra-extras: extra calligra tools')
   conflicts=('koffice-kword')
   replaces=('koffice-kword')
@@ -254,5 +262,17 @@ package_calligra-devtools() {
   depends=('calligra-libs')
 
   cd build/devtools
+  make DESTDIR="${pkgdir}" install
+}
+
+package_calligra-gemini() {
+  pkgdesc="QML interface for Calligra Words and Stage"
+  depends=('calligra-words' 'calligra-stage')
+#  optdepends=('libqgit2: GIT plugin')
+  install=calligra-gemini.install
+
+  cd build/qtquick
+  make DESTDIR="${pkgdir}" install
+  cd "${srcdir}"/build/gemini
   make DESTDIR="${pkgdir}" install
 }

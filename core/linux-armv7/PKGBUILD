@@ -4,73 +4,74 @@
 buildarch=4
 
 pkgbase=linux-armv7
-_srcname=linux-3.14
+_srcname=linux-4.1
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 multi-platform"
-pkgver=3.14.3
+pkgver=4.1.6
 pkgrel=1
-rcnrel=armv7-x5
+rcnrel=armv7-x2
 arch=('armv7h')
 url="http://www.kernel.org/"
 license=('GPL2')
-makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-mkimage')
+makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-tools')
 options=('!strip')
-source=("http://www.kernel.org/pub/linux/kernel/v3.x/${_srcname}.tar.xz"
-        "http://www.kernel.org/pub/linux/kernel/v3.x/patch-${pkgver}.xz"
-        "http://rcn-ee.net/deb/sid-armhf/v${pkgver}-${rcnrel}/patch-${pkgver%.0}-${rcnrel}.diff.gz"
-        "git://git.code.sf.net/p/aufs/aufs3-standalone#branch=aufs${pkgver%.*}"
-        '0001-atags-add-support-for-marvell-uboot.patch'
-        '0002-atags-retrieve-mac-addresses.patch'
-        '0003-smileplug-devicetree.patch'
-        '0004-emmc-timing-fix.patch'
-        '0005-squelch-rt2800usb-messages.patch'
-        '0006-Bluetooth-allocate-static-minor-for-vhci.patch'
-        'mvneta.patch::https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/patch/drivers/net/ethernet/marvell/mvneta.c?id=e3a8786c10e75903f1269474e21fe8cb49c3a670'
+source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
+        "http://www.kernel.org/pub/linux/kernel/v4.x/patch-${pkgver}.xz"
+        "http://rcn-ee.com/deb/sid-armhf/v${pkgver}-${rcnrel}/patch-${pkgver%.0}-${rcnrel}.diff.gz"
+        "git+https://github.com/sfjro/aufs4-standalone.git#branch=aufs${pkgver%.*}"
+        #"git+https://github.com/sfjro/aufs4-standalone.git#branch=aufs4.x-rcN"
+        '0001-ARM-atags-add-support-for-Marvell-s-u-boot.patch'
+        '0002-ARM-atags-fdt-retrieve-MAC-addresses-from-Marvell-bo.patch'
+        '0003-SMILE-Plug-device-tree-file.patch'
+        '0004-fix-mvsdio-eMMC-timing.patch'
+        '0005-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch'
+        '0006-ARM-TLV320AIC23-SoC-Audio-Codec-Fix-errors-reported-.patch'
+        '0007-set-default-cubietruck-led-triggers.patch'
+        '0008-USB-armory-support.patch'
         'config')
-md5sums=('b621207b3f6ecbb67db18b13258f8ea8'
-         '92a784cdb150c798e122ac080dc0f455'
-         '7a7f33365b70ecc8c20a8d14714a37de'
+md5sums=('fe9dc0f6729f36400ea81aa41d614c37'
+         '7dea69f02c906206f88df48085069eb6'
+         '85f64432d43e1c329605bfa68fbcad79'
          'SKIP'
-         '3ad860d0d6daedc82091ea29c9730b95'
-         '02cce6b8f88c4392f552b14d0bf2e71c'
-         '0a0c5691aea2503cd0c503cb50244f48'
-         '911bffe9c261ca5b91dd0a083d99e81f'
-         '8609ac79ba99320692c50481aabc6ed2'
-         '1b276abe16d14e133f3f28d9c9e6bd68'
-         '1986ba8f945dbf4f9a3c94761b713336'
-         'c55cdca16f3fdc8c9faa2323b080812c')
+         'db7c0ff1f385725f3e0683b0f544db6b'
+         'ad71eb3cdf4fa9b1b292017af32cbf79'
+         '5f549866a22ba1ebe1476c4f2800a1fe'
+         '3c99f777fa383198887cba84b768efe7'
+         '95895bca7fad74be10216eb293026f5e'
+         'aa5fc5a2efb2d122c6dbd49fb9356e2e'
+         '996623b310630e6471329f304167834c'
+         '8a5f87a89b4d0f9a7c93d762670e7342'
+         '756ed626eee70c33aeddff416176872d')
 
 prepare() {
   cd "${srcdir}/${_srcname}"
 
   # add upstream patch
-  patch -p1 -i ../patch-${pkgver}
-
-  # Revert commit e3a8786c10e75903f1269474e21fe8cb49c3a670
-  # This fixes mvneta ethernet on Armada 370
-  patch -Rp1 -i ../mvneta.patch
+  git apply --whitespace=nowarn ../patch-${pkgver}
 
   # RCN patch
   git apply ../patch-${pkgver%.0}-${rcnrel}.diff
 
   # ALARM patches
-  patch -p1 -i ../0001-atags-add-support-for-marvell-uboot.patch
-  patch -p1 -i ../0002-atags-retrieve-mac-addresses.patch
-  patch -p1 -i ../0003-smileplug-devicetree.patch
-  patch -p1 -i ../0004-emmc-timing-fix.patch
-  patch -p1 -i ../0005-squelch-rt2800usb-messages.patch
-  patch -p1 -i ../0006-Bluetooth-allocate-static-minor-for-vhci.patch
+  git apply ../0001-ARM-atags-add-support-for-Marvell-s-u-boot.patch
+  git apply ../0002-ARM-atags-fdt-retrieve-MAC-addresses-from-Marvell-bo.patch
+  git apply ../0003-SMILE-Plug-device-tree-file.patch
+  git apply ../0004-fix-mvsdio-eMMC-timing.patch
+  git apply ../0005-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch
+  git apply ../0006-ARM-TLV320AIC23-SoC-Audio-Codec-Fix-errors-reported-.patch
+  git apply ../0007-set-default-cubietruck-led-triggers.patch
+  git apply ../0008-USB-armory-support.patch
 
   # AUFS patches
-  cp -ru "${srcdir}/aufs3-standalone/Documentation" .
-  cp -ru "${srcdir}/aufs3-standalone/fs" .
-  cp -ru "${srcdir}/aufs3-standalone/include/uapi/linux/aufs_type.h" ./include/linux
-  cp -ru "${srcdir}/aufs3-standalone/include/uapi/linux/aufs_type.h" ./include/uapi/linux
+  cp -ru "${srcdir}/aufs4-standalone/Documentation" .
+  cp -ru "${srcdir}/aufs4-standalone/fs" .
+  cp -ru "${srcdir}/aufs4-standalone/include/uapi/linux/aufs_type.h" ./include/linux
+  cp -ru "${srcdir}/aufs4-standalone/include/uapi/linux/aufs_type.h" ./include/uapi/linux
 
-  patch -Np1 -i ../aufs3-standalone/aufs3-kbuild.patch
-  patch -Np1 -i ../aufs3-standalone/aufs3-base.patch
-  patch -Np1 -i ../aufs3-standalone/aufs3-mmap.patch
-  patch -Np1 -i ../aufs3-standalone/aufs3-standalone.patch
+  git apply ../aufs4-standalone/aufs4-kbuild.patch
+  git apply ../aufs4-standalone/aufs4-base.patch
+  git apply ../aufs4-standalone/aufs4-mmap.patch
+  git apply ../aufs4-standalone/aufs4-standalone.patch
 
   cat "${srcdir}/config" > ./.config
 
@@ -117,7 +118,7 @@ _package() {
   optdepends=('crda: to set the correct wireless channels of your country')
   provides=('kernel26' "linux=${pkgver}" 'aufs_friendly')
   conflicts=('linux')
-  replaces=('linux-mvebu')
+  replaces=('linux-mvebu' 'linux-udoo' 'linux-sun4i' 'linux-sun5i' 'linux-sun7i' 'linux-usbarmory')
   install=${pkgname}.install
 
   cd "${srcdir}/${_srcname}"
@@ -164,7 +165,7 @@ _package-headers() {
   pkgdesc="Header files and scripts for building modules for linux kernel - ${_desc}"
   provides=("linux-headers=${pkgver}")
   conflicts=('linux-headers')
-  replaces=('linux-mvebu-headers')
+  replaces=('linux-mvebu-headers' 'linux-sun4i-headers' 'linux-sun5i-headers' 'linux-sun7i-headers' 'linux-usbarmory-headers')
 
   install -dm755 "${pkgdir}/usr/lib/modules/${_kernver}"
 
@@ -254,7 +255,6 @@ _package-headers() {
   # add xfs and shmem for aufs building
   mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/fs/xfs"
   mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/mm"
-  cp fs/xfs/xfs_sb.h "${pkgdir}/usr/lib/modules/${_kernver}/build/fs/xfs/xfs_sb.h"
 
   # copy in Kconfig files
   for i in $(find . -name "Kconfig*"); do
@@ -284,7 +284,8 @@ _package-headers() {
 _package-smileplug() {
   pkgdesc="The Linux Kernel - ${_desc} - Marvell SMILE Plug"
   depends=('linux-armv7')
-  conflicts=('linux-armv7-mirabox' 'linux-armv7-ax3')
+  provides=('linux-armv7-uimage')
+  conflicts=('linux-armv7-uimage')
   replaces=('linux-mvebu-smileplug')
 
   cd "${srcdir}/${_srcname}"
@@ -297,7 +298,8 @@ _package-smileplug() {
 _package-mirabox() {
   pkgdesc="The Linux Kernel - ${_desc} - Globalscale Mirabox"
   depends=('linux-armv7')
-  conflicts=('linux-armv7-smileplug' 'linux-armv7-ax3')
+  provides=('linux-armv7-uimage')
+  conflicts=('linux-armv7-uimage')
   replaces=('linux-mvebu-mirabox')
 
   cd "${srcdir}/${_srcname}"
@@ -310,7 +312,8 @@ _package-mirabox() {
 _package-ax3() {
   pkgdesc="The Linux Kernel - ${_desc} - OpenBlocks AX3-4"
   depends=('linux-armv7')
-  conflicts=('linux-armv7-mirabox' 'linux-armv7-smileplug')
+  provides=('linux-armv7-uimage')
+  conflicts=('linux-armv7-uimage')
   replaces=('linux-mvebu-ax3')
 
   cd "${srcdir}/${_srcname}"
@@ -320,7 +323,35 @@ _package-ax3() {
   mkimage -A arm -O linux -T kernel -C none -a 0x00008000 -e 0x00008000 -n "${pkgname}" -d myimage "${pkgdir}/boot/uImage"
 }
 
-pkgname=("${pkgbase}" "${pkgbase}-headers" "${pkgbase}-smileplug" "${pkgbase}-mirabox" "${pkgbase}-ax3")
+_package-d3plug() {
+  pkgdesc="The Linux Kernel - ${_desc} - Globalscale D3Plug"
+  depends=('linux-armv7')
+  provides=('linux-armv7-uimage')
+  conflicts=('linux-armv7-uimage')
+  #replaces=('linux-d3plug')
+
+  cd "${srcdir}/${_srcname}"
+
+  mkdir -p "${pkgdir}/boot"
+  cat arch/$KARCH/boot/zImage arch/$KARCH/boot/dts/dove-d3plug.dtb > myimage
+  mkimage -A arm -O linux -T kernel -C none -a 0x00008000 -e 0x00008000 -n "${pkgname}" -d myimage "${pkgdir}/boot/uImage"
+}
+
+_package-cubox() {
+  pkgdesc="The Linux Kernel - ${_desc} - SolidRun Cubox (Marvell)"
+  depends=('linux-armv7')
+  provides=('linux-armv7-uimage')
+  conflicts=('linux-armv7-uimage')
+  #replaces=('linux-cubox')
+
+  cd "${srcdir}/${_srcname}"
+
+  mkdir -p "${pkgdir}/boot"
+  cat arch/$KARCH/boot/zImage arch/$KARCH/boot/dts/dove-cubox.dtb > myimage
+  mkimage -A arm -O linux -T kernel -C none -a 0x00008000 -e 0x00008000 -n "${pkgname}" -d myimage "${pkgdir}/boot/uImage"
+}
+
+pkgname=("${pkgbase}" "${pkgbase}-headers" "${pkgbase}-smileplug" "${pkgbase}-mirabox" "${pkgbase}-ax3" "${pkgbase}-d3plug" "${pkgbase}-cubox")
 for _p in ${pkgname[@]}; do
   eval "package_${_p}() {
     _package${_p#${pkgbase}}

@@ -8,28 +8,24 @@ pkgbase=kdebindings-python
 pkgname=('kdebindings-python'
          'kdebindings-python2'
          'kdebindings-python-common')
-pkgver=4.13.0
-pkgrel=2
+pkgver=4.14.3
+pkgrel=3
 url='https://projects.kde.org/projects/kde/kdebindings/pykde4'
 arch=('i686' 'x86_64')
 license=('GPL' 'LGPL' 'FDL')
 groups=('kdebindings')
-makedepends=('cmake' 'automoc4' 'boost' 'kdepim-runtime' 'python2-pyqt4'
+makedepends=('cmake' 'automoc4' 'boost' 'python2-pyqt4' 'kdepimlibs'
              'python-pyqt4' 'qscintilla' 'python2-sip' 'python-sip' 'mesa')
 source=("http://download.kde.org/stable/${pkgver}/src/pykde4-${pkgver}.tar.xz"
-        "sip-4.15.5.patch"
-        "pykde4-4.10.0-arm-sip.patch")
-sha1sums=('2c47c3e642d0d38e8d8b9bb8fb22972d162d976e'
-          'bffd9f642ad10fb3a49c42e4b457b2b90665d641'
+        "pykde4-4.14.0-arm-sip.patch")
+sha1sums=('9cc8e70d3b107a876cf579beab1f582861cd2c48'
           'f0798d25767768006d5f674049e51b2e39f9f4eb')
 
 prepare() {
   mkdir build
 
   cd pykde4-${pkgver}
-  # Fix build with sip 4.15.5 upstream: https://bugs.kde.org/show_bug.cgi?id=332223
-  patch -p1 -i "$srcdir/sip-4.15.5.patch"
-  patch -Np1 -i "${srcdir}/pykde4-4.10.0-arm-sip.patch"
+  patch -Np1 -i "${srcdir}/pykde4-4.14.0-arm-sip.patch"
 }
 
 build() {
@@ -63,7 +59,7 @@ build() {
 
 package_kdebindings-python() {
   pkgdesc="A set of Python 3.x bindings for KDE"
-  depends=('kdepim-runtime' 'python-pyqt4' 'kdebindings-python-common')
+  depends=('python-pyqt4' 'kdebindings-python-common' 'kdepimlibs')
 
   cd "${srcdir}"/build
   make DESTDIR="${pkgdir}" install
@@ -77,7 +73,7 @@ package_kdebindings-python() {
 
 package_kdebindings-python2() {
   pkgdesc="A set of Python 2.x bindings for KDE"
-  depends=('kdepim-runtime' 'python2-pyqt4'  'kdebindings-python-common')
+  depends=('python2-pyqt4' 'kdebindings-python-common' 'kdepimlibs')
   conflicts=('kdebindings-python<4.8.1-2')
  
   cd "${srcdir}"/build-python2

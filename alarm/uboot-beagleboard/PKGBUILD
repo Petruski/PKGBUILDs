@@ -4,27 +4,23 @@
 buildarch=4
 
 pkgname=uboot-beagleboard
-pkgver=2014.01
+pkgver=2015.04
 pkgrel=1
 pkgdesc="U-Boot for BeagleBoard and BeagleBoard-xM"
 arch=('armv7h')
 url="http://git.denx.de/u-boot.git/"
 license=('GPL')
-makedepends=('git')
+makedepends=('git' 'bc')
 source=("ftp://ftp.denx.de/pub/u-boot/u-boot-${pkgver}.tar.bz2"
-        "https://raw.github.com/eewiki/u-boot-patches/master/v${pkgver}/0001-omap3_beagle-uEnv.txt-bootz-n-fixes.patch"
-        'alarm.patch'
+        '0001-arch-linux-arm-modifications.patch'
         'uEnv.txt')
-md5sums=('e531307578f6d32a7ccb1d04f1e08cbc'
-         '6d6a394e07527d30330092ea3aa35cc9'
-         '8c8e5ce2a03e99ed561185e9a6cffad8'
-         '3704f05f308e3bb73a5b67a033b2ce5c')
+md5sums=('570bdc2c47270c2a98ca60ff6c5c74cd'
+         '64860a464158923815b052e997214867'
+         'd41d8cd98f00b204e9800998ecf8427e')
 
 prepare() {
   cd u-boot-${pkgver}
-
-  patch -p1 -i "${srcdir}"/0001-omap3_beagle-uEnv.txt-bootz-n-fixes.patch
-  patch -p1 -i "${srcdir}"/alarm.patch
+  git apply ../0001-arch-linux-arm-modifications.patch
 }
 
 build() {

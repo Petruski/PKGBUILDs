@@ -6,8 +6,8 @@
 
 pkgname=devtools-alarm
 _pkgname=devtools
-pkgver=20131107
-pkgrel=3
+pkgver=20150228
+pkgrel=1
 pkgdesc='Tools for Arch Linux ARM package maintainers'
 arch=('any')
 license=('GPL')
@@ -15,39 +15,37 @@ url='http://projects.archlinux.org/devtools.git/'
 conflicts=('devtools')
 provides=('devtools')
 depends=('namcap' 'openssh' 'subversion' 'rsync' 'arch-install-scripts')
-source=("ftp://ftp.archlinux.org/other/${_pkgname}/${_pkgname}-${pkgver}.tar.gz"
-        "ftp://ftp.archlinux.org/other/${_pkgname}/${_pkgname}-${pkgver}.tar.gz.sig"
+source=("https://sources.archlinux.org/other/$_pkgname/$_pkgname-$pkgver.tar.gz"
         '0001-makechrootpkg-cache-dir.patch'
         '0002-arch-nspawn-keep-mirrorlist.patch'
         '0003-makechrootpkg-distcc.patch'
         '0004-arch-nspawn-arm-fix.patch'
         '0005-makechrootpkg-no-default-logging.patch'
         '0006-archbuild-no-setarch.patch')
-md5sums=('8b78e5f8e68d09864cf231c999ab222a'
-         'SKIP'
-         '7b96700206f0832d8f9c72adeccb8f9f'
-         'ac6a4477565030c8e2bea08068e7597f'
-         '97a011ae19be82b932ef8abab83f9b6a'
-         'd7c5800ed19500e33e2c9cf89c41a86c'
-         '473f7128e088188121f5565e7ca34759'
-         'a9f511668f1f8bb8f408017ec7dbabc9')
+md5sums=('4b17a83dac3f8c93de85acebd0a90a16'
+         '9e70b777886ec0af1a787b32c7444ed8'
+         'd6ff97c5dcc0cbfbe65ec3cc3ae495f7'
+         '9bb4797d676a56437a5ed130ce202e68'
+         '14c261c1d0139888a2fb10cb9bbfda37'
+         '2af8e8b30dbc22d5a0f3ddfcaecf64fa'
+         '97ed4af62c8020fe6f7f991f930fb68e')
 
 prepare() {
-	cd ${srcdir}/${_pkgname}-${pkgver}
-	patch -p1 -i "${srcdir}"/0001-makechrootpkg-cache-dir.patch
-	patch -p1 -i "${srcdir}"/0002-arch-nspawn-keep-mirrorlist.patch
-	patch -p1 -i "${srcdir}"/0003-makechrootpkg-distcc.patch
-	patch -p1 -i "${srcdir}"/0004-arch-nspawn-arm-fix.patch
-	patch -p1 -i "${srcdir}"/0005-makechrootpkg-no-default-logging.patch
-	patch -p1 -i "${srcdir}"/0006-archbuild-no-setarch.patch
+	cd "${_pkgname}-${pkgver}"
+	patch -p1 -i ../0001-makechrootpkg-cache-dir.patch
+	patch -p1 -i ../0002-arch-nspawn-keep-mirrorlist.patch
+	patch -p1 -i ../0003-makechrootpkg-distcc.patch
+	patch -p1 -i ../0004-arch-nspawn-arm-fix.patch
+	patch -p1 -i ../0005-makechrootpkg-no-default-logging.patch
+	patch -p1 -i ../0006-archbuild-no-setarch.patch
 }
 
 build() {
-	cd ${srcdir}/${_pkgname}-${pkgver}
+	cd "${_pkgname}-${pkgver}"
 	make PREFIX=/usr
 }
 
 package() {
-	cd ${srcdir}/${_pkgname}-${pkgver}
+	cd "${_pkgname}-${pkgver}"
 	make PREFIX=/usr DESTDIR=${pkgdir} install
 }

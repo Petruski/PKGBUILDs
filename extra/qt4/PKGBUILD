@@ -1,5 +1,6 @@
-# $Id: PKGBUILD 179026 2013-03-01 17:55:20Z andrea $
-# Maintainer: Andrea Scarpino <andrea@archlinux.org>
+# $Id: PKGBUILD 179026 2013-03-01 17:55:20Z andrea $ Maintainer: 
+# Felix Yan <felixonmars@archlinux.org>
+# Contributor: Andrea Scarpino <andrea@archlinux.org>
 # Contributor: Pierre Schmitz <pierre@archlinux.de>
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
@@ -7,10 +8,11 @@
 #  - disabled distcc - bad things happen
 #  - added -fno-strict-volatile-bitfields to CXXFLAGS to fix ARM bug
 #  - no libfbclient/ibase, issues building on ARM
+#  - patch for AArch64, define platform as linux-g++, reduce concurrency
 
 pkgname=qt4
-pkgver=4.8.6
-pkgrel=1
+pkgver=4.8.7
+pkgrel=2
 arch=('i686' 'x86_64')
 url='http://qt-project.org/'
 license=('GPL3' 'LGPL' 'FDL' 'custom')
@@ -27,41 +29,57 @@ optdepends=('qtchooser: set the default Qt toolkit'
             'libxinerama: Xinerama support'
             'libxcursor: Xcursor support'
             'libxfixes: Xfixes support'
-            'icu: Unicode support')
+            'icu: Unicode support'
+            'sni-qt: StatusNotifierItem (AppIndicators) support')
 install="${pkgname}.install"
 options=('!distcc')
 replaces=('qt<=4.8.4')
 conflicts=('qt')
-options=('staticlibs') # libQtUiTools builds as static only
 _pkgfqn="qt-everywhere-opensource-src-${pkgver}"
-source=("http://download.qt-project.org/official_releases/qt/4.8/${pkgver}/${_pkgfqn}.tar.gz"
+source=("http://download.qt.io/official_releases/qt/4.8/${pkgver}/${_pkgfqn}.tar.gz"
         'qtconfig-qt4.desktop' 'assistant-qt4.desktop' 'designer-qt4.desktop'
         'linguist-qt4.desktop' 'qdbusviewer-qt4.desktop'
         'improve-cups-support.patch'
-        'CVE-2014-0190.patch')
-md5sums=('2edbe4d6c2eff33ef91732602f3518eb'
+        'moc-boost-workaround.patch'
+        'kubuntu_14_systemtrayicon.diff'
+        'kde4-settings.patch'
+        'qt-aarch64.patch')
+md5sums=('d990ee66bf7ab0c785589776f35ba6ad'
          'a16638f4781e56e7887ff8212a322ecc'
          '8a28b3f52dbeb685d4b69440b520a3e1'
          '9727c406c240990870c905696a8c5bd1'
          '0e384663d3dd32abe35f5331c4147569'
          'b859c5673e5098c39f72b2252947049e'
          'c439c7731c25387352d8453ca7574971'
-         '34ed257109afb83342cfe514c8abe027')
+         'da387bde22ae1c446f12525d2a31f070'
+         'a523644faa8f98a73f55c4aa23c114a6'
+         '66dfea63916c8dbf47b23cb012ffdccc'
+         '2a9572f3b758fc3ca9ff5fc40012a2a4')
 
 prepare() {
   cd ${_pkgfqn}
 
+  # AArch64 support
+  patch -p1 -i "${srcdir}"/qt-aarch64.patch
+
   # (FS#28381) (KDEBUG#180051)
   patch -p1 -i "${srcdir}"/improve-cups-support.patch
+  
+  # QTBUG#22829
+  patch -p1 -i "${srcdir}"/moc-boost-workaround.patch
 
-  # QTBUG#38367
-  patch -p1 -i "${srcdir}"/CVE-2014-0190.patch
+  # http://blog.martin-graesslin.com/blog/2014/06/where-are-my-systray-icons/
+  patch -p1 -i "${srcdir}"/kubuntu_14_systemtrayicon.diff
 
   export CXXFLAGS="$CXXFLAGS -fno-strict-volatile-bitfields"
+
+  # FS#45106
+  patch -p0 -i "${srcdir}"/kde4-settings.patch
 
   sed -i "s|-O2|${CXXFLAGS}|" mkspecs/common/{g++,gcc}-base.conf
   sed -i "/^QMAKE_LFLAGS_RPATH/s| -Wl,-rpath,||g" mkspecs/common/gcc-base-unix.conf
   sed -i "/^QMAKE_LFLAGS\s/s|+=|+= ${LDFLAGS}|g" mkspecs/common/gcc-base.conf
+
   cp mkspecs/common/linux{,32}.conf
   sed -i "/^QMAKE_LIBDIR\s/s|=|= /usr/lib32|g" mkspecs/common/linux32.conf
   sed -i "s|common/linux.conf|common/linux32.conf|" mkspecs/linux-g++-32/qmake.conf
@@ -71,6 +89,11 @@ build() {
   export QT4DIR="${srcdir}"/${_pkgfqn}
   export LD_LIBRARY_PATH=${QT4DIR}/lib:${LD_LIBRARY_PATH}
   
+  if [[ $CARCH == "aarch64" ]]; then
+    MAKEFLAGS="-j3"
+    CONFIG="-platform linux-g++"
+  fi
+
   cd ${_pkgfqn}
 
   ./configure -confirm-license -opensource \
@@ -98,7 +121,7 @@ build() {
     -silent \
     -no-rpath \
     -optimized-qmake \
-    -reduce-relocations \
+    -no-reduce-relocations \
     -dbus-linked \
     -no-openvg \
     -no-mmx \
@@ -110,7 +133,7 @@ build() {
     -no-sse4.1 \
     -no-sse4.2 \
     -no-avx \
-    -no-neon
+    -no-neon $CONFIG
 
   make
 }

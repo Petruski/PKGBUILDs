@@ -1,0 +1,38 @@
+From 7e2c115b770bd73b84f8a48d33ce32cb9fe50740 Mon Sep 17 00:00:00 2001
+From: Kevin Mihelich <kevin@archlinuxarm.org>
+Date: Fri, 2 Jan 2015 20:16:57 -0700
+Subject: [PATCH] arch linux arm modifications
+
+---
+ include/config_distro_defaults.h | 3 +++
+ include/configs/sunxi-common.h   | 2 +-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/include/config_distro_defaults.h b/include/config_distro_defaults.h
+index 8237239..2477edf 100644
+--- a/include/config_distro_defaults.h
++++ b/include/config_distro_defaults.h
+@@ -59,4 +59,7 @@
+ #define CONFIG_SUPPORT_RAW_INITRD
+ #define CONFIG_SYS_HUSH_PARSER
+ 
++#define CONFIG_CMD_PART
++#define CONFIG_PARTITION_UUIDS
++
+ #endif	/* _CONFIG_CMD_DISTRO_DEFAULTS_H */
+diff --git a/include/configs/sunxi-common.h b/include/configs/sunxi-common.h
+index 1f7a1cb..ae0ddf7 100644
+--- a/include/configs/sunxi-common.h
++++ b/include/configs/sunxi-common.h
+@@ -141,7 +141,7 @@
+ #define CONFIG_SYS_NO_FLASH
+ 
+ #define CONFIG_SYS_MONITOR_LEN		(512 << 10)	/* 512 KiB */
+-#define CONFIG_IDENT_STRING		" Allwinner Technology"
++#define CONFIG_IDENT_STRING		" Arch Linux ARM"
+ 
+ #define CONFIG_ENV_OFFSET		(544 << 10) /* (8 + 24 + 512) KiB */
+ #define CONFIG_ENV_SIZE			(128 << 10)	/* 128 KiB */
+-- 
+2.3.6
+

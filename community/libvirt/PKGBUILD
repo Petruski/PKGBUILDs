@@ -4,20 +4,23 @@
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - remove numactl from depends, doesn't build on ARM
+#  - drop ceph depend until it builds
 
 pkgname=libvirt
-pkgver=1.2.4
+pkgver=1.2.18
 pkgrel=2
 pkgdesc="API for controlling virtualization engines (openvz,kvm,qemu,virtualbox,xen,etc)"
 arch=('i686' 'x86_64')
 url="http://libvirt.org/"
 license=('LGPL')
 depends=('e2fsprogs' 'gnutls' 'iptables' 'libxml2' 'parted' 'polkit' 'python2'
-	 'avahi' 'yajl' 'libpciaccess' 'udev' 'dbus-core' 'libxau' 'libxdmcp' 'libpcap'
+	 'avahi' 'yajl' 'libpciaccess' 'udev' 'dbus' 'libxau' 'libxdmcp' 'libpcap'
 	 'curl' 'libsasl' 'libgcrypt' 'libgpg-error' 'openssl' 'libxcb' 'gcc-libs'
-	 'iproute2' 'libnl' 'libx11')
-makedepends=('pkgconfig' 'lvm2' 'linux-api-headers' 'dnsmasq' 'lxc' 'libiscsi' 'open-iscsi')
-optdepends=('bridge-utils: for briged networking (default)'
+	 'iproute2' 'libnl' 'libx11' 'gettext' 'libssh2' 'netcf')
+makedepends=('pkgconfig' 'lvm2' 'linux-api-headers' 'dnsmasq' 'lxc'
+	     'libiscsi' 'open-iscsi'
+	     'perl-xml-xpath' 'libxslt')
+optdepends=('bridge-utils: for bridged networking (default)'
 	    'dnsmasq: for NAT/DHCP for guests'
 	    'openbsd-netcat: for remote management over ssh'
 	    'qemu'
@@ -64,9 +67,9 @@ source=("http://libvirt.org/sources/$pkgname-$pkgver.tar.gz"
 	libvirtd.conf.d
 	libvirtd-guests.conf.d
 	libvirt.tmpfiles.d)
-md5sums=('da7a9ca519df45a460659189fe0024e6'
-         '3ed0e24f5b5e25bf553f5427d64915e6'
-         '0a96ed876ffb1fcb9dff5a9b3a609c1e'
+md5sums=('5531b44fc282c3ce0c3951c6bb692576'
+         '5e31269067dbd12ca871234450bb66bb'
+         '384fff96c6248d4f020f6fa66c32b357'
          '020971887442ebbf1b6949e031c8dd3f')
 
 prepare() {
@@ -82,7 +85,11 @@ prepare() {
     tools/{libvirt-guests.service,libvirt-guests.sh,virt-pki-validate}.in \
     src/locking/virtlockd.service.in
   sed -i 's|@sbindir@|/usr/bin|g' src/locking/virtlockd.service.in
-  sed -i 's|#group =.*|group="kvm"|' src/qemu/qemu.conf
+  # 78 is kvm group: https://wiki.archlinux.org/index.php/DeveloperWiki:UID_/_GID_Database
+  sed -i 's|#group =.*|group="78"|' src/qemu/qemu.conf
+  sed -i 's|/usr/libexec/qemu-bridge-helper|/usr/lib/qemu/qemu-bridge-helper|g' \
+    src/qemu/qemu{.conf,_conf.c} \
+    src/qemu/test_libvirtd_qemu.aug.in
 }
 
 build() {
@@ -95,7 +102,7 @@ build() {
 	--with-storage-lvm --without-xen --with-udev --without-hal --disable-static \
 	--with-init-script=systemd \
 	--with-qemu-user=nobody --with-qemu-group=nobody \
-	--without-netcf --with-interface --with-lxc --with-storage-iscsi
+	--with-netcf --with-interface --with-lxc --with-storage-iscsi
   make
 }
 
@@ -107,6 +114,13 @@ package() {
   install -D -m644 "$srcdir"/libvirtd.conf.d "$pkgdir"/etc/conf.d/libvirtd
   install -D -m644 "$srcdir"/libvirtd-guests.conf.d "$pkgdir"/etc/conf.d/libvirt-guests
   install -D -m644 "$srcdir"/libvirt.tmpfiles.d "$pkgdir"/usr/lib/tmpfiles.d/libvirt.conf
+
+  chown -R 0:78 "$pkgdir"/var/lib/libvirt/qemu
+  chmod 0770 "$pkgdir"/var/lib/libvirt/qemu
+
+  # FS#45252
+  chown polkitd "$pkgdir"/usr/share/polkit-1/rules.d
+  chmod 0700 "$pkgdir"/usr/share/polkit-1/rules.d
 
   rm -rf \
 	"$pkgdir"/var/run \

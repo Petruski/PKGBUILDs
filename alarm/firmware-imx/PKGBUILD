@@ -3,39 +3,29 @@
 
 buildarch=4
 pkgname=firmware-imx
-pkgver=3.10.17_1.0.0
+pkgver=3.14.28_1.0.0
 _pkgver=${pkgver/_/-}
 pkgrel=1
-pkgdesc="Freescale IMX firmware such as for the VPU - proprietary firmware for i.MX6 SoC"
-
-# filesystem prefix for the include files and license
-_install_prefix=/usr
-# filesystem prefix for the firmware
-_install_fw_prefix=/usr
-
+pkgdesc="Freescale proprietary firmware for i.MX6 SoC"
 url="https://community.freescale.com/docs/DOC-95560"
 arch=('armv7h')
 license=('proprietay')
 source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${pkgname}-${_pkgver}.bin")
-md5sums=('29a54f6e5bf889a00cd8ca85080af223')
+md5sums=('6e700f3d3a6482db08d5aabee7751630')
 
 prepare() {
   cd "${srcdir}"
+  #extract the firmware
   sh ${pkgname}-${_pkgver}.bin --force --auto-accept
-  sed -n '/EOEULA/,/EOEULA/p' ${pkgname}-${_pkgver}.bin | grep -v EOEULA > LICENSE.$pkgname
 }
 
 package() {
-  #cd "${pkgdir}"
-  #ls -l
-  #ls -l "${srcdir}/${pkgname}-${_pkgver}"
-  mkdir -p "${pkgdir}/${_install_fw_prefix}/lib/firmware/vpu"
-  cp -rv "${srcdir}/${pkgname}-${_pkgver}/firmware/vpu/"* "${pkgdir}/${_install_fw_prefix}/lib/firmware/vpu"
+  mkdir -p "${pkgdir}/usr/lib/firmware/vpu"
+  cp -r "${srcdir}/${pkgname}-${_pkgver}/firmware/vpu/"* "${pkgdir}/usr/lib/firmware/vpu"
 
-  mkdir -p "${pkgdir}/${_install_prefix}/licenses"
-  cp "${srcdir}/LICENSE.$pkgname" "${pkgdir}/${_install_prefix}/licenses"
+  install -D -m0644 "${srcdir}/${pkgname}-${_pkgver}/COPYING" "$pkgdir/opt/fsl/licenses/LICENSE.${pkgname}"
   mkdir -p "${pkgdir}/etc/ld.so.conf.d"
-  echo "${_install_fw_prefix}/lib" > "${pkgdir}/etc/ld.so.conf.d/$pkgname.conf"
+  echo "/opt/fsl/lib" > "${pkgdir}/etc/ld.so.conf.d/$pkgname.conf"
 }
 
 # vim:set ts=2 sw=2 et:

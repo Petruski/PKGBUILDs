@@ -8,8 +8,8 @@
 #  - added --enable-arm-neon=no to configure
 
 pkgname=libpng
-pkgver=1.6.10
-_apngver=1.6.10
+pkgver=1.6.18
+_apngver=1.6.18
 pkgrel=1
 pkgdesc="A collection of routines used to create PNG format graphics files"
 arch=('i686' 'x86_64')
@@ -19,9 +19,10 @@ depends=('zlib' 'sh')
 options=('!libtool')
 source=(http://downloads.sourceforge.net/sourceforge/$pkgname/$pkgname-$pkgver.tar.xz{,.asc}
         http://downloads.sourceforge.net/sourceforge/libpng-apng/libpng-$_apngver-apng.patch.gz)
-md5sums=('5f414b20f683b1d96b163c89e3eff768'
+md5sums=('6a57c8e0f5469b9c9949a4b43d57b3a1'
          'SKIP'
-         '3404257f66d4a118b26ccc3fc4788810')
+         'a9c85fe3cf0347ea94356f1e70d07973')
+validpgpkeys=('8048643BA2C840F4F92A195FF54984BFA16C640F')
 
 prepare() {
   cd $pkgname-$pkgver

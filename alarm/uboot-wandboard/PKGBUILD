@@ -5,35 +5,33 @@ buildarch=4
 
 pkgbase=uboot-wandboard
 pkgname=('uboot-wandboard-solo' 'uboot-wandboard-dual' 'uboot-wandboard-quad')
-pkgver=2014.04
+pkgver=2015.04
 pkgrel=1
 arch=('armv7h')
 url="http://git.denx.de/u-boot.git/"
 license=('GPL')
-makedepends=('git')
+makedepends=('git' 'bc')
 source=("ftp://ftp.denx.de/pub/u-boot/u-boot-${pkgver}.tar.bz2"
-        "https://raw.github.com/eewiki/u-boot-patches/master/v${pkgver}/0001-wandboard-uEnv.txt-bootz-n-fixes.patch"
-        'alarm.patch')
-md5sums=('6d2116d1385a66e9a59742caa9d62a54'
-         '07b1aba3db09dc86c2c3960baa4d77ad'
-         '8f749cdb50b4deddbfa92655610ad5f4')
+        '0001-arch-linux-arm-modifications.patch')
+md5sums=('570bdc2c47270c2a98ca60ff6c5c74cd'
+         '7b1bcd38116d27e450705948cb8a87a7')
 
 prepare() {
   cd u-boot-${pkgver}
-  patch -p1 -i ../0001-wandboard-uEnv.txt-bootz-n-fixes.patch
-  patch -p1 -i ../alarm.patch
+  git apply ../0001-arch-linux-arm-modifications.patch
 }
 
 build() {
   cd u-boot-${pkgver}
   
-  unset CFLAGS CXXFLAGS LDFLAGS
+  unset LDFLAGS
   
+  mkdir bins
   for i in solo dl quad; do
     make distclean
     make wandboard_${i}_config
     make
-    mv u-boot.imx arch.u-boot-${i}.imx.arch
+    mv u-boot.imx bins/u-boot-${i}.imx
   done
 }
 
@@ -43,7 +41,7 @@ package_uboot-wandboard-solo() {
   install=${pkgbase}.install
 
   mkdir -p "${pkgdir}"/boot
-  cp u-boot-${pkgver}/arch.u-boot-solo.imx.arch "${pkgdir}"/boot/u-boot.imx
+  cp u-boot-${pkgver}/bins/u-boot-solo.imx "${pkgdir}"/boot/u-boot.imx
 }
 
 package_uboot-wandboard-dual() {
@@ -52,7 +50,7 @@ package_uboot-wandboard-dual() {
   install=${pkgbase}.install
 
   mkdir -p "${pkgdir}"/boot
-  cp u-boot-${pkgver}/arch.u-boot-dl.imx.arch "${pkgdir}"/boot/u-boot.imx
+  cp u-boot-${pkgver}/bins/u-boot-dl.imx "${pkgdir}"/boot/u-boot.imx
 }
 
 package_uboot-wandboard-quad() {
@@ -61,5 +59,5 @@ package_uboot-wandboard-quad() {
   install=${pkgbase}.install
 
   mkdir -p "${pkgdir}"/boot
-  cp u-boot-${pkgver}/arch.u-boot-quad.imx.arch "${pkgdir}"/boot/u-boot.imx
+  cp u-boot-${pkgver}/bins/u-boot-quad.imx "${pkgdir}"/boot/u-boot.imx
 }

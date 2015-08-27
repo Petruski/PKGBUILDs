@@ -1,0 +1,40 @@
+# $Id$
+# Maintainer: Andreas Radke <andyrtr@archlinux.org>
+
+# ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
+#  - drop valgrind makedepend
+
+pkgname=libevdev
+pkgver=1.4.3
+pkgrel=1
+pkgdesc="Wrapper library for evdev devices"
+arch=(i686 x86_64)
+url="http://www.freedesktop.org/wiki/Software/libevdev/"
+license=(custom:X11)
+depends=('glibc')
+makedepends=('python2' 'check' 'doxygen')
+#checkdepends=('kmod')
+source=(http://freedesktop.org/software/$pkgname/$pkgname-$pkgver.tar.xz{,.sig})
+sha256sums=('1c418b26fd78b0e9900872be2f77fb5311c877b34ec5c75efd1b670ed627969b'
+            'SKIP')
+validpgpkeys=('3C2C43D9447D5938EF4551EBE23B7E70B467F0BF') # Peter Hutterer (Who-T) <office@who-t.net>
+
+build() {
+  cd $pkgname-$pkgver
+  ./configure --prefix=/usr \
+    --disable-static
+  make
+}
+check() {
+  cd $pkgname-$pkgver
+  # test suite requires root access and needs to load uinput module
+  # that's not possible in our chroot
+  #modprobe uinput
+  make check || /bin/true
+}
+
+package() {
+  cd $pkgname-$pkgver
+  make DESTDIR="$pkgdir" install
+  install -Dm644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/COPYING"
+}
