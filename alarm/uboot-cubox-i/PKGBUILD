@@ -5,32 +5,45 @@ buildarch=4
 
 pkgbase=uboot-cubox-i
 pkgname=('uboot-cubox-i')
-pkgver=2013.10
-pkgrel=1
+pkgver=2015.07
+pkgrel=2
 arch=('armv7h')
 url="http://git.denx.de/u-boot.git/"
 license=('GPL')
-makedepends=('git')
+makedepends=('bc' 'dtc' 'git')
 option=('!strip')
-source=("uboot::git+https://github.com/SolidRun/u-boot-imx6.git")
-md5sums=('SKIP')
+_commit=e509dd30e97bf2cbce21502e4462d9d7c1d85daa
+source=("ftp://ftp.denx.de/pub/u-boot/u-boot-${pkgver}.tar.bz2"
+        "0001-Arch-Linux-ARM-modifications.patch")
+md5sums=('3dac9a0b46fed77fc768ad3bd2d68c05'
+         '5de66b57790e633d309025a983d1eaa7')
+
+prepare() {
+  cd u-boot-${pkgver}
+
+  patch -Np1 -i ../0001-Arch-Linux-ARM-modifications.patch
+}
 
 build() {
-  cd uboot
-  LDFLAGS=""
+  cd u-boot-${pkgver}
+
   unset CFLAGS
   unset CXXFLAGS
-  
-  make mx6_cubox-i_config
-  make
+  unset LDFLAGS
+
+  make distclean
+  make mx6cuboxi_config
+  make EXTRAVERSION=-${pkgrel}
 }
 
 package() {
   pkgdesc="U-Boot for all Cubox-i variants"
   install=${pkgbase}.install
 
+  cd u-boot-${pkgver}
+
   mkdir -p "${pkgdir}"/boot
-  cp uboot/u-boot.img "${pkgdir}"/boot
-  cp uboot/SPL "${pkgdir}"/boot
+  cp u-boot.img "${pkgdir}"/boot
+  cp SPL "${pkgdir}"/boot
 }
 

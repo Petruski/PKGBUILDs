@@ -8,20 +8,20 @@
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - correctly define ARM cpus for configure
 #  - disabled vdpau, mmx, incompatible ARM FPUs
-#  - ffmpeg backport to fix building on GCC 4.8
 
 pkgname=mythtv
-pkgver=0.27.4
+pkgver=0.27.5
 pkgrel=2
 epoch=1
 pkgdesc="A Homebrew PVR project"
 arch=('i686' 'x86_64')
 url="http://www.mythtv.org/"
 license=('GPL')
-depends=('avahi' 'fftw' 'lame' 'libass' 'libavc1394' 'libcdio' 'libiec61883' 'libgl'
-         'libpulse' 'libva' 'libvpx' 'libxinerama' 'lirc-utils' 'mariadb-clients'
+depends=('avahi' 'fftw' 'lame' 'libass' 'libavc1394' 'libcdio' 'libiec61883'
+         'libgl' 'libpulse' 'libva' 'libvpx' 'libxinerama' 'lirc' 'mariadb-clients'
          'mysql-python' 'perl-dbd-mysql' 'perl-io-socket-inet6' 'perl-libwww'
-         'perl-net-upnp' 'python2-lxml' 'qtwebkit' 'taglib' 'urlgrabber' 'libx264')
+         'perl-net-upnp' 'python2-lxml' 'qtwebkit' 'taglib' 'urlgrabber'
+         'libx264')
 makedepends=('glew' 'libcec' 'libxml2' 'mesa' 'mesa-libgl' 'openssl' 'yasm' 'x264' 'gdb')
 optdepends=('glew: for GPU commercial flagging'
             'libcec: for consumer electronics control capabilities'
@@ -35,7 +35,7 @@ install='mythtv.install'
 source=("$pkgname-$pkgver.tar.gz::https://github.com/MythTV/$pkgname/archive/v$pkgver.tar.gz"
         'mythbackend.service'
         'http://code.mythtv.org/trac/raw-attachment/ticket/11338/libcec-2-support.2.patch')
-sha256sums=('1f734ffc776e4938aa913e49ce94279f2c2d520c62af278f1d04fe399723365b'
+sha256sums=('7e625f94332effeadfba8e7ae7c98d44a83bfc25b7c59e39adce67dc2f4e1e1b'
             'ecfde779ded8332cc62c86fac6b432b09cbf5d254135798287ada688af9a1302'
             '8270407c2074b305e0c32151f89c84f6bf980a32665a2da8e4727405fa3911f3')
 

@@ -9,14 +9,14 @@
 
 pkgbase=gmic
 pkgname=("gmic" "gimp-plugin-gmic" "zart")
-pkgver=1.6.0.1
+pkgver=1.6.5.1
 pkgrel=1
 arch=("i686" "x86_64")
-url="http://gmic.sourceforge.net"
+url="http://gmic.eu/"
 license=("custom:CeCILL")
 makedepends=('gimp' 'qt4' 'fftw' 'openexr' 'opencv' 'mesa' 'gtk2')
-source=("http://downloads.sourceforge.net/sourceforge/gmic/gmic_${pkgver}.tar.gz")
-md5sums=('39858b032636f6bf6e4026d5022d2dd5')
+source=("http://gmic.eu/files/source/gmic_$pkgver.tar.gz")
+md5sums=('547f70801886fdc02b2b0ddadb3f7d2e')
 
 prepare() {
   cd "${srcdir}/gmic-${pkgver}"
@@ -35,7 +35,7 @@ build() {
 
 package_gmic() {
   pkgdesc="GREYC's Magic Image Converter: image processing framework"
-  depends=("fftw" "libtiff" "libjpeg" "libpng" "openexr" "libx11")
+  depends=("opencv" "fftw" "libtiff" "libjpeg" "libpng" "openexr" "libx11")
   replaces=("greycstoration")
 
   cd "${srcdir}/gmic-${pkgver}"
@@ -55,7 +55,7 @@ package_zart() {
 
 package_gimp-plugin-gmic() {
   pkgdesc="Gimp plugin for the G'MIC image processing framework"
-  depends=("gimp" "fftw")
+  depends=("opencv" "gimp" "fftw")
   replaces=("gimp-plugin-greycstoration" "gimp-plugin-gmic4gimp")
 
   cd "${srcdir}/gmic-${pkgver}"

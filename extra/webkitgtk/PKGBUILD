@@ -4,10 +4,11 @@
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - use --disable-jit to solve segfaults
 #  - use --disable-gtk-doc to solve html docs breaking the build
+#  - AArch64 fixes
 
 pkgbase=webkitgtk
 pkgname=(webkitgtk webkitgtk2)
-pkgver=2.4.7
+pkgver=2.4.9
 pkgrel=1
 pkgdesc="GTK+ Web content engine library"
 arch=(i686 x86_64)
@@ -21,22 +22,31 @@ optdepends=('gst-plugins-base: free media decoding'
             'gst-libav: nonfree media decoding')
 options=(!emptydirs)
 source=(http://webkitgtk.org/releases/$pkgbase-${pkgver}.tar.xz
-        fix-pretty-quotes.patch)
-sha256sums=('f5cf26e39abf1d6b2d25f1398348fef6bbe6c03fb4f99e11c569091c05197d38'
-            '56316228bbbf0b7ebcbe210a35120f4e72cb9c1b680dd82cc2bde0f4549245e6')
+        webkitgtk-aarch64.patch
+        webkitgtk-2.4.1-ppc64_align.patch)
+sha256sums=('afdf29e7828816cad0be2604cf19421e96d96bf493987328ffc8813bb20ac564'
+            '362c66145e3a7978cd612d1a838be7b556d31bb4c51f9ffe12054b5c91b08a73'
+            '62fb5f50c0fca6fbb598a93078d2b8882d5ecb78bbc22c7040f57e676e8d433f')
 
 prepare() {
   mkdir build-gtk{,2} path
-
   ln -s /usr/bin/python2 path/python
 
+  # AArch64 fixes
   cd $pkgbase-$pkgver
-  patch -Np0 -i ../fix-pretty-quotes.patch
+  patch -p1 -i ../webkitgtk-aarch64.patch
+  if [[ $CARCH == "aarch64" ]]; then
+    patch -p1 -i ../webkitgtk-2.4.1-ppc64_align.patch
+    CFLAGS+=" -DENABLE_YARR_JIT=0"
+    CXXFLAGS+=" -DENABLE_YARR_JIT=0"
+  fi
 }
 
 _build() (
   _ver="$1"; shift
   cd build-${_ver}
+
+  PATH="$srcdir/path:$PATH"
 
   ../$pkgbase-$pkgver/configure --prefix=/usr \
     --libexecdir=/usr/lib/webkit${_ver} \
@@ -53,8 +63,6 @@ _build() (
 )
 
 build() {
-  PATH="$srcdir/path:$PATH"
-
   _build gtk
   _build gtk2 --with-gtk=2.0
 }

@@ -9,43 +9,35 @@
 # Contributor: Jason Plum <jplum@archlinuxarm.org>
 
 pkgname=nodejs
-pkgver=0.10.33
-_npmver=2.1.9
-pkgrel=5
+pkgver=0.12.7
+pkgrel=1
 pkgdesc='Evented I/O for V8 javascript'
 arch=('i686' 'x86_64' 'arm')
 url='http://nodejs.org/'
 license=('MIT')
 provides=('nodejs-node-gyp')
-makedepends=('python2' 'git' 'procps-ng')
-optdepends=('python2: for node-gyp')
-checkdepends=('curl')
-options=('!emptydirs !strip')
+depends=('openssl' 'zlib' 'icu') # 'libuv' 'v8' 'c-ares')
+makedepends=('python2' 'procps-ng')
+optdepends=('npm: nodejs package manager')
 source=("http://nodejs.org/dist/v$pkgver/node-v$pkgver.tar.gz"
-        git+https://github.com/npm/npm.git#tag=v$_npmver)
-sha256sums=('75dc26c33144e6d0dc91cb0d68aaf0570ed0a7e4b0c35f3a7a726b500edd081e'
-            'SKIP')
+        'arm.patch')
+sha256sums=('b23d64df051c9c969b0c583f802d5d71de342e53067127a5061415be7e12f39d'
+            '37cec64b8364c1ecb13f914b44dc86eb12a72be985f78e6d07b5ced91edfe246')
 
 set_flags_for_arm() {
   if [ "$CARCH" == "arm" ]; then
     # CXXFLAGS is here to bash it over the head. It has a bad habit.
     EABI=soft
     CXXFLAGS="$CXXFLAGS -march=armv5t -mno-unaligned-access" ;
-    GYPFLAGS="-Darmeabi=soft -Dv8_can_use_vfp_instructions=false -Dv8_can_use_unaligned_accesses=false -Darmv7=0"
-    VFP3=off
-    VFP2=off
+    GYPFLAGS="-Darm_thumb -Darm_float_abi=soft -Darm_version=5 -Darm_fpu= -Darm_test_noprobe=on"
   fi
   if [ "$CARCH" == "armv6h" ]; then
     EABI=hard
-    GYPFLAGS="-Darmeabi=hard -Dv8_use_arm_eabi_hardfloat=true -Dv8_can_use_vfp3_instructions=false -Dv8_can_use_vfp2_instructions=true -Darm7=0 -Darm_vfp=vfp"
-    VFP3=off
-    VFP2=on
+    GYPFLAGS="-Darm_thumb -Darm_float_abi=hard -Darm_version=6 -Darm_fpu=vfpv2"
   fi
   if [ "$CARCH" == "armv7h" ]; then
     EABI=hard
-    GYPFLAGS="-Darmeabi=hard -Dv8_use_arm_eabi_hardfloat=true -Dv8_can_use_vfp3_instructions=true -Dv8_can_use_vfp2_instructions=true -Darm7=1"  
-    VFP3=on
-    VFP2=on
+    GYPFLAGS="-Darm_thumb -Darm_float_abi=hard -Darm_version=7 -Darm_fpu=vfpv3-d16"
   fi
   export CXXFLAGS
   export GYPFLAGS
@@ -54,17 +46,14 @@ set_flags_for_arm() {
 prepare() {
   cd node-v$pkgver
 
-  # We need newer version of npm to fix bugs
-  rm -r deps/npm
-  ln -s "$srcdir/npm" deps
-  rm -r "$srcdir/npm/.git"
+  patch -p1 -i ../arm.patch
 
   msg 'fixing for python2 name'
   find -type f -exec sed -e 's_^#!/usr/bin/env python$_&2_' -e 's_^\(#!/usr/bin/python2\).[45]$_\1_' -e 's_^#!/usr/bin/python$_&2_' -e "s_'python'_'python2'_" -i {} \;
   find test -type f -exec sed -e "s|python |python2 |" -i {} \;
   sed -i "s|python |python2 |" Makefile
 }
- 
+
 build() {
   cd node-v$pkgver
 
@@ -86,20 +75,21 @@ build() {
 
   ./configure \
     --prefix=/usr \
+    --with-intl=system-icu \
+    --without-npm \
     --without-snapshot \
     --with-arm-float-abi=$EABI \
-    --shared-openssl 
+    --shared-openssl \
+    --shared-zlib
+#    --shared-libuv
 #    --shared-v8 \
 #    --shared-v8-libpath=/usr/lib \
 #    --shared-v8-includes=/usr/include 
 
+  [ "$CARCH" == "arm" ] && sed -i 's/vfpv3//' config.gypi
+  [ "$CARCH" == "armv6h" ] && sed -i 's/vfpv3/vfp/' config.gypi
 
-  make 
-
-  cd ../npm
-  ../node-v$pkgver/node cli.js install ronn marked
-  PATH="$srcdir/node-v$pkgver:$PATH" make
-  ../node-v$pkgver/node cli.js uninstall ronn marked marked-man
+  make
 }
 
 check() {
@@ -121,21 +111,8 @@ package() {
   cp -r doc/api/{*.html,assets} \
     ${pkgdir}/usr/share/doc/nodejs
 
-  # compress man pages
-  find "$pkgdir"/usr/lib/node_modules/npm/man -type f | xargs gzip -9
-
   install -D -m644 LICENSE \
     ${pkgdir}/usr/share/licenses/nodejs/LICENSE
-
-  install -d "$pkgdir"/usr/share/man/{man1,man3,man5,man7}
-  for _dir in man1 man3 man5 man7; do
-    cd "$pkgdir"/usr/lib/node_modules/npm/man/$_dir
-    for _file in *; do
-      ln -s /usr/lib/node_modules/npm/man/$_dir/$_file "$pkgdir"/usr/share/man/$_dir/
-    done
-  done
-
-  ln -s /usr/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js "$pkgdir"/usr/bin/node-gyp
 }
 
 # vim:set ts=2 sw=2 et:

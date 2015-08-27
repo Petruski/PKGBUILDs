@@ -1,0 +1,15 @@
+[Unit]
+Description = Starts an instance of Kodi
+After = remote-fs.target
+
+[Service]
+User = kodi
+Group = kodi
+Type = simple
+ExecStartPre = /bin/sh -c "echo 0 > /sys/class/graphics/fbcon/cursor_blink"
+ExecStart = /usr/bin/kodi-standalone -l /run/lirc/lircd
+ExecStopPost = /bin/sh -c "echo 1 > /sys/class/graphics/fbcon/cursor_blink"
+Restart = on-failure
+
+[Install]
+WantedBy = multi-user.target

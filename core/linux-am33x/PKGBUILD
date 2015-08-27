@@ -4,28 +4,30 @@
 buildarch=4
 
 pkgbase=linux-am33x
-_srcname=linux-3.17
+_srcname=linux-4.1
 _kernelname=${pkgbase#linux}
 _desc="TI AM335x Beaglebone (Black)"
-pkgver=3.17.2
+pkgver=4.1.6
 pkgrel=1
-rcnrel=bone5
+rcnrel=bone15
 arch=('armv7h')
 url="http://www.kernel.org/"
 license=('GPL2')
-makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git')
+makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'dtc-overlay')
 options=('!strip')
-source=("http://www.kernel.org/pub/linux/kernel/v3.x/${_srcname}.tar.xz"
-        "http://www.kernel.org/pub/linux/kernel/v3.x/patch-${pkgver}.xz"
-        "http://rcn-ee.net/deb/sid-armhf/v${pkgver}-${rcnrel}/patch-${pkgver%.0}-${rcnrel}.diff.gz"
-        "git://git.code.sf.net/p/aufs/aufs3-standalone#branch=aufs${pkgver%.*}"
-        #"git://git.code.sf.net/p/aufs/aufs3-standalone#branch=aufs3.x-rcN"
+source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
+        "http://www.kernel.org/pub/linux/kernel/v4.x/patch-${pkgver}.xz"
+        "http://rcn-ee.com/deb/sid-armhf/v${pkgver}-${rcnrel}/patch-${pkgver%.0}-${rcnrel}.diff.gz"
+        "git+https://github.com/sfjro/aufs4-standalone.git#branch=aufs${pkgver%.*}"
+        #"git+https://github.com/sfjro/aufs4-standalone.git#branch=aufs4.x-rcN"
+        "git+https://github.com/RobertCNelson/bb.org-overlays.git"
         'config')
-md5sums=('fb30d0f29214d75cddd2faa94f73d5cf'
-         'd694b8625f834791f5e02d7c9add1406'
-         '5dc7c4ae822effa68465a5f9aac6d096'
+md5sums=('fe9dc0f6729f36400ea81aa41d614c37'
+         '7dea69f02c906206f88df48085069eb6'
+         'a16343c6e08048ec30f04ed836e41718'
          'SKIP'
-         'c8d38d87d76521f2839beb41df17638f')
+         'SKIP'
+         '9c6782c60f92aa673e4e442d73652a91')
 
 prepare() {
   cd "${srcdir}/${_srcname}"
@@ -37,15 +39,15 @@ prepare() {
   git apply "${srcdir}/patch-${pkgver%.0}-${rcnrel}.diff"
 
   # AUFS patches
-  cp -ru "${srcdir}/aufs3-standalone/Documentation" .
-  cp -ru "${srcdir}/aufs3-standalone/fs" .
-  cp -ru "${srcdir}/aufs3-standalone/include/uapi/linux/aufs_type.h" ./include/linux
-  cp -ru "${srcdir}/aufs3-standalone/include/uapi/linux/aufs_type.h" ./include/uapi/linux
+  cp -ru "${srcdir}/aufs4-standalone/Documentation" .
+  cp -ru "${srcdir}/aufs4-standalone/fs" .
+  cp -ru "${srcdir}/aufs4-standalone/include/uapi/linux/aufs_type.h" ./include/linux
+  cp -ru "${srcdir}/aufs4-standalone/include/uapi/linux/aufs_type.h" ./include/uapi/linux
 
-  git apply ../aufs3-standalone/aufs3-kbuild.patch
-  git apply ../aufs3-standalone/aufs3-base.patch
-  git apply ../aufs3-standalone/aufs3-mmap.patch
-  git apply ../aufs3-standalone/aufs3-standalone.patch
+  git apply ../aufs4-standalone/aufs4-kbuild.patch
+  git apply ../aufs4-standalone/aufs4-base.patch
+  git apply ../aufs4-standalone/aufs4-mmap.patch
+  git apply ../aufs4-standalone/aufs4-standalone.patch
 
   cat "${srcdir}/config" > ./.config
 
@@ -84,6 +86,10 @@ build() {
 
   # build!
   make ${MAKEFLAGS} zImage modules dtbs
+
+  # build overlays
+  cd "${srcdir}/bb.org-overlays"
+  make
 }
 
 _package() {
@@ -92,6 +98,7 @@ _package() {
   optdepends=('crda: to set the correct wireless channels of your country')
   provides=('kernel26' "linux=${pkgver}" 'aufs_friendly')
   conflicts=('linux')
+  replaces=('linux-ti')
   install=${pkgname}.install
 
   cd "${srcdir}/${_srcname}"
@@ -132,12 +139,18 @@ _package() {
   # move module tree /lib -> /usr/lib
   mkdir -p "${pkgdir}/usr"
   mv "$pkgdir/lib" "$pkgdir/usr"
+
+  # install overlays
+  cd "${srcdir}/bb.org-overlays"
+  mkdir -p "${pkgdir}/usr/lib/firmware"
+  cp src/arm/*.dtbo "${pkgdir}/usr/lib/firmware"
 }
 
 _package-headers() {
   pkgdesc="Header files and scripts for building modules for linux kernel - ${_desc}"
   provides=("linux-headers=${pkgver}")
   conflicts=('linux-headers')
+  replaces=('linux-ti-headers')
 
   install -dm755 "${pkgdir}/usr/lib/modules/${_kernver}"
 

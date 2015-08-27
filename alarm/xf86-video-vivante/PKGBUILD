@@ -5,7 +5,7 @@ buildarch=4
 
 pkgname=xf86-video-vivante
 _yocto_pkgname=xserver-xorg-video-imx-viv
-pkgver=3.10.17_1.0.0
+pkgver=3.10.17_1.0.1
 _pkgver=${pkgver/_/-}
 pkgrel=4
 pkgdesc="Xorg driver for proprietary VIVANTE GPU drivers"
@@ -14,12 +14,12 @@ url="https://community.freescale.com/"
 arch=('armv7h')
 license=('MIT')
 makedepends=('xorg-server-devel')
-depends=('libdrm-viv' 'libx11' 'gpu-viv-bin-mx6q-x11=3.10.17_1.0.0')
+depends=('libdrm-viv' 'libx11' 'gpu-viv-bin-mx6q-x11=3.10.17_1.0.1')
 source=("http://www.freescale.com/lgfiles/NMG/MAD/YOCTO/${_yocto_pkgname}-${_pkgver}.tar.gz"
         'libdrm.patch'
         'fb.patch'
         '10-vivante.conf')
-md5sums=( '697d9a3fb244eb95eae4207bf2d9c321'
+md5sums=( '974f33945dc96e876907541906297798'
           'f7077ac0dcb884dbecb296e7faf2c20a'
           '2cf4b02e3f8741539a7b5ac94a80594f'
           'a9b630f51e3b618ce30befb1ffc96bcb')
@@ -28,7 +28,7 @@ md5sums=( '697d9a3fb244eb95eae4207bf2d9c321'
 prepare() {
   cd "${_yocto_pkgname}-${_pkgver}"
   patch -p1 < "${srcdir}"/libdrm.patch
-  patch -p1 < "${srcdir}"/fb.patch
+  #patch -p1 < "${srcdir}"/fb.patch
   cp "${srcdir}"/10-vivante.conf ./
 }
 

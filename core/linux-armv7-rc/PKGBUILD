@@ -3,12 +3,12 @@
 
 buildarch=4
 
-_rcver=3.18
-_rcrel=4
-_rcnrel=armv7-x2
+_rcver=4.2
+_rcrel=8
+_rcnrel=armv7-x0
 
 pkgbase=linux-armv7-rc
-_srcname=linux-3.$((${_rcver##*.}-1))
+_srcname=linux-4.$((${_rcver##*.}-1))
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 multi-platform"
 pkgver=${_rcver}.rc${_rcrel}
@@ -18,24 +18,30 @@ url="http://www.kernel.org/"
 license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-tools')
 options=('!strip')
-source=("http://www.kernel.org/pub/linux/kernel/v3.x/${_srcname}.tar.xz"
-        "https://www.kernel.org/pub/linux/kernel/v3.x/testing/patch-${_rcver}-rc${_rcrel}.xz"
-        "http://rcn-ee.net/deb/sid-armhf/v${_rcver}.0-rc${_rcrel}-${_rcnrel}/patch-${_rcver}-rc${_rcrel}-${_rcnrel}.diff.gz"
-        "git://git.code.sf.net/p/aufs/aufs3-standalone#branch=aufs3.x-rcN"
+source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
+        "https://www.kernel.org/pub/linux/kernel/v4.x/testing/patch-${_rcver}-rc${_rcrel}.xz"
+        "http://rcn-ee.com/deb/sid-armhf/v${_rcver}.0-rc${_rcrel}-${_rcnrel}/patch-${_rcver}-rc${_rcrel}-${_rcnrel}.diff.gz"
         '0001-ARM-atags-add-support-for-Marvell-s-u-boot.patch'
         '0002-ARM-atags-fdt-retrieve-MAC-addresses-from-Marvell-bo.patch'
         '0003-SMILE-Plug-device-tree-file.patch'
         '0004-fix-mvsdio-eMMC-timing.patch'
+        '0005-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch'
+        '0006-ARM-TLV320AIC23-SoC-Audio-Codec-Fix-errors-reported-.patch'
+        '0007-set-default-cubietruck-led-triggers.patch'
+        '0008-USB-armory-support.patch'
         'config')
-md5sums=('fb30d0f29214d75cddd2faa94f73d5cf'
-         '587ecff959eff7392c4977c513580f44'
-         'f162f3907c37e9e12d9e2117c01cc497'
-         'SKIP'
-         'bf5c78900f42d0ae6b7f45d8b88ba7f8'
-         '4e54599d103d95f9eadd3a4c6a413da0'
-         '11889f6e6873f79059c5d9bf3fcc0cf8'
-         'e728042f0d32a7d2e0610ed3eaf4ad52'
-         'fef11931fa2f261058db82256e0ae1cb')
+md5sums=('fe9dc0f6729f36400ea81aa41d614c37'
+         '9fdcb985419e57c2159d69f660ac9cd3'
+         'fd76c5733766038ae06b116ea9e11ab5'
+         '61f728f854713d17a3d4ef00f8e38f1e'
+         'bc39bcc5d752155854f31eb7758db5e8'
+         'e871d819421abab551d8219b62cccdf9'
+         '05e37d0cd7670fe10502b56864b93c41'
+         'bef1f3ba7b87f467316de0ae99b40acf'
+         '3be6a6ddf93b89e90cc127268721845e'
+         'fe20decabf6b7d94cf2ecb4d15a07ba7'
+         '50dca48291316e4c0a7e918f08d5e3f5'
+         '36cc9dcd9d479c35d362b852a00d6d74')
 
 prepare() {
   cd "${srcdir}/${_srcname}"
@@ -51,17 +57,10 @@ prepare() {
   git apply ../0002-ARM-atags-fdt-retrieve-MAC-addresses-from-Marvell-bo.patch
   git apply ../0003-SMILE-Plug-device-tree-file.patch
   git apply ../0004-fix-mvsdio-eMMC-timing.patch
-
-  # AUFS patches
-  cp -ru "${srcdir}/aufs3-standalone/Documentation" .
-  cp -ru "${srcdir}/aufs3-standalone/fs" .
-  cp -ru "${srcdir}/aufs3-standalone/include/uapi/linux/aufs_type.h" ./include/linux
-  cp -ru "${srcdir}/aufs3-standalone/include/uapi/linux/aufs_type.h" ./include/uapi/linux
-
-  git apply ../aufs3-standalone/aufs3-kbuild.patch
-  git apply ../aufs3-standalone/aufs3-base.patch
-  git apply ../aufs3-standalone/aufs3-mmap.patch
-  git apply ../aufs3-standalone/aufs3-standalone.patch
+  git apply ../0005-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch
+  git apply ../0006-ARM-TLV320AIC23-SoC-Audio-Codec-Fix-errors-reported-.patch
+  git apply ../0007-set-default-cubietruck-led-triggers.patch
+  git apply ../0008-USB-armory-support.patch
 
   cat "${srcdir}/config" > ./.config
 
@@ -106,7 +105,7 @@ _package() {
   pkgdesc="The Linux Kernel and modules - ${_desc}"
   depends=('coreutils' 'linux-firmware' 'kmod' 'mkinitcpio>=0.7')
   optdepends=('crda: to set the correct wireless channels of your country')
-  provides=('kernel26' "linux=${pkgver}" 'aufs_friendly')
+  provides=('kernel26' "linux=${pkgver}")
   conflicts=('linux')
   replaces=('linux-mvebu')
   install=${pkgname}.install
@@ -273,22 +272,22 @@ _package-headers() {
 
 _package-smileplug() {
   pkgdesc="The Linux Kernel - ${_desc} - Marvell SMILE Plug"
-  depends=('linux-armv7')
-  conflicts=('linux-armv7-mirabox' 'linux-armv7-ax3')
-  replaces=('linux-mvebu-smileplug')
+  depends=('linux-armv7-rc')
+  provides=('linux-armv7-rc-uimage')
+  conflicts=('linux-armv7-rc-uimage')
 
   cd "${srcdir}/${_srcname}"
 
-  mkdir -p "${pkgdir}/boot"
+  mkdir -p "${pkgdir}/boot" 
   cat arch/$KARCH/boot/zImage arch/$KARCH/boot/dts/armada-370-smileplug.dtb > myimage
   mkimage -A arm -O linux -T kernel -C none -a 0x00008000 -e 0x00008000 -n "${pkgname}" -d myimage "${pkgdir}/boot/uImage"
 }
 
 _package-mirabox() {
   pkgdesc="The Linux Kernel - ${_desc} - Globalscale Mirabox"
-  depends=('linux-armv7')
-  conflicts=('linux-armv7-smileplug' 'linux-armv7-ax3')
-  replaces=('linux-mvebu-mirabox')
+  depends=('linux-armv7-rc')
+  provides=('linux-armv7-rc-uimage')
+  conflicts=('linux-armv7-rc-uimage')
 
   cd "${srcdir}/${_srcname}"
 
@@ -299,9 +298,9 @@ _package-mirabox() {
 
 _package-ax3() {
   pkgdesc="The Linux Kernel - ${_desc} - OpenBlocks AX3-4"
-  depends=('linux-armv7')
-  conflicts=('linux-armv7-mirabox' 'linux-armv7-smileplug')
-  replaces=('linux-mvebu-ax3')
+  depends=('linux-armv7-rc')
+  provides=('linux-armv7-rc-uimage')
+  conflicts=('linux-armv7-rc-uimage')
 
   cd "${srcdir}/${_srcname}"
 
@@ -310,7 +309,20 @@ _package-ax3() {
   mkimage -A arm -O linux -T kernel -C none -a 0x00008000 -e 0x00008000 -n "${pkgname}" -d myimage "${pkgdir}/boot/uImage"
 }
 
-pkgname=("${pkgbase}" "${pkgbase}-headers" "${pkgbase}-smileplug" "${pkgbase}-mirabox" "${pkgbase}-ax3")
+_package-d3plug() {
+  pkgdesc="The Linux Kernel - ${_desc} - Globalscale D3Plug"
+  depends=('linux-armv7-rc')
+  provides=('linux-armv7-rc-uimage')
+  conflicts=('linux-armv7-rc-uimage')
+
+  cd "${srcdir}/${_srcname}"
+
+  mkdir -p "${pkgdir}/boot"
+  cat arch/$KARCH/boot/zImage arch/$KARCH/boot/dts/dove-d3plug.dtb > myimage
+  mkimage -A arm -O linux -T kernel -C none -a 0x00008000 -e 0x00008000 -n "${pkgname}" -d myimage "${pkgdir}/boot/uImage"
+}
+
+pkgname=("${pkgbase}" "${pkgbase}-headers" "${pkgbase}-smileplug" "${pkgbase}-mirabox" "${pkgbase}-ax3" "${pkgbase}-d3plug")
 for _p in ${pkgname[@]}; do
   eval "package_${_p}() {
     _package${_p#${pkgbase}}

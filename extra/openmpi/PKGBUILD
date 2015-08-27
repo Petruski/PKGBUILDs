@@ -6,7 +6,7 @@
 #  - only use valgrind with v7
 
 pkgname=openmpi
-pkgver=1.8.3
+pkgver=1.8.8
 pkgrel=1
 pkgdesc='High performance message passing library (MPI)'
 arch=(i686 x86_64)
@@ -14,23 +14,11 @@ url='http://www.open-mpi.org'
 license=(custom)
 depends=(libltdl hwloc)
 makedepends=(inetutils gcc-fortran)
+makedepends_armv7h=(valgrind)
 optdepends=('gcc-fortran: fortran support')
 options=(staticlibs)
-source=(http://www.open-mpi.org/software/ompi/v1.8/downloads/${pkgname}-${pkgver}.tar.bz2
-        system_ltdl.patch)
-sha1sums=('4be9c5d2a8baee6a80bde94c6485931979a428fe'
-          'd5f8a3d463f1a1f29ca4725d6fb3b9f8c40799dc')
-
-[[ $CARCH = armv7h ]] && makedepends+=('valgrind')
-
-prepare() {
-   cd $pkgname-$pkgver
-
-   # Make sure we use the system ltdl library rather than the ones in the tarball
-   rm -r opal/libltdl
-   patch -p1 < ../system_ltdl.patch
-   ./autogen.pl
-}
+source=(http://www.open-mpi.org/software/ompi/v1.8/downloads/${pkgname}-${pkgver}.tar.bz2)
+sha1sums=('0c9cc2ad1ee73838bed1a445793e36671d631447')
 
 build() {
    cd $pkgname-$pkgver
@@ -38,6 +26,7 @@ build() {
    # enable valgrind and memchecker for v7
    [[ $CARCH = armv7h ]] && CONFIG='--with-valgrind --enable-memchecker'
 
+   ./autogen.pl
    ./configure --prefix=/usr \
                --sysconfdir=/etc/${pkgname} \
                --enable-mpi-fortran=all \

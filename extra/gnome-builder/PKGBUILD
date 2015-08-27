@@ -1,0 +1,44 @@
+# $Id$
+# Maintainer: Jan Alexander Steffens (heftig) <jan.steffens@gmail.com>
+
+# ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
+#  - patch to fix build on ARM
+
+pkgname=gnome-builder
+pkgver=3.16.3
+pkgrel=2
+pkgdesc="An IDE for writing GNOME-based software"
+url="https://wiki.gnome.org/Apps/Builder"
+arch=(i686 x86_64)
+license=(GPL3)
+depends=(gtksourceview3 devhelp libgit2-glib gjs python-gobject clang desktop-file-utils
+         ctags)
+makedepends=(intltool llvm gobject-introspection)
+groups=(gnome-extra)
+install=gnome-builder.install
+source=(http://download.gnome.org/sources/$pkgname/${pkgver:0:4}/$pkgname-$pkgver.tar.xz
+        arm.patch)
+sha256sums=('a1d7b287d39ce724114c128e25bb00e273ecd8982ed22c8aba48cad9c4d51e61'
+            'e56bb096be7b6fae0725efa5846e2376177e12b6b0495e04c21c13d771c38b34')
+
+prepare() {
+  cd $pkgname-$pkgver
+  patch -p1 -i ../arm.patch
+}
+
+build() {
+  cd $pkgname-$pkgver
+  ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var \
+    --libexecdir=/usr/lib
+  make
+}
+
+check() {
+  cd $pkgname-$pkgver
+  make -k check || :
+}
+
+package() {
+  cd $pkgname-$pkgver
+  make DESTDIR="$pkgdir" install
+}

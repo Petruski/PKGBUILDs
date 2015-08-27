@@ -3,13 +3,12 @@
 # Contributor: Jakub Schmidtke <sjakub@gmail.com>
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
-#  - patch to fix building webrtc
-
-buildarch=20
+#  - mozconfig changes for ARM
+#  - patch to remove NEON/SIMD checks from configure
 
 pkgname=firefox
-pkgver=33.1
-pkgrel=2
+pkgver=40.0.2
+pkgrel=1
 pkgdesc="Standalone web browser from mozilla.org"
 arch=('i686' 'x86_64')
 license=('MPL' 'GPL' 'LGPL')
@@ -22,28 +21,41 @@ makedepends=('unzip' 'zip' 'diffutils' 'python2' 'yasm' 'mesa' 'imake'
              'inetutils')
 optdepends=('networkmanager: Location detection via available WiFi networks'
             'gst-plugins-good: h.264 video'
-            'gst-libav: h.264 video')
+            'gst-libav: h.264 video'
+            'upower: Battery API')
 install=firefox.install
 options=('!emptydirs' '!makeflags')
-source=(https://ftp.mozilla.org/pub/mozilla.org/firefox/releases/$pkgver/source/firefox-$pkgver.source.tar.bz2{,.asc}
-        mozconfig firefox.desktop firefox-install-dir.patch vendor.js rhbz-966424.patch
+source=(https://ftp.mozilla.org/pub/mozilla.org/firefox/releases/$pkgver/source/firefox-$pkgver.source.tar.bz2
+        mozconfig
+        firefox.desktop
+        firefox-install-dir.patch
+        vendor.js
         firefox-fixed-loading-icon.png
-        arm-webrtc-fix.patch)
-sha256sums=('47bf66f8680a97692ea142ca62d46cc91af454771f7fac5c6f6116b83792be01'
-            'SKIP'
-            '2e04ee3aefb33bb0f9367e6e88c8ded2cb3e8926fce75a71acfb34b0619dc650'
-            'd2a7610393ba259c35e3227b92e02ec91095a95189f56ac93ccdf6732772719c'
+        no-neon.patch)
+sha256sums=('057dd75d6fb4fd264cd175788518d458cb7792fd905a6fa450968526305121fd'
+            '11a16ea86073de5a6e7c1c665c954f0cf184932abbb55fc906ba1671e5b7162e'
+            'c202e5e18da1eeddd2e1d81cb3436813f11e44585ca7357c4c5f1bddd4bec826'
             'd86e41d87363656ee62e12543e2f5181aadcff448e406ef3218e91865ae775cd'
             '4b50e9aec03432e21b44d18c4c97b2630bace606b033f7d556c9d3e3eb0f4fa4'
-            '4f0046b39a8d98f6e4fc3360ec490cb2416e38c7b3e92699f7e511c206c2c961'
             '68e3a5b47c6d175cc95b98b069a15205f027cab83af9e075818d38610feb6213'
-            '6f81cd3c1d5d96aaeae9882cc24da4fd42ff7ebf25113d9516d5e7c94d375090')
+            '6d0c1c9ca28b20d206ce24ca84f4d4e3f5d062a2e9cb7445fcb6c2cfea959b4a')
+validpgpkeys=('2B90598A745E992F315E22C58AB132963A06537A')
 
 # Google API keys (see http://www.chromium.org/developers/how-tos/api-keys)
 # Note: These are for Arch Linux use ONLY. For your own distribution, please
 # get your own set of keys. Feel free to contact foutrelis@archlinux.org for
 # more information.
+#  - Arch Linux ARM has obtained permission to use the Arch Linux keys.
 _google_api_key=AIzaSyDwr302FpOSkGRpLlUpPThNTDPbXcIn_FM
+_google_default_client_id=413772536636.apps.googleusercontent.com
+_google_default_client_secret=0ZChLK6AxeA3Isu96MkwqDR4
+
+# Mozilla API keys (see https://location.services.mozilla.com/api)
+# Note: These are for Arch Linux use ONLY. For your own distribution, please
+# get your own set of keys. Feel free to contact heftig@archlinux.org for
+# more information.
+_mozilla_api_key=16674381-f021-49de-8622-3021c5942aff
+
 
 prepare() {
   cd mozilla-release
@@ -51,40 +63,36 @@ prepare() {
   cp ../mozconfig .mozconfig
   patch -Np1 -i ../firefox-install-dir.patch
 
-  # https://bugs.archlinux.org/task/41689
-  patch -Np2 -i ../rhbz-966424.patch
-
   echo -n "$_google_api_key" >google-api-key
   echo "ac_add_options --with-google-api-keyfile=\"$PWD/google-api-key\"" >>.mozconfig
+
+  echo -n "$_google_default_client_id $_google_default_client_secret" >google-oauth-api-key
+  echo "ac_add_options --with-google-oauth-api-keyfile=\"$PWD/google-oauth-api-key\"" >>.mozconfig
+
+  echo -n "$_mozilla_api_key" >mozilla-api-key
+  echo "ac_add_options --with-mozilla-api-keyfile=\"$PWD/mozilla-api-key\"" >>.mozconfig
 
   mkdir "$srcdir/path"
 
   # WebRTC build tries to execute "python" and expects Python 2
   ln -s /usr/bin/python2 "$srcdir/path/python"
 
-  # Use gold, as Mozilla can use some of its features, such as safe ICF
-  #ln -s /usr/bin/ld.gold "$srcdir/path/ld"
-
   # configure script misdetects the preprocessor without an optimization level
   # https://bugs.archlinux.org/task/34644
   sed -i '/ac_cpp=/s/$CPPFLAGS/& -O2/' configure
 
-  # Fix tab loading icon (flickers with libpng 1.6)
+  # Fix tab loading icon (doesn't work with libpng 1.6)
   # https://bugzilla.mozilla.org/show_bug.cgi?id=841734
-  # TODO: Remove this; Firefox 36 might use CSS animations for the loading icon
-  # https://bugzilla.mozilla.org/show_bug.cgi?id=759252
   cp "$srcdir/firefox-fixed-loading-icon.png" \
     browser/themes/linux/tabbrowser/loading.png
 
-  # Fix webrtc build on ARM
-  patch -Np0 -i ../arm-webrtc-fix.patch
+  patch -Np0 -i ../no-neon.patch
 }
 
 build() {
   cd mozilla-release
 
   export PATH="$srcdir/path:$PATH"
-  export LDFLAGS="$LDFLAGS -Wl,-rpath,/usr/lib/firefox"
   export PYTHON="/usr/bin/python2"
 
   # Do PGO
