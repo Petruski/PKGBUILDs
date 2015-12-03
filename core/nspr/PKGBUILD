@@ -6,7 +6,7 @@
 #  - --enable-64bit for AArch64
 
 pkgname=nspr
-pkgver=4.10.8
+pkgver=4.10.10
 pkgrel=1
 pkgdesc="Netscape Portable Runtime"
 arch=(i686 x86_64)
@@ -15,9 +15,9 @@ license=('MPL' 'GPL')
 depends=('glibc')
 makedepends=('zip')
 options=('!emptydirs')
-source=(ftp://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v${pkgver}/src/${pkgname}-${pkgver}.tar.gz)
-sha1sums=('c87c6a10e0e36866006b45c194d70cd8c67d0934')
-sha256sums=('507ea57c525c0c524dae4857a642b4ef5c9d795518754c7f83422d22fe544a15')
+source=(https://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v${pkgver}/src/${pkgname}-${pkgver}.tar.gz)
+sha1sums=('d90b61d96248577a551bd322199dfa2438941661')
+sha256sums=('343614971c30520d0fa55f4af0a72578e2d8674bb71caf7187490c3379523107')
 
 build() {
   cd $pkgname-$pkgver

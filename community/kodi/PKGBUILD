@@ -15,11 +15,9 @@
 
 buildarch=4
 
-_prefix=/usr
-
 pkgbase=kodi
 pkgname=('kodi' 'kodi-eventclients')
-pkgver=15.1
+pkgver=15.2
 _codename=Isengard
 pkgrel=1
 arch=('i686' 'x86_64')
@@ -38,7 +36,7 @@ makedepends=(
 source=(
   "$pkgname-$pkgver-$_codename.tar.gz::https://github.com/xbmc/xbmc/archive/$pkgver-$_codename.tar.gz"
 )
-sha256sums=('72b2610d8fbff807128d74429f25bf6716ba880c27c2c5d9fad012ec7fc70705')
+sha256sums=('dd8aeb942e6de5d1488e243e1346cff3f6597e21b5131a3ba72ff5cc82037110')
 
 prepare() {
   cd "$srcdir/xbmc-$pkgver-$_codename"
@@ -60,7 +58,7 @@ build() {
 
   # Configuring XBMC
   export PYTHON_VERSION=2  # external python v2
-  ./configure --prefix=$_prefix --exec-prefix=$_prefix \
+  ./configure --prefix=/usr --exec-prefix=/usr \
     --disable-debug \
     --enable-optimizations \
     --enable-libbluray \
@@ -83,7 +81,7 @@ package_kodi() {
   depends=(
     'python2-pillow' 'python2-pybluez' 'python2-simplejson'
     'mesa-demos' 'xorg-xdpyinfo'
-    'bluez-libs' 'fribidi' 'glew' 'hicolor-icon-theme' 'libcdio'
+    'bluez-libs' 'fribidi' 'glew' 'hicolor-icon-theme' 'libass' 'libcdio'
     'libjpeg-turbo' 'libmariadbclient' 'libmicrohttpd' 'libpulse' 'libssh'
     'libva' 'libxrandr' 'libxslt' 'lzo' 'sdl2' 'smbclient' 'taglib' 'tinyxml'
     'yajl'
@@ -118,10 +116,10 @@ package_kodi() {
   # we will leave /usr/{include,lib,share}/xbmc for now
 
   # Licenses
-	install -dm755 ${pkgdir}${_prefix}/share/licenses/${pkgname}
+	install -dm755 ${pkgdir}/usr/share/licenses/${pkgname}
   for licensef in LICENSE.GPL copying.txt; do
-		mv ${pkgdir}${_prefix}/share/doc/kodi/${licensef} \
-			${pkgdir}${_prefix}/share/licenses/${pkgname}
+		mv ${pkgdir}/usr/share/doc/kodi/${licensef} \
+			${pkgdir}/usr/share/licenses/${pkgname}
   done
 }
 
