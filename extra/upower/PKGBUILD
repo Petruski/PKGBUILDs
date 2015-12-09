@@ -1,0 +1,36 @@
+# $Id$
+# Maintainer: Jan de Groot <jgc@archlinux.org>
+
+pkgname=upower
+pkgver=0.99.3
+pkgrel=2
+pkgdesc="Abstraction for enumerating power devices, listening to device events and querying history and statistics"
+arch=('i686' 'x86_64')
+url="http://upower.freedesktop.org"
+license=('GPL')
+depends=('systemd' 'libusb' 'dbus-glib' 'libimobiledevice' 'libgudev')
+makedepends=('intltool' 'docbook-xsl' 'gobject-introspection' 'python2')
+backup=('etc/UPower/UPower.conf')
+source=(http://upower.freedesktop.org/releases/$pkgname-$pkgver.tar.xz
+        'handle_at_sign_in_device_path.patch')
+sha256sums=('697199bcc113bb069e6fb6bf4135536a702ba9847e46c5fc6df87d19624ddd38'
+            '22e1e42239f2c04216bdc298ea054efbc9176fd3bf83f820df6a0c63e61182b7')
+
+build() {
+  cd $pkgname-$pkgver
+
+  patch -p1 < "${srcdir}/handle_at_sign_in_device_path.patch"
+
+  ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --localstatedir=/var \
+    --libexecdir=/usr/lib/$pkgname \
+    --disable-static
+  make
+}
+
+package() {
+  cd $pkgname-$pkgver
+  make DESTDIR="$pkgdir" install
+}

@@ -1,0 +1,11 @@
+diff -Nur upower-0.99.3-orig/src/up-device.c upower-0.99.3/src/up-device.c
+--- upower-0.99.3-orig/src/up-device.c  2015-04-22 11:57:08.000000000 +0200
++++ upower-0.99.3/src/up-device.c       2015-11-24 21:27:30.769995603 +0100
+@@ -986,6 +986,8 @@
+			id[i] = 'x';
+		if (id[i] == ':')
+			id[i] = 'o';
++		if (id[i] == '@')
++			id[i] = 'a';
+	}
+	object_path = g_build_filename (UP_DEVICES_DBUS_PATH, id, NULL);
