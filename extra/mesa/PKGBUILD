@@ -6,10 +6,11 @@
 #  - Removed DRI and Gallium3D drivers/packages for chipsets that don't exist in our ARM devices (intel, radeon, VMware svga).
 #  - Removed libgles, libegl and khrplatform-devel from conflicts for marvell-libgfx compatibility.
 #  - Moved .pc files to mesa-libgl that reference libraries in mesa-libgl
+#  - Build vc4 gallium driver for v6/v7
 
 pkgbase=mesa
 pkgname=('mesa' 'mesa-libgl' 'libva-mesa-driver')
-pkgver=11.1.1
+pkgver=11.1.2
 pkgrel=1
 arch=('i686' 'x86_64')
 makedepends=('python2-mako' 'libxml2' 'libx11' 'glproto' 'libdrm' 'dri2proto' 'dri3proto' 'presentproto'
@@ -20,7 +21,7 @@ license=('custom')
 options=('!libtool')
 source=(ftp://ftp.freedesktop.org/pub/mesa/${pkgver}/mesa-${pkgver}.tar.xz{,.sig}
         LICENSE)
-sha256sums=('64db074fc514136b5fb3890111f0d50604db52f0b1e94ba3fcb0fe8668a7fd20'
+sha256sums=('8f72aead896b340ba0f7a4a474bfaf71681f5d675592aec1cb7ba698e319148b'
             'SKIP'
             '7fdc119cf53c8ca65396ea73f6d10af641ba41ea1dd2bd44a824726e01c8b3f2')
 validpgpkeys=('8703B6700E7EE06D7A39B8D6EDAE37B02CEB490D') # Emil Velikov <emil.l.velikov@gmail.com>
@@ -37,10 +38,12 @@ build() {
 
   #autoreconf -vfi # our automake is far too new for their build system :)
 
+  [[ $CARCH == "armv7h" || $CARCH == "armv6h" ]] && VC4=',vc4'
+
   ./configure --prefix=/usr \
     --sysconfdir=/etc \
     --with-dri-driverdir=/usr/lib/xorg/modules/dri \
-    --with-gallium-drivers=freedreno,nouveau,swrast \
+    --with-gallium-drivers=freedreno,nouveau,swrast${VC4} \
     --with-dri-drivers=nouveau,swrast \
     --with-egl-platforms=x11,drm,wayland \
     --with-sha1=libgcrypt \

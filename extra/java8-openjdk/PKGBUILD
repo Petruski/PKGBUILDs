@@ -20,9 +20,8 @@ pkgname=('jre8-openjdk-headless' 'jre8-openjdk' 'jdk8-openjdk' 'openjdk8-src' 'o
 pkgbase=java8-openjdk
 _java_ver=8
 # Found @ http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-_jdk_update=66
-# Found @ http://hg.openjdk.java.net/jdk8u/jdk8u
-_jdk_build=17
+_jdk_update=74
+_jdk_build=02
 pkgver=${_java_ver}.u${_jdk_update}
 _repo_ver=jdk${_java_ver}u${_jdk_update}-b${_jdk_build}
 pkgrel=1
@@ -42,14 +41,14 @@ source=(jdk8u-${_repo_ver}.tar.gz::${_url_src}/archive/${_repo_ver}.tar.gz
         langtools-${_repo_ver}.tar.gz::${_url_src}/langtools/archive/${_repo_ver}.tar.gz
         nashorn-${_repo_ver}.tar.gz::${_url_src}/nashorn/archive/${_repo_ver}.tar.gz
         rhbz1206656_fix_current_stack_pointer.patch)
-sha256sums=('7bd68bbe99094c46744dbaf5563e3e49b08adc8ed7a8e24d8f10520d42b1a63b'
-            '1dfa95d3e5747a48f2acf91b4c3f3b7233f65fd37078c096015ade80ceb5d93d'
-            'f552ab7216d233296f64cb2551f43090b4ff1c0383bec365c910a913e25e61bb'
-            'a6368996acc5f914acab7b000ce70f387b7994776fb00dc82882bdefc676c77b'
-            '317f85ae5af4d2be44b8b5a4318512d344895e978530cc87544bf9987860b0cb'
-            'e4a95401c4e45fc0471e42b2b62bdfad025eee57715583ce58b0da785159e2eb'
-            'b58d81b7e873c2ebd9f96a6bbd538f68c1f457e4dfea3b262e52973a33f2e6f7'
-            'ad5c17b67999179966175caa35684056a48eb74186191e8f1b8ff900b580b25a'
+sha256sums=('5a65fc7e061e4f1bec3a7c666a5875c4279533308d41a289eab43bc36b12faca'
+            '8ce88dbb0f00dd60711b86d435505addfaf215474955782d9a9f34e7adc0b369'
+            '63d7f2a230623e82def92c9bdec36d02b82a0f7d29648bdafa92d9cb645df53e'
+            '6796e956492778b6d1831144ae06a39f17dd817a31cc2205fe4a68964cdc794f'
+            '40d58330b06a855d7f2edd462bf2550f82ed83f37ee881b0dd63684a794f808e'
+            '42c398efba7280ea331ba2bbe01f608a63514cde0bd8b417b5451cedf04670d5'
+            '1340a50fc7e37ab73869f0f934b7e9755bffb7e261d2fd5cadb4bd7acc558a1c'
+            '150e7518c5be066ea729297c44fbbfebb874a5b1fe2b0a9eb0a52da9bf83df31'
             '85d396e1663514390e73b0b072a5f93c51ca6e324ee0a08aa2ace599e3df83bf')
 
 case "${CARCH}" in
