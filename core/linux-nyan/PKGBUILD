@@ -7,8 +7,8 @@ pkgbase=linux-nyan
 _kernelname=${pkgbase#linux}
 _desc="TegraK1 Chromebooks (Nyan)"
 pkgver=3.10.18
-pkgrel=6
-_commit=539671c830fea129207c0d06a9d2193231dca440
+pkgrel=7
+_commit=46472634867d4447d3236bce7cf57f6befe0d6b0
 arch=('armv7h')
 url="https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.10"
 license=('GPL2')
@@ -16,7 +16,7 @@ makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-tools' '
 options=('!strip')
 source=(  "https://chromium.googlesource.com/chromiumos/third_party/kernel/+archive/${_commit}.tar.gz"
           http://archlinuxarm.org/builder/src/sd{8787,8797,8897}_uapsta_cros.bin
-          'http://commondatastorage.googleapis.com/chromeos-localmirror/distfiles/xhci-firmware-2015.05.06.00.00.tbz2'
+          'http://commondatastorage.googleapis.com/chromeos-localmirror/distfiles/xhci-firmware-2016.01.20.00.00.tbz2'
           'config'
           '0001-kernel-add-support-for-gcc-5.patch'
           '0002-Staging-wlan-ng-fix-sparse-warning-in-prism2fw.c.patch'
@@ -34,7 +34,7 @@ sha256sums=('SKIP'
             '72c9d88552505ee28dc9db342cd1ac1f4efee56f2884e710d66d3f60584c321d'
             '35f60f174da4bb367f37e355ca5f037a8528021d33d475cae91e968beb2f8325'
             'da63c1035c0d6c53a71901ff4ad4e7abca697b297b5446de4ed5bed0badd976b'
-            '878f68640256f1eaec0db68379e7a53c14ed812cfc29397b1a425cf91ee1cede'
+            '749e71828635b144f336138a233c70740eb3dd3903ba31846784854ed519227d'
             '2a995910727b04018a4519888550fdb184f3399bd8ea146ee2d5675a03ec778a'
             '9cbfa08415884b6881e44b109b9e46c025ab273a42d1d65d008692850baf8348'
             '3b0d1eea23a2d35762f1a2e17bb642d2a5bc8fb79991b8a6941b4e0a5abccd66'
