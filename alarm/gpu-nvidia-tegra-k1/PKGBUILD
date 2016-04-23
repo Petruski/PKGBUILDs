@@ -2,11 +2,11 @@
 
 buildarch=4
 pkgbase=gpu-nvidia-tegra-k1
-_nv_release=r21_Release_v4.0
+_nv_full_release=r21_Release_v4.0
 _nv_version=21.4
 _nv_release=0
 pkgver="${_nv_version}.${_nv_release}"
-pkgrel=4
+pkgrel=4.1
 pkgdesc="NVIDIA proprietary Tegra K1 GPU drivers for Tegra K1 powered SoC"
 
 # filesystem prefix for the include files and license
@@ -17,7 +17,7 @@ url="https://developer.nvidia.com/embedded/linux-tegra"
 arch=('armv7h')
 license=('proprietary')
 
-source=("http://developer.download.nvidia.com/embedded/L4T/${_nv_release}/Tegra124_Linux_R${pkgver}_armhf.tbz2"
+source=("http://developer.download.nvidia.com/embedded/L4T/${_nv_full_release}/Tegra124_Linux_R${pkgver}_armhf.tbz2"
         51-nvrm.rules
         egl.pc
         glesv2.pc)
