@@ -1,7 +1,8 @@
-From 0ba7469f426c5576a896f9bf128342a996f55f1b Mon Sep 17 00:00:00 2001
+From 10aca71d77b1f3ef917377ce2027c3bd4d51ac56 Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Wed, 9 Dec 2015 18:06:12 +0100
-Subject: [PATCH 8/8] zd1201: drop the node parameter from the hlist iterators
+Subject: [PATCH 08/14] zd1201: drop the node parameter from the hlist
+ iterators
 
 This fixes the problem of drivers/net/wireless-3.8/zd1201.c
 passing too many arguments to hlist_for_each_entry(). The
@@ -57,5 +58,5 @@ index 48273dd..4941f20 100644
  		kfree_skb(frag->skb);
  		kfree(frag);
 -- 
-2.6.3
+2.8.3
 

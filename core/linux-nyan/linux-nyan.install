@@ -2,7 +2,7 @@
 # arg 2:  the old package version
 
 KERNEL_NAME=-nyan
-KERNEL_VERSION=3.10.18-8-ARCH
+KERNEL_VERSION=3.10.18-9-ARCH
 
 flash_kernel() {
   major=$(mountpoint -d / | cut -f 1 -d ':')

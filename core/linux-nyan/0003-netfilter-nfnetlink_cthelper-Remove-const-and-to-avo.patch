@@ -1,8 +1,8 @@
-From 8320c858b34c8725c53f771ea60432fc72c3496c Mon Sep 17 00:00:00 2001
+From 799686e23d4c4e141644c7424b34020fa521cad2 Mon Sep 17 00:00:00 2001
 From: Chen Gang <gang.chen.5i5j@gmail.com>
 Date: Wed, 24 Dec 2014 23:04:54 +0800
-Subject: [PATCH 3/8] netfilter: nfnetlink_cthelper: Remove 'const' and '&' to
- avoid warnings
+Subject: [PATCH 03/14] netfilter: nfnetlink_cthelper: Remove 'const' and '&'
+ to avoid warnings
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -64,5 +64,5 @@ index a191b6d..a9da433 100644
  }
  
 -- 
-2.6.3
+2.8.3
 

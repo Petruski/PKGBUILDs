@@ -1,7 +1,7 @@
-From 40719671e68d4c5d6a4555693734f316b0a0237a Mon Sep 17 00:00:00 2001
+From 32c900b046bc70aa5d6f7f6a99bef70d39723c83 Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Wed, 9 Dec 2015 18:04:06 +0100
-Subject: [PATCH 7/8] Fix several compilation issues with GCC5.2
+Subject: [PATCH 07/14] Fix several compilation issues with GCC5.2
 
 This patch replaces statements such as 'extern static', 'STATIC inline',
 etc. with 'static inline' to make GCC5.2 happy again, and removes a
@@ -73,5 +73,5 @@ index 743cef5..5b0dd20 100644
  {
  	unsigned long address = __vma_address(page, vma);
 -- 
-2.6.3
+2.8.3
 
