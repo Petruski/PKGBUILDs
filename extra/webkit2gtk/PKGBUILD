@@ -8,7 +8,7 @@
 highmem=1
 
 pkgname=webkit2gtk
-pkgver=2.12.1
+pkgver=2.12.3
 pkgrel=1
 pkgdesc="GTK+ Web content engine library"
 arch=('i686' 'x86_64')
@@ -23,7 +23,7 @@ optdepends=('gtk2: Netscape plugin support'
             'gst-libav: nonfree media decoding')
 options=('!emptydirs')
 source=(http://webkitgtk.org/releases/webkitgtk-${pkgver}.tar.xz)
-sha256sums=('5b1a2d5227553f3cecbdb258c68b384f9235747b2c07c15afb555fe4fa6ae896')
+sha256sums=('173cbb9a2eca23eee52e99965483ab25aa9c0569ef5b57041fc0c129cc26c307')
 
 prepare() {
   mkdir build

@@ -3,13 +3,13 @@
 
 buildarch=4
 
-_rcver=4.6
-_rcrel=4
-_rcnrel=armv7-x1
+_rcver=4.7
+_rcrel=2
+_rcnrel=armv7-x0
 
 pkgbase=linux-armv7-rc
-_srcname=linux-4.$((${_rcver##*.}-1))
-#_srcname=linux-${_rcver}-rc${_rcrel}
+#_srcname=linux-4.$((${_rcver##*.}-1))
+_srcname=linux-${_rcver}-rc${_rcrel}
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 multi-platform (release candidate)"
 pkgver=${_rcver}.rc${_rcrel}
@@ -19,9 +19,9 @@ url="http://www.kernel.org/"
 license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-tools' 'vboot-utils' 'dtc')
 options=('!strip')
-source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
-        "https://www.kernel.org/pub/linux/kernel/v4.x/testing/patch-${_rcver}-rc${_rcrel}.xz"
-        #"https://www.kernel.org/pub/linux/kernel/v4.x/testing/${_srcname}.tar.xz"
+source=(#"http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
+        #"https://www.kernel.org/pub/linux/kernel/v4.x/testing/patch-${_rcver}-rc${_rcrel}.xz"
+        "https://www.kernel.org/pub/linux/kernel/v4.x/testing/${_srcname}.tar.xz"
         "http://rcn-ee.com/deb/sid-armhf/v${_rcver}.0-rc${_rcrel}-${_rcnrel}/patch-${_rcver}-rc${_rcrel}-${_rcnrel}.diff.gz"
         '0001-ARM-atags-add-support-for-Marvell-s-u-boot.patch'
         '0002-ARM-atags-fdt-retrieve-MAC-addresses-from-Marvell-bo.patch'
@@ -36,18 +36,17 @@ source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
         'kernel.its'
         'kernel.keyblock'
         'kernel_data_key.vbprivk')
-md5sums=('a60d48eee08ec0536d5efb17ca819aef'
-         'e46066be489b66dfb5250dd394e17d38'
-         '8e4267397cb814ca85f99cfc2602cd3a'
-         'c025cf3894fc3662c49aae80febd85e8'
-         'f0a2c6c5c9d185ef2c324639cc5c5ccc'
-         'cb3bd7ef06f5695e27e3d7a7ec99ab4f'
-         'a67db6ac12f75402b1f7a6fe556fa738'
-         'a5d2d5ef084a9482220ffd5978644a5a'
-         '252b65cccacf013e4ec13e69bba2e543'
-         '91a804ea2c4d44b08a5a05354f86f398'
-         '48b236d1156a8a0dc8fd6e726a5ade0e'
-         'bbe5daa0c6779012ecbc378db6fd2b27'
+md5sums=('687e3ff4f6be272e69cd1633d2955027'
+         '8c739cba64b00b4f1f48f2f2eed78d29'
+         'abf9fe78fae0ffd10b6db56670bbb0f1'
+         'cd9c5400cf4fcd261d19c472d61f7445'
+         '99bb48b1b02b3ace761633622a315d84'
+         '914e279e5fabedc2f2d1afb22ddd225c'
+         '2f4e6922546a4851abdefbfd89f12e00'
+         '6fdf2b5666d534f83eeec6b43c6838c3'
+         'e4ff8c1bcdeb833ca1f86802ef03bc35'
+         'e7e0c12b90941b30ef1f2f6fcda46bf0'
+         '9652b6d6ccbf002f298bf4e9996c6182'
          '7d3061393c215d08f44a46ca48b13b7e'
          '4f2379ed84258050edb858ee8d281678'
          '61c5ff73c136ed07a7aadbf58db3d96a'
@@ -57,7 +56,7 @@ prepare() {
   cd "${srcdir}/${_srcname}"
 
   # add upstream patch
-  git apply --whitespace=nowarn ../patch-${_rcver}-rc${_rcrel}
+  #git apply --whitespace=nowarn ../patch-${_rcver}-rc${_rcrel}
 
   # RCN patch
   git apply ../patch-${_rcver}-rc${_rcrel}-${_rcnrel}.diff
@@ -144,13 +143,11 @@ _package() {
   rm -f "${pkgdir}"/lib/modules/${_kernver}/{source,build}
   # remove the firmware
   rm -rf "${pkgdir}/lib/firmware"
-  # gzip -9 all modules to save 100MB of space
-  find "${pkgdir}" -name '*.ko' |xargs -P 2 -n 1 gzip -9
   # make room for external modules
-  ln -s "../extramodules-${_basekernel}-${_kernelname:-ARCH}" "${pkgdir}/lib/modules/${_kernver}/extramodules"
+  ln -s "../extramodules-${_basekernel}${_kernelname:--ARCH}" "${pkgdir}/lib/modules/${_kernver}/extramodules"
   # add real version for building modules and running depmod from post_install/upgrade
-  mkdir -p "${pkgdir}/lib/modules/extramodules-${_basekernel}-${_kernelname:-ARCH}"
-  echo "${_kernver}" > "${pkgdir}/lib/modules/extramodules-${_basekernel}-${_kernelname:-ARCH}/version"
+  mkdir -p "${pkgdir}/lib/modules/extramodules-${_basekernel}${_kernelname:--ARCH}"
+  echo "${_kernver}" > "${pkgdir}/lib/modules/extramodules-${_basekernel}${_kernelname:--ARCH}/version"
 
   # Now we call depmod...
   depmod -b "$pkgdir" -F System.map "$_kernver"
