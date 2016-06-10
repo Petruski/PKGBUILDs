@@ -118,7 +118,9 @@ build() {
   #yes "" | make config
 
   # build!
-  WIFIVERSION=-3.8 make ${MAKEFLAGS} zImage modules dtbs
+  WIFIVERSION=-3.8 make ${MAKEFLAGS} \
+  KCFLAGS="${KCFLAGS} -Wno-error=unused-const-variable -Wno-error=misleading-indentation -Wno-error=array-bounds" \
+  zImage modules dtbs
 }
 
 _package() {
