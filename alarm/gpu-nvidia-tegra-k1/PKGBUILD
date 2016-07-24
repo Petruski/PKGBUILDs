@@ -2,11 +2,11 @@
 
 buildarch=4
 pkgbase=gpu-nvidia-tegra-k1
-_nv_full_release=r21_Release_v4.0
-_nv_version=21.4
+_nv_full_release=r21_Release_v5.0
+_nv_version=21.5
 _nv_release=0
 pkgver="${_nv_version}.${_nv_release}"
-pkgrel=4.1
+pkgrel=1
 pkgdesc="NVIDIA proprietary Tegra K1 GPU drivers for Tegra K1 powered SoC"
 
 # filesystem prefix for the include files and license
@@ -21,7 +21,7 @@ source=("http://developer.download.nvidia.com/embedded/L4T/${_nv_full_release}/T
         51-nvrm.rules
         egl.pc
         glesv2.pc)
-sha256sums=('f3539746e307751d0f6a0a9f827ae16a7514c5aeb95f43cc618a317aacb06f69'
+sha256sums=('a639e3e37e17ef11ea5754d7b703a133febdd6a5d3dd2e5b3924288930a45cca'
             'bdff89e517cd8cbba5f9e9d960bc79d7c2740bf563ff6aaab789a13a547f08fe'
             '81ea8cf2c759edc19fbecdbaee3ddf22ab74d82e119da31ea9ddc8d1eb038ab4'
             'ac63bec624005f948386f427ea7e2d679662146383b5fed27fddd6d8a327afa1')
