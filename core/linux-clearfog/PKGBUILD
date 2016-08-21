@@ -3,49 +3,41 @@
 buildarch=4
 
 pkgbase=linux-clearfog
-pkgname=('linux-clearfog' 'linux-headers-clearfog')
+pkgname=('linux-clearfog' 'linux-clearfog-headers')
 # pkgname=linux-custom       # Build kernel with a different name
-_commit=a20f684fb5df2d2968f012a9450ee1d59c7a2f29
-_srcname=linux-armada38x-${_commit}
+_commit=fd87b5f7d58bf52d17808460d2565d3a9f77a560
+_srcname=linux-stable-${_commit}
 _kernelname=${pkgname#linux}
-pkgver=3.10.101
-pkgrel=4
-cryptodev_commit=bc67142c57eadc0aafd0323ec527849012786643
-bfqver=v7r8
+pkgver=4.4.18
+pkgrel=1
+cryptodev_commit=7a3a9ee1329f7224b4fc564b80ef8160457caf76
+bfqver=v7r11
 
 arch=('armv7h')
 url="http://www.kernel.org/"
 license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'uboot-mkimage' 'git' 'lzop')
 options=('!strip')
-source=("linux-${_commit}::https://github.com/moonman/linux-armada38x/archive/${_commit}.tar.gz"
+source=("linux-${_commit}::https://github.com/moonman/linux-stable/archive/${_commit}.tar.gz"
         "cryptodev-${cryptodev_commit}.tar.gz::https://github.com/cryptodev-linux/cryptodev-linux/archive/${cryptodev_commit}.tar.gz"
-        "ftp://teambelgium.net/bfq/patches/${pkgver:0:4}.8+-${bfqver}/0001-block-cgroups-kconfig-build-bits-for-BFQ-${bfqver}-${pkgver:0:4}.8.patch"
-        "ftp://teambelgium.net/bfq/patches/${pkgver:0:4}.8+-${bfqver}/0002-block-introduce-the-BFQ-${bfqver}-I-O-sched-for-${pkgver:0:4}.8.patch"
-        "ftp://teambelgium.net/bfq/patches/${pkgver:0:4}.8+-${bfqver}/0003-block-bfq-add-Early-Queue-Merge-EQM-to-BFQ-${bfqver}-for-${pkgver:0:4}.8+.patch"
-        'config'
-        'compiler-gcc_integrate_the_various_compiler-h_files.patch'
-        'compiler-gcc_disable_-ftracer_for-__noclone_functions.patch')
+        "ftp://teambelgium.net/bfq/patches/${pkgver:0:3}.0-${bfqver}/0001-block-cgroups-kconfig-build-bits-for-BFQ-${bfqver}-${pkgver:0:3}.0.patch"
+        "ftp://teambelgium.net/bfq/patches/${pkgver:0:3}.0-${bfqver}/0002-block-introduce-the-BFQ-${bfqver}-I-O-sched-for-${pkgver:0:3}.0.patch"
+        "ftp://teambelgium.net/bfq/patches/${pkgver:0:3}.0-${bfqver}/0003-block-bfq-add-Early-Queue-Merge-EQM-to-BFQ-${bfqver}-for.patch"
+        'config')
+md5sums=('10d45493f82ae3f463092d08d1680185'
+         'ad56ca4e2a29a3b76f3526c262d9fec1'
+         'c1d7fcfe88edb658375089c0a9cc1811'
+         '953133d5e387de2ad79ac0ae5c27cb6b'
+         'f0387e673975e9f2a5e05136948edece'
+         '3bddcf8141a3dece80ebd8504a8b6783')
 
-md5sums=('fd7f6d9eb913586582d2f2e4264b904f'
-         '2c8ecae91223868decdf37b8a76489b7'
-         '003f1554be6b672100d2f2401a574d92'
-         '12ffe57584b4f2adcc3e184dc6948772'
-         '9e78f9f5364f8ebb981aeb235dcb7415'
-         'bc9c5a31b4ea9de5a9386dc4623531ae'
-         'c7367a2bd5462ce12a7c38adfd8a2ad8'
-         'dc1ea1c0f5e8bc484aa30cae9bac7066')
 prepare() {
   cd "${srcdir}/${_srcname}"
 
-  msg2 "GCC6 support patches from upstream"
-  patch -Np1 -i ${srcdir}/compiler-gcc_integrate_the_various_compiler-h_files.patch
-  patch -Np1 -i ${srcdir}/compiler-gcc_disable_-ftracer_for-__noclone_functions.patch
-
   msg2 "Add BFQ patches"
-  patch -Np1 -i "${srcdir}/0001-block-cgroups-kconfig-build-bits-for-BFQ-${bfqver}-${pkgver:0:4}.8.patch"
-  patch -Np1 -i "${srcdir}/0002-block-introduce-the-BFQ-${bfqver}-I-O-sched-for-${pkgver:0:4}.8.patch"
-  patch -Np1 -i "${srcdir}/0003-block-bfq-add-Early-Queue-Merge-EQM-to-BFQ-${bfqver}-for-${pkgver:0:4}.8+.patch"  
+  patch -Np1 -i "${srcdir}/0001-block-cgroups-kconfig-build-bits-for-BFQ-${bfqver}-${pkgver:0:3}.0.patch"
+  patch -Np1 -i "${srcdir}/0002-block-introduce-the-BFQ-${bfqver}-I-O-sched-for-${pkgver:0:3}.0.patch"
+  patch -Np1 -i "${srcdir}/0003-block-bfq-add-Early-Queue-Merge-EQM-to-BFQ-${bfqver}-for.patch"  
 
   cat "${srcdir}/config" > ./.config
 
@@ -146,9 +138,11 @@ package_linux-clearfog() {
   mv "$pkgdir/lib" "$pkgdir/usr"
 }
 
-package_linux-headers-clearfog() {
+package_linux-clearfog-headers() {
   pkgdesc="Header files and scripts for building modules for linux kernel - SolidRun ClearFog"
   provides=("linux-headers=${pkgver}")
+  conflicts=('linux-clearfog-headers' 'linux-headers')
+  replaces=("linux-headers-clearfog")
 
   install -dm755 "${pkgdir}/usr/lib/modules/${_kernver}"
 
@@ -198,8 +192,6 @@ package_linux-headers-clearfog() {
   # add headers for lirc package
   mkdir -p "${pkgdir}/usr/src/linux-${_kernver}/drivers/video"
 
-  cp drivers/video/*.h  "${pkgdir}/usr/src/linux-${_kernver}/drivers/video/"
-
   for i in cpia2 pwc; do
     mkdir -p "${pkgdir}/usr/src/linux-${_kernver}/drivers/media/usb/${i}"
     cp -a drivers/media/usb/${i}/*.h "${pkgdir}/usr/src/linux-${_kernver}/drivers/media/usb/${i}"
@@ -240,11 +232,6 @@ package_linux-headers-clearfog() {
   cp drivers/media/dvb-frontends/*.h "${pkgdir}/usr/src/linux-${_kernver}/drivers/media/dvb-frontends/"
   mkdir -p "${pkgdir}/usr/src/linux-${_kernver}/drivers/media/tuners"
   cp drivers/media/tuners/*.h "${pkgdir}/usr/src/linux-${_kernver}/drivers/media/tuners/"
-
-  # add xfs and shmem for aufs building
-  mkdir -p "${pkgdir}/usr/src/linux-${_kernver}/fs/xfs"
-  mkdir -p "${pkgdir}/usr/src/linux-${_kernver}/mm"
-  cp fs/xfs/xfs_sb.h "${pkgdir}/usr/src/linux-${_kernver}/fs/xfs/xfs_sb.h"
 
   #make uapi headers, some of them are needed for vpu/ipu usage
   mkdir -p "${srcdir}/headers"
