@@ -1,7 +1,7 @@
-From e2718694570246a927b162e221af08f8a4704d9d Mon Sep 17 00:00:00 2001
+From 89b5739747d745cc8c2301c9fdc846ed48d5babb Mon Sep 17 00:00:00 2001
 From: Kevin Mihelich <kevin@archlinuxarm.org>
 Date: Thu, 25 Jun 2015 20:35:06 -0600
-Subject: [PATCH 2/3] use chromiumos mwifiex drivers
+Subject: [PATCH 2/9] use chromiumos mwifiex drivers
 
 Signed-off-by: Kevin Mihelich <kevin@archlinuxarm.org>
 ---
@@ -9,7 +9,7 @@ Signed-off-by: Kevin Mihelich <kevin@archlinuxarm.org>
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/wireless/mwifiex/sdio.h b/drivers/net/wireless/mwifiex/sdio.h
-index 57eeb89..455cc32 100644
+index 57eeb89..455cc32e 100644
 --- a/drivers/net/wireless/mwifiex/sdio.h
 +++ b/drivers/net/wireless/mwifiex/sdio.h
 @@ -30,9 +30,9 @@
@@ -26,5 +26,5 @@ index 57eeb89..455cc32 100644
  
  #define BLOCK_MODE	1
 -- 
-2.4.5
+2.9.2
 

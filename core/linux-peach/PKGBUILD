@@ -7,8 +7,8 @@ pkgbase=linux-peach
 _kernelname=${pkgbase#linux}
 _desc="Exynos Chromebooks (Peach, Snow, Spring)"
 pkgver=3.8.11
-pkgrel=3
-_commit=75dd2035f13c18744f6085d9f86a15172b95ea81
+pkgrel=4
+_commit=653848d0fa58ebf9cc0c7543ff88b4a9e154651d
 arch=('armv7h')
 url="https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8"
 license=('GPL2')
@@ -16,10 +16,16 @@ makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-tools' '
 options=('!strip')
 source=("https://chromium.googlesource.com/chromiumos/third_party/kernel/+archive/${_commit}.tar.gz"
         http://archlinuxarm.org/builder/src/sd{8787,8797,8897}_uapsta_cros.bin
-        '0001-mwifiex-do-not-create-AP-and-P2P-interfaces-upon-dri.patch'
-        '0002-use-chromiumos-mwifiex-drivers.patch'
-        '0003-exynos-DRM-have-exynos_drm_fbdev_update-set-smem_sta.patch'
-        'kernel-CVE-2016-0728.patch'
+        0001-mwifiex-do-not-create-AP-and-P2P-interfaces-upon-dri.patch
+        0002-use-chromiumos-mwifiex-drivers.patch
+        0003-exynos-DRM-have-exynos_drm_fbdev_update-set-smem_sta.patch
+        0004-compiler-gcc.h-neatening.patch
+        0005-compiler-gcc-integrate-the-various-compiler-gcc-345-.patch
+        0006-include-linux-compiler-gcc.h-hide-assume_aligned-att.patch
+        0007-include-linux-compiler-gcc.h-improve-__visible-docum.patch
+        0008-compiler-gcc-disable-ftracer-for-__noclone-functions.patch
+        0009-compiler-gcc-require-gcc-4.8-for-powerpc-__builtin_b.patch
+        0010-Staging-wlan-ng-fix-sparse-warning-in-prism2fw.c.patch
         'config'
         'kernel.its'
         'kernel.keyblock'
@@ -29,22 +35,33 @@ md5sums=('SKIP'
          'bda543cb5943eac34e16d12911f3ee99'
          'dc6da2272ffb8ea63f10bc4457cc3f70'
          '5d74feddd86b9c1e6cd23704795cc7d7'
-         '8d44534965bda4a009e03d11bbb03d2f'
-         'bdcaf5ecc962cfdd6a732be8fbb96e0a'
-         'f7f9c336e574efae3aeb32562e8752ef'
-         '6470e9783bd1c7a8feddc2d67f07afd5'
-         '7e1d18307858818b9d85cd841a6da6b9'
+         '6f942c0f124954e0ec52c2860165efce'
+         'f82a17516d767071a2523b4a920fd102'
+         '4fa0fb1c71e5cc1b06059244388ad82b'
+         '523acd008903385bd2bff6506ae13db8'
+         '14dda1cb8f1491f8b25e639fe8233808'
+         '50b7873f78f02739da627d165905bb47'
+         'ec82dfd3a1bf52266526238e3bc3fe49'
+         '4d67b80e50887f3638dea22feeb12160'
+         '7e9ae2db426fd6cee96b414a53060d23'
+         'c48f994221a5481327bee31ec8b7977e'
+       	 '7e1d18307858818b9d85cd841a6da6b9'
          '9791091c8e4158297533df988d1a47da'
          '61c5ff73c136ed07a7aadbf58db3d96a'
          '584777ae88bce2c5659960151b64c7d8'
          'caac3e4ace66a81a3e0a3e7348e99098')
 
 prepare() {
-  git apply 0001-mwifiex-do-not-create-AP-and-P2P-interfaces-upon-dri.patch
-  git apply 0002-use-chromiumos-mwifiex-drivers.patch
-  git apply 0003-exynos-DRM-have-exynos_drm_fbdev_update-set-smem_sta.patch
-  git apply kernel-CVE-2016-0728.patch
-
+  patch -p1 < 0001-mwifiex-do-not-create-AP-and-P2P-interfaces-upon-dri.patch
+  patch -p1 < 0002-use-chromiumos-mwifiex-drivers.patch
+  patch -p1 < 0003-exynos-DRM-have-exynos_drm_fbdev_update-set-smem_sta.patch
+  patch -p1 < 0004-compiler-gcc.h-neatening.patch
+  patch -p1 < 0005-compiler-gcc-integrate-the-various-compiler-gcc-345-.patch
+  patch -p1 < 0006-include-linux-compiler-gcc.h-hide-assume_aligned-att.patch
+  patch -p1 < 0007-include-linux-compiler-gcc.h-improve-__visible-docum.patch
+  patch -p1 < 0008-compiler-gcc-disable-ftracer-for-__noclone-functions.patch
+  patch -p1 < 0009-compiler-gcc-require-gcc-4.8-for-powerpc-__builtin_b.patch
+  patch -p1 < 0010-Staging-wlan-ng-fix-sparse-warning-in-prism2fw.c.patch
   cp config .config
 
   # add pkgrel to extraversion
