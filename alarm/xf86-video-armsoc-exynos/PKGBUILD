@@ -1,0 +1,46 @@
+# ArmSoc (OMAP + Mali)  FrameBuffer driver for Xorg from Linaro.
+# Maintainer: Kevin Mihelich <kevin@archlinuxarm.org>
+# Contributor: Erik Andersson <erik.h.andersson@gmail.com>
+# Modifier:   gripped forum.odroid.com
+
+# Official upstream is at 
+# http://git.linaro.org/gitweb?p=arm/xorg/driver/xf86-video-armsoc.git;a=summary
+
+buildarch=4
+_commit=ee9f1d96193d4fc2887183b613f209b18a93e718
+pkgname=xf86-video-armsoc-exynos
+_pkgname=xf86-video-armsoc
+pkgdesc="armsoc framebuffer driver for X which attempts to comprimise between speed and usability on exynos CPU"
+pkgver=251.ee9f1d9
+pkgrel=1
+arch=('armv7h')
+install=xf86-video-armsoc-exynos.install
+url="git://anongit.freedesktop.org/xorg/driver/xf86-video-armsoc"
+license=('GPL2')
+makedepends=('git' 'pkgconfig' 'xorg-server-devel' 'resourceproto' 'scrnsaverproto')
+options=('!libtool')
+conflicts=('xf86-video-armsoc')
+provides=('xf86-video-armsoc')
+source=("git+http://anongit.freedesktop.org/git/xorg/driver/xf86-video-armsoc.git#commit=${_commit}"
+        'write_combine_caching.patch')
+md5sums=('SKIP'
+         'c6b22faad840f391120a92ef38679a58')
+pkgver() {
+  cd "$srcdir/$_pkgname"
+  echo $(git rev-list --count makepkg).$(git rev-parse --short makepkg)
+}
+
+prepare() {
+  cd "$srcdir/$_pkgname"
+  patch -N -p0 < ../write_combine_caching.patch
+}
+	
+build() {
+  cd "$srcdir/$_pkgname"
+  ./autogen.sh --prefix=/usr --with-drmmode=exynos
+  make
+}
+
+package() {
+  make -C "$srcdir/$_pkgname" DESTDIR="${pkgdir}" install
+}
