@@ -1,14 +1,14 @@
 # $Id$
-# Maintainer:  Bartłomiej Piotrowski <bpiotrowski@archlinux.org>
 # Maintainer: Maxime Gauduin <alucryd@archlinux.org>
+# Contributor: Bartłomiej Piotrowski <bpiotrowski@archlinux.org>
 # Contributor: kfgz <kfgz@interia.pl>
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - patch to attempt fixing ARM hackery by bandwagoning developers
 
 pkgname=x265
-pkgver=2.0
-pkgrel=1
+pkgver=2.1
+pkgrel=2
 pkgdesc='Open Source H265/HEVC video encoder'
 arch=('i686' 'x86_64')
 url='https://bitbucket.org/multicoreware/x265'
@@ -18,8 +18,8 @@ makedepends=('yasm' 'cmake')
 provides=('libx265.so')
 source=("https://bitbucket.org/multicoreware/x265/downloads/x265_${pkgver}.tar.gz"
         arm.patch)
-md5sums=('a4f16c0f054f002d6d8c9c6f7fb03026'
-         '6b7074bb7a250d0cb7de33905996dd5c')
+sha256sums=('88fcb9af4ba52c0757ac9c0d8cd5ec79951a22905ae886897e06954353d6a643'
+            '394cbf7e6f9f51e9f525698d73739fb0c94e6e7c810321ea14c964440f74877d')
 
 prepare() {
   cd x265_${pkgver}

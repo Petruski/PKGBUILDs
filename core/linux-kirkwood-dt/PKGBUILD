@@ -6,15 +6,15 @@ buildarch=2
 pkgbase=linux-kirkwood-dt
 _kernelname=${pkgbase#linux}
 _desc="Marvell Kirkwood DT"
-pkgver=4.7.1
+pkgver=4.8.4
 srcver=${pkgver%.0}
-pkgrel=2
-cryptodev_commit=7a3a9ee1329f7224b4fc564b80ef8160457caf76
-bfqver=v8r2
+pkgrel=1
+cryptodev_commit=f116a93224fc7b85f83d2c53f565f8fd86165ecc
+bfqver=v8r4
 
 ### BFQ patch kernel version
 bfqkern=${pkgver:0:3}
-# bfqkern=4.5
+# bfqkern=4.7
 
 ### AUFS branch name
 aufsbranch="aufs${pkgver:0:3}"
@@ -33,37 +33,25 @@ source=("https://kernel.org/pub/linux/kernel/v4.x/linux-${srcver}.tar.xz"
         "git+https://github.com/sfjro/aufs4-standalone.git#branch=${aufsbranch}"
         "cryptodev-${cryptodev_commit}.tar.gz::https://github.com/cryptodev-linux/cryptodev-linux/archive/${cryptodev_commit}.tar.gz"
         "ftp://teambelgium.net/bfq/patches/${bfqkern}.0-${bfqver}/0001-block-cgroups-kconfig-build-bits-for-BFQ-v7r11-${bfqkern}.0.patch"
-        "ftp://teambelgium.net/bfq/patches/${bfqkern}.0-${bfqver}/0002-block-introduce-the-BFQ-v7r11-I-O-sched-for-${bfqkern}.0.patch"
-        "ftp://teambelgium.net/bfq/patches/${bfqkern}.0-${bfqver}/0003-block-bfq-add-Early-Queue-Merge-EQM-to-BFQ-v7r11-for.patch"
-        "ftp://teambelgium.net/bfq/patches/${bfqkern}.0-${bfqver}/0004-block-bfq-turn-BFQ-v7r11-for-4.7.0-into-BFQ-${bfqver}-for.patch"
+        "ftp://teambelgium.net/bfq/patches/${bfqkern}.0-${bfqver}/0002-block-introduce-the-BFQ-v7r11-I-O-sched-to-be-ported.patch"
+        "ftp://teambelgium.net/bfq/patches/${bfqkern}.0-${bfqver}/0003-block-bfq-add-Early-Queue-Merge-EQM-to-BFQ-v7r11-to-.patch"
+        "ftp://teambelgium.net/bfq/patches/${bfqkern}.0-${bfqver}/0004-Turn-BFQ-v7r11-into-BFQ-${bfqver}-for-${bfqkern}.0.patch"
         'goflexhome_fdt.patch'
-        'linux.preset'
-        'pageaccess_fix_for_4.6+.patch'
-        'support_skcipher_and_ablkcipher.patch'
-        'fix_test_compile_time_warnings.patch')
-md5sums=('764e9cc14e43bddef944381b1fe32574'
-         '3bad68b8a29e154ebd4e0da7f613c3f2'
-         'c02d088db6c0b3d271526befc611c00c'
+        'linux.preset')
+md5sums=('6a382a6b4fd6fd1695ac9a51a353ef41'
+         'c9f64a2e641d88edbe8018d1620c3e86'
+         'a6c6f6d930d43787117d00fc759c115b'
          '09d44b9f07abfaeaf4f688ee52034786'
          'SKIP'
-         'ad56ca4e2a29a3b76f3526c262d9fec1'
-         'f2c3aabfbb8319134fc2f041bf239b50'
-         '275d66e9de98296d689a3b17871defaf'
-         'a873c975acf24c3ef0225b9fcd3f3e1e'
-         '1bb4a4a11135998454cce698fe373f3a'
-         'ce1975f40c48ec1b08dd09447ab043ca'
-         '959e49540dac4c5e689ad9037150a360'
-         'b92624323adb5f874a06b9b05c1954a0'
-         '510d6cc1126153ccfbd33cda64a81d74'
-         '1a17740b0cbed752d3afa963cdb26ba0')
+         'bd52f10ced89e663d2f4d138948828fd'
+         '2c03a8a60b498b4255641987756b5f03'
+         'aac603e9cab20dbb0593f312f781a8c9'
+         'e3f3b7eb0099942269fce9435b91d749'
+         'eead07332319e7ed97822a3e1faaa2dc'
+         'f5a554eefbd337e71cca072e2d2cab45'
+         '959e49540dac4c5e689ad9037150a360')
 
 prepare() {
-  msg2 "Patching cryptodev"
-  cd "${srcdir}/cryptodev-linux-${cryptodev_commit}"
-  patch -Np1 -i "${srcdir}/pageaccess_fix_for_4.6+.patch"
-  patch -Np1 -i "${srcdir}/support_skcipher_and_ablkcipher.patch"
-  patch -Np1 -i "${srcdir}/fix_test_compile_time_warnings.patch"
-
   cd "${srcdir}/linux-${srcver}"
 
   msg2 "Copying aufs patches into the kernel source tree"
@@ -86,9 +74,9 @@ prepare() {
 
   msg2 "Add BFQ patches"
   patch -Np1 -i "${srcdir}/0001-block-cgroups-kconfig-build-bits-for-BFQ-v7r11-${bfqkern}.0.patch"
-  patch -Np1 -i "${srcdir}/0002-block-introduce-the-BFQ-v7r11-I-O-sched-for-${bfqkern}.0.patch"
-  patch -Np1 -i "${srcdir}/0003-block-bfq-add-Early-Queue-Merge-EQM-to-BFQ-v7r11-for.patch"
-  patch -Np1 -i "${srcdir}/0004-block-bfq-turn-BFQ-v7r11-for-4.7.0-into-BFQ-${bfqver}-for.patch"
+  patch -Np1 -i "${srcdir}/0002-block-introduce-the-BFQ-v7r11-I-O-sched-to-be-ported.patch"
+  patch -Np1 -i "${srcdir}/0003-block-bfq-add-Early-Queue-Merge-EQM-to-BFQ-v7r11-to-.patch"
+  patch -Np1 -i "${srcdir}/0004-Turn-BFQ-v7r11-into-BFQ-${bfqver}-for-${bfqkern}.0.patch"
 
   cat "${srcdir}/config" > ./.config
 
