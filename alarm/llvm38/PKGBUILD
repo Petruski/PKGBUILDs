@@ -10,14 +10,17 @@
 # Contributor: Gerardo Exequiel Pozzi <vmlinuz386@yahoo.com.ar>
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
-#  - disable v5
+#  - separate package for ARMv5; latest version doesn't build for it
+#  - v5: disable compiler-rt, don't install in clang package
+#  - v5: patch to remove ThreadPool: unsupported c++ usage
+#  - v5: disable lldb, unsupported c++ usage
+#  - v8: disable lldb, unsupported architecture
 
-buildarch=28
-highmem=1
+buildarch=2
 
-pkgname=('llvm' 'llvm-libs' 'llvm-ocaml' 'lldb' 'clang' 'clang-tools-extra')
-pkgver=3.9.0
-pkgrel=1.1
+pkgname=('llvm38' 'llvm38-libs' 'llvm38-ocaml' 'clang38' 'clang38-tools-extra')
+pkgver=3.8.1
+pkgrel=1
 _ocaml_ver=4.03.0
 arch=('i686' 'x86_64')
 url="http://llvm.org/"
@@ -32,21 +35,26 @@ source=(http://llvm.org/releases/$pkgver/llvm-$pkgver.src.tar.xz{,.sig}
         http://llvm.org/releases/$pkgver/clang-tools-extra-$pkgver.src.tar.xz{,.sig}
         http://llvm.org/releases/$pkgver/compiler-rt-$pkgver.src.tar.xz{,.sig}
         http://llvm.org/releases/$pkgver/lldb-$pkgver.src.tar.xz{,.sig}
-        msan-prevent-initialization-failure-with-newer-glibc.patch
-        llvm-Config-llvm-config.h)
-sha256sums=('66c73179da42cee1386371641241f79ded250e117a79f571bbd69e56daa48948'
+        D17567-PR23529-Sema-part-of-attrbute-abi_tag-support.patch
+        D18035-PR23529-Mangler-part-of-attrbute-abi_tag-support.patch
+        llvm-Config-llvm-config.h
+        remove-threadpool.patch)
+sha256sums=('6e82ce4adb54ff3afc18053d6981b6aed1406751b8742582ed50f04b5ab475f9'
             'SKIP'
-            '7596a7c7d9376d0c89e60028fe1ceb4d3e535e8ea8b89e0eb094e0dcb3183d28'
+            '4cd3836dfb4b88b597e075341cae86d61c63ce3963e45c7fe6a8bf59bb382cdf'
             'SKIP'
-            '5b7aec46ec8e999ec683c87ad744082e1133781ee4b01905b4bdae5d20785f14'
+            '664a5c60220de9c290bf2a5b03d902ab731a4f95fe73a00856175ead494ec396'
             'SKIP'
-            'e0e5224fcd5740b61e416c549dd3dcda92f10c524216c1edb5e979e42078a59a'
+            '0df011dae14d8700499dfc961602ee0a9572fef926202ade5dcdfe7858411e5c'
             'SKIP'
-            '61280e07411e3f2b4cca0067412b39c16b0a9edd19d304d3fc90249899d12384'
+            '349148116a47e39dcb5d5042f10d8a6357d2c865034563283ca512f81cdce8a3'
             'SKIP'
-            '8e4f194c2283b91644a7fff43bc4e58c36b5507f2a4d90b72f275c0bd7511c20'
-            '597dc5968c695bbdbb0eac9e8eb5117fcd2773bc91edf5ec103ecffffab8bc48')
-validpgpkeys=('B6C8F98282B944E3B0D5C2530FC3042E345AD05D')
+            '406754764e83d58bc3b859ab4b7893abd48c760278c4619cf4341ef9b9b75c85'
+            'd71f8677882c86accddb8a5b720f298a4d7a2ad3bce6091951a46396b8f14da1'
+            '597dc5968c695bbdbb0eac9e8eb5117fcd2773bc91edf5ec103ecffffab8bc48'
+            'ea686a21076aeefdb81af22ab7e5d786e4f6d490507320275f443d8bcf663040')
+validpgpkeys=('B6C8F98282B944E3B0D5C2530FC3042E345AD05D'
+              '11E521D646982372EB577A1F8F0871F202119294')
 
 prepare() {
   cd "$srcdir/llvm-$pkgver.src"
@@ -59,10 +67,18 @@ prepare() {
 
   mv "$srcdir/compiler-rt-$pkgver.src" projects/compiler-rt
 
-  mv "$srcdir/lldb-$pkgver.src" tools/lldb
+  [[ $CARCH != 'aarch64' && $CARCH != 'arm' ]] && mv "$srcdir/lldb-$pkgver.src" tools/lldb
 
-  # https://reviews.llvm.org/D24736
-  patch -Np0 -d projects/compiler-rt <../msan-prevent-initialization-failure-with-newer-glibc.patch
+  # https://llvm.org/bugs/show_bug.cgi?id=23529
+  patch -d tools/clang -Np2 <../D17567-PR23529-Sema-part-of-attrbute-abi_tag-support.patch
+  patch -d tools/clang -Np0 <../D18035-PR23529-Mangler-part-of-attrbute-abi_tag-support.patch
+
+  if [[ $CARCH == "arm" ]]; then
+    patch -p1 -i ../remove-threadpool.patch
+    rm lib/Support/ThreadPool.cpp
+    rm include/llvm/Support/ThreadPool.h
+    rm unittests/Support/ThreadPool.cpp
+  fi
 
   mkdir build
 }
@@ -70,10 +86,13 @@ prepare() {
 build() {
   cd "$srcdir/llvm-$pkgver.src/build"
 
+  [[ $CARCH == "arm" ]] && CONFIG="-DLLVM_BUILD_EXTERNAL_COMPILER_RT=ON"
+
   cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr \
     -DLLVM_BUILD_LLVM_DYLIB=ON \
+    -DLLVM_DYLIB_EXPORT_ALL=ON \
     -DLLVM_LINK_LLVM_DYLIB=ON \
     -DLLVM_ENABLE_RTTI=ON \
     -DLLVM_ENABLE_FFI=ON \
@@ -81,11 +100,10 @@ build() {
     -DLLVM_BUILD_DOCS=ON \
     -DLLVM_ENABLE_SPHINX=ON \
     -DLLVM_ENABLE_DOXYGEN=OFF \
-    -DLLDB_DISABLE_LIBEDIT=1 \
     -DSPHINX_WARNINGS_AS_ERRORS=OFF \
     -DFFI_INCLUDE_DIR=$(pkg-config --variable=includedir libffi) \
     -DLLVM_BINUTILS_INCDIR=/usr/include \
-    ..
+    $CONFIG ..
 
   make
   make ocaml_doc
@@ -102,16 +120,18 @@ check() {
   make check-clang
 }
 
-package_llvm() {
+package_llvm38() {
   pkgdesc="Low Level Virtual Machine"
   depends=("llvm-libs=$pkgver-$pkgrel" 'perl')
+  replaces=('llvm')
+  provides=("llvm=$pkgver-$pkgrel")
 
   cd "$srcdir/llvm-$pkgver.src"
 
   make -C build DESTDIR="$pkgdir" install
 
   # Remove documentation sources
-  rm -r "$pkgdir"/usr/share/doc/$pkgname/html/{_sources,.buildinfo}
+  rm -r "$pkgdir"/usr/share/doc/llvm/html/{_sources,.buildinfo}
 
   # The runtime libraries go into llvm-libs
   mv -f "$pkgdir"/usr/lib/lib{LLVM,LTO}*.so "$srcdir"
@@ -131,12 +151,14 @@ package_llvm() {
       "$pkgdir/usr/include/llvm/Config/llvm-config.h"
   fi
 
-  install -Dm644 LICENSE.TXT "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm644 LICENSE.TXT "$pkgdir/usr/share/licenses/llvm/LICENSE"
 }
 
-package_llvm-libs() {
+package_llvm38-libs() {
   pkgdesc="Low Level Virtual Machine (runtime libraries)"
   depends=('gcc-libs' 'zlib' 'libffi' 'libedit' 'ncurses')
+  replaces=('llvm-libs')
+  provides=("llvm-libs=$pkgver-$pkgrel")
 
   install -d "$pkgdir/usr/lib"
   cp -P \
@@ -150,62 +172,41 @@ package_llvm-libs() {
   ln -s ../LLVMgold.so "$pkgdir/usr/lib/bfd-plugins/LLVMgold.so"
 
   install -Dm644 "$srcdir/llvm-$pkgver.src/LICENSE.TXT" \
-    "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+    "$pkgdir/usr/share/licenses/llvm-libs/LICENSE"
 }
 
-package_llvm-ocaml() {
+package_llvm38-ocaml() {
   pkgdesc="OCaml bindings for LLVM"
   depends=("llvm=$pkgver-$pkgrel" "ocaml=$_ocaml_ver" 'ocaml-ctypes')
+  replaces=('llvm-ocaml')
+  provides=("llvm-ocaml=$pkgver-$pkgrel")
 
   cd "$srcdir/llvm-$pkgver.src"
 
   install -d "$pkgdir"/{usr/lib,usr/share/doc}
   cp -a "$srcdir/ocaml.lib" "$pkgdir/usr/lib/ocaml"
-  cp -a "$srcdir/ocaml.doc" "$pkgdir/usr/share/doc/$pkgname"
+  cp -a "$srcdir/ocaml.doc" "$pkgdir/usr/share/doc/llvm-ocaml"
 
-  install -Dm644 LICENSE.TXT "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm644 LICENSE.TXT "$pkgdir/usr/share/licenses/llvm-ocaml/LICENSE"
 }
 
-package_lldb() {
-  pkgdesc="Next generation, high-performance debugger"
-  url="http://lldb.llvm.org/"
-  depends=('libxml2' 'python2' 'python2-six')
-
-  cd "$srcdir/llvm-$pkgver.src"
-
-  make -C build/tools/lldb DESTDIR="$pkgdir" install
-
-  # https://bugs.archlinux.org/task/50759
-  sed -i "/import_module('_lldb')/s/_lldb/lldb.&/" \
-  "$pkgdir/usr/lib/python2.7/site-packages/lldb/__init__.py"
-
-  # Remove bundled six library
-  rm "$pkgdir/usr/lib/python2.7/site-packages/six.py"
-
-  # Compile Python scripts
-  python2 -m compileall "$pkgdir/usr/lib/python2.7/site-packages/lldb"
-  python2 -O -m compileall "$pkgdir/usr/lib/python2.7/site-packages/lldb"
-
-  install -Dm644 tools/lldb/LICENSE.TXT "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
-}
-
-package_clang() {
+package_clang38() {
   pkgdesc="C language family frontend for LLVM"
   url="http://clang.llvm.org/"
   depends=("llvm-libs=$pkgver-$pkgrel" 'gcc' 'libxml2')
   optdepends=('openmp: OpenMP support in clang with -fopenmp'
               'python2: for scan-view and git-clang-format')
-  provides=("clang-analyzer=$pkgver")
+  provides=("clang-analyzer=$pkgver" "clang=$pkgver-$pkgrel")
   conflicts=('clang-analyzer')
-  replaces=('clang-analyzer')
+  replaces=('clang-analyzer' 'clang')
 
   cd "$srcdir/llvm-$pkgver.src"
 
   make -C build/tools/clang DESTDIR="$pkgdir" install
-  make -C build/projects/compiler-rt DESTDIR="$pkgdir" install
+  [[ $CARCH != "arm" ]] && make -C build/projects/compiler-rt DESTDIR="$pkgdir" install
 
   # Remove documentation sources
-  rm -r "$pkgdir"/usr/share/doc/$pkgname/html/{_sources,.buildinfo}
+  rm -r "$pkgdir"/usr/share/doc/clang/html/{_sources,.buildinfo}
 
   # Move analyzer scripts out of /usr/libexec
   mv "$pkgdir"/usr/libexec/{ccc,c++}-analyzer "$pkgdir/usr/lib/clang/"
@@ -220,31 +221,35 @@ package_clang() {
   sed -i 's|/usr/bin/env python|&2|' \
     "$pkgdir/usr/bin/scan-view" \
     "$pkgdir/usr/bin/git-clang-format" \
-    "$pkgdir/usr/share/$pkgname/clang-format-diff.py"
+    "$pkgdir/usr/share/clang/clang-format-diff.py"
 
   # Compile Python scripts
   python2 -m compileall "$pkgdir"
   python2 -O -m compileall "$pkgdir"
 
   install -Dm644 tools/clang/LICENSE.TXT \
-    "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+    "$pkgdir/usr/share/licenses/clang/LICENSE"
 }
 
-package_clang-tools-extra() {
+package_clang38-tools-extra() {
   pkgdesc="Extra tools built using clang's tooling APIs"
   url="http://clang.llvm.org/"
   depends=("clang=$pkgver-$pkgrel")
+  provides=("clang-tools-extra=$pkgver-$pkgrel")
+  replaces=('clang-tools-extra')
 
   cd "$srcdir/llvm-$pkgver.src"
 
   make -C build/tools/clang/tools/extra DESTDIR="$pkgdir" install
 
   # Use Python 2
-  sed -i 's|/usr/bin/env python|&2|' \
-    "$pkgdir"/usr/share/clang/{clang-tidy-diff,run-clang-tidy,run-find-all-symbols}.py
+  sed -i \
+    -e 's|env python$|&2|' \
+    -e 's|/usr/bin/python$|&2|' \
+    "$pkgdir"/usr/share/clang/{clang-tidy-diff,run-clang-tidy}.py
 
   install -Dm644 tools/clang/tools/extra/LICENSE.TXT \
-    "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+    "$pkgdir/usr/share/licenses/clang-tools-extra/LICENSE"
 }
 
 # vim:set ts=2 sw=2 et:
