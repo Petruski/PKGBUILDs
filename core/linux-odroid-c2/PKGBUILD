@@ -4,12 +4,12 @@
 buildarch=8
 
 pkgbase=linux-odroid-c2
-_commit=b6470b90b25295d7427c2e7570a4e8fd7f1adcf9
+_commit=c683a39d642b0860e8a888410c569a509beec4ce
 _srcname=linux-${_commit}
 _kernelname=${pkgbase#linux}
 _desc="ODROID-C2"
 pkgver=3.14.79
-pkgrel=7
+pkgrel=10
 arch=('aarch64')
 url="https://github.com/hardkernel/linux/tree/odroidc2-3.14.y"
 license=('GPL2')
@@ -21,10 +21,10 @@ source=("https://github.com/hardkernel/linux/archive/${_commit}.tar.gz"
         'config'
         'linux.preset'
         'amlogic.service')
-md5sums=('3365c9ef979b049bb3977fe2cd9fe27d'
+md5sums=('c9cabb6676849f9da00f47257c2299ba'
          'SKIP'
          '3c4a5342ac88d86b4bf99e7d0b8b2977'
-         '3f19fc977ffa72a6dbf528658783658d'
+         '8a3f9f091ae2f2a4f71f1b630a60c46d'
          '85fd3026c435ffa6d7c2d7f9767b4251'
          'b8956789318f49cec5b8bb0b41654a9b')
 
