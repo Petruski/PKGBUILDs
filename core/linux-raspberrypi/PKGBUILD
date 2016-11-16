@@ -7,11 +7,11 @@
 buildarch=20
 
 pkgbase=linux-raspberrypi
-_commit=c1f53f11eda0dbc733e7ecef1c1af0885a3537a3
+_commit=abe33682e797932abcdc0fd1421f30cddc1f101a
 _srcname=linux-${_commit}
 _kernelname=${pkgbase#linux}
 _desc="Raspberry Pi"
-pkgver=4.4.30
+pkgver=4.4.32
 pkgrel=1
 bfqver=v7r11
 arch=('armv6h' 'armv7h')
@@ -29,7 +29,7 @@ source=("https://github.com/raspberrypi/linux/archive/${_commit}.tar.gz"
         'cmdline.txt'
         'config.v6'
         'config.v7')
-md5sums=('f6c952f46b25f685a4c12fc785943f88'
+md5sums=('1f78980c2d62864f0225585e1e1ec6db'
          'SKIP'
          'c1d7fcfe88edb658375089c0a9cc1811'
          '953133d5e387de2ad79ac0ae5c27cb6b'
