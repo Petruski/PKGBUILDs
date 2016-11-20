@@ -7,11 +7,11 @@
 buildarch=20
 
 pkgbase=linux-raspberrypi
-_commit=abe33682e797932abcdc0fd1421f30cddc1f101a
+_commit=8b86209d907ae808c24798e5c3c3c9e87935e6e1
 _srcname=linux-${_commit}
 _kernelname=${pkgbase#linux}
 _desc="Raspberry Pi"
-pkgver=4.4.32
+pkgver=4.4.33
 pkgrel=1
 bfqver=v7r11
 arch=('armv6h' 'armv7h')
@@ -29,7 +29,7 @@ source=("https://github.com/raspberrypi/linux/archive/${_commit}.tar.gz"
         'cmdline.txt'
         'config.v6'
         'config.v7')
-md5sums=('1f78980c2d62864f0225585e1e1ec6db'
+md5sums=('114ee9e8e33442710fbae326d317caec'
          'SKIP'
          'c1d7fcfe88edb658375089c0a9cc1811'
          '953133d5e387de2ad79ac0ae5c27cb6b'
@@ -125,10 +125,11 @@ _package() {
   mkdir -p "${pkgdir}"/{lib/modules,lib/firmware}
   make INSTALL_MOD_PATH="${pkgdir}" modules_install
   make INSTALL_DTBS_PATH="${pkgdir}/boot" dtbs_install
+  mkdir -p "${pkgdir}/boot/overlays"
+  cp arch/$KARCH/boot/dts/overlays/{*.dtbo,README} "${pkgdir}/boot/overlays"
 
   [[ $CARCH == "armv6h" ]] && perl scripts/mkknlimg --dtok arch/$KARCH/boot/zImage "${pkgdir}/boot/kernel.img"
   [[ $CARCH == "armv7h" ]] && perl scripts/mkknlimg --dtok arch/$KARCH/boot/zImage "${pkgdir}/boot/kernel7.img"
-  cp arch/$KARCH/boot/dts/overlays/README "${pkgdir}/boot/overlays"
 
   # set correct depmod command for install
   sed \
