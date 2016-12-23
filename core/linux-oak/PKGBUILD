@@ -7,8 +7,8 @@ pkgbase=linux-oak
 _kernelname=${pkgbase#linux}
 _desc="Oak Chromebooks"
 pkgver=3.18.0
-pkgrel=2
-_commit=faaa0586aba977987480e0fbbe62bc13769d6d75
+pkgrel=4
+_commit=320656588dd8db8eb9de891aa27631bcdf64b3b8
 arch=('aarch64')
 url="https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.18"
 license=('GPL2')
@@ -29,17 +29,17 @@ source=("https://chromium.googlesource.com/chromiumos/third_party/kernel/+archiv
         'kernel.keyblock'
         'kernel_data_key.vbprivk'
         'cmdline')
-md5sums=('4996445ef49e80b221c8374b492660f0'
-         '5d12cc890e0c6bb9cc9528a438ae3f64'
-         'ea7c4bfbe62b0df369610d72d03a35e4'
-         'ca2e60b021e01c55b540795d4b9e8ea1'
-         '70549cd54addf2fb60f33ce68fa2cd1b'
-         'd9d09f62a06c0c8077a1274323aa0545'
-         '7a255d612fdb87c4e4dfdea8628ce3df'
-         'e658200d968a8d88eeac798198b888e6'
-         'c305d36d91e8806dce877af47f9a715b'
-         'd4f85f0032f193fd9254034b0207740e'
-         'de6011bd435696b92a07213ecdd5c8b4'
+md5sums=('7cd05873a3784f25af47155cb3f1d936'
+         '651be13e7d7f49db4bfe0ef5f21ffee3'
+         '843053a21da143004ae06ce7ef8f85e1'
+         'e4fd093922d688d35a0c6f1a045b75f5'
+         '234d57c4e23e091600dceb8831a42c62'
+         'f32a108e5bb0f8a1a0e8089cc7e6d445'
+         '3b08c86ebec9efcc6ed761a7aa3fb61a'
+         '92b754e3b482dfed1d3224d033cb2e6d'
+         '6426e55bd8d4a416bd3e937aef4ea4f4'
+         'cb5d65e711aa4410f5ab7646632b8a21'
+         '1122992a2e14b7a97673fa0cc172647e'
          'aef13cb59516e9313cb8947350f717d6'
          '61c5ff73c136ed07a7aadbf58db3d96a'
          '584777ae88bce2c5659960151b64c7d8'
@@ -181,7 +181,7 @@ _package-headers() {
 
   mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/include"
 
-  for i in acpi asm-generic config crypto drm generated keys linux math-emu \
+  for i in acpi asm-generic clocksource config crypto drm generated keys linux math-emu \
     media net pcmcia scsi sound trace uapi video xen; do
     cp -a include/${i} "${pkgdir}/usr/lib/modules/${_kernver}/build/include/"
   done
