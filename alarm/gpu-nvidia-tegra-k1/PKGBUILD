@@ -6,7 +6,7 @@ _nv_full_release=r21_Release_v5.0
 _nv_version=21.5
 _nv_release=0
 pkgver="${_nv_version}.${_nv_release}"
-pkgrel=2
+pkgrel=3
 pkgdesc="NVIDIA proprietary Tegra K1 GPU drivers for Tegra K1 powered SoC"
 
 # filesystem prefix for the include files and license
@@ -22,13 +22,15 @@ source=("http://developer.download.nvidia.com/embedded/L4T/${_nv_full_release}/T
         egl.pc
         gl.pc
         glesv1_cm.pc
-        glesv2.pc)
+        glesv2.pc
+        tegra.conf)
 sha256sums=('a639e3e37e17ef11ea5754d7b703a133febdd6a5d3dd2e5b3924288930a45cca'
             'bdff89e517cd8cbba5f9e9d960bc79d7c2740bf563ff6aaab789a13a547f08fe'
             'cc77351d44cb2fec5ff18fe523e09076148ae255927a4aa1b8514d0b27ad173a'
             '78b70b7d40b7c9e01d065e537f383f96a784d37e3c6fb13ef2ec8bd5a5ce246a'
             '8ab2bb84100d1be7e470acb6323e7ee49a1c93d8fa84602c0ce8456c3e0b4b1b'
-            '071cc930fb05eac8633dd02e99e6df5863ade9942e8c5a8369fa78a530a9ce42')
+            '071cc930fb05eac8633dd02e99e6df5863ade9942e8c5a8369fa78a530a9ce42'
+            '05cf40f5722a33a2bf13631eadb6c49be81f8f70e0bf85db896c71d1a6f519e1')
 
 conflicts=( 'X-ABI-VIDEODRV_VERSION<19'
             'X-ABI-VIDEODRV_VERSION>=20'
@@ -145,6 +147,9 @@ package_gpu-nvidia-tegra-k1-x11() {
   cp -r usr/lib/xorg/modules/drivers/nvidia_drv.so "${pkgdir}/usr/lib/xorg/modules/drivers/"
   ln -s ${_install_prefix}/lib/libglx.so "${pkgdir}/usr/lib/xorg/modules/extensions/libglx.so"
 
+  # install tegra X11 config
+  mkdir -p "${pkgdir}/usr/share/X11/xorg.conf.d/"
+  cp "${srcdir}/tegra.conf" "${pkgdir}/usr/share/X11/xorg.conf.d/"
 }
 
 package_gpu-nvidia-tegra-k1-libcuda() {
