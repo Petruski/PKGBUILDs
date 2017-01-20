@@ -6,13 +6,13 @@ buildarch=8
 pkgname=xf86-video-fbturbo-odroid-c2-git
 _gitname=xf86-video-fbturbo
 pkgver=199.f9a6ed7
-pkgrel=1
+pkgrel=2
 pkgdesc="X.org fbturbo video driver for odroid-c2"
 arch=('aarch64')
 url="https://github.com/tnmeyer/xf86-video-fbturbo"
 license=('MIT')
-makedepends=('git' 'xorg-server-devel' 'X-ABI-VIDEODRV_VERSION=20')
-conflicts=('xf86-video-fbturbo' 'xorg-server<1.16' 'X-ABI-VIDEODRV_VERSION<20' 'X-ABI-VIDEODRV_VERSION>=21')
+makedepends=('git' 'xorg-server-devel' 'X-ABI-VIDEODRV_VERSION=23')
+conflicts=('xf86-video-fbturbo' 'xorg-server<1.19' 'X-ABI-VIDEODRV_VERSION<23' 'X-ABI-VIDEODRV_VERSION>=24')
 options=('!libtool')
 provides=('xf86-video-fbturbo')
 source=('git+https://github.com/tnmeyer/xf86-video-fbturbo')
