@@ -7,9 +7,9 @@ pkgbase=linux-nyan
 _kernelname=${pkgbase#linux}
 _desc="TegraK1 Chromebooks (Nyan)"
 pkgver=3.10.18
-pkgrel=17
-_commit=48b1f6713500eeb387e131b606079fb010886d68
-_coreboot_commit=aac0d13ecc812ce6b18cde19cec4f8949e023b8b
+pkgrel=18
+_commit=5e2dd6984e7e82ac506224405801a8fa2478da27
+_coreboot_commit=5bb7ca8a308a5800a02842447259cc8191c32fa5
 arch=('armv7h')
 url="https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.10"
 license=('GPL2')
@@ -44,7 +44,7 @@ sha256sums=('SKIP'
             '35f60f174da4bb367f37e355ca5f037a8528021d33d475cae91e968beb2f8325'
             'da63c1035c0d6c53a71901ff4ad4e7abca697b297b5446de4ed5bed0badd976b'
             'f25cd8269cc107108560b07a68d701870fb91e3ed195917113918d1cb1cbb74f'
-            'cf41a7ae915f83df19c9d10468c69f206f9688b205c045ebe7145b8679e1f39d'
+            'd6914aee62ba6d9a5ffef506e3f17d3485a84c138f666c96d3e4f4da88a8797f'
             '05f543cbd29c1fd4146922658007f8c31a0522d14b9b2a3b4391988f7a3cb80a'
             '7a13bfeede38d47845027c4ef10b050f24eeea44db7bbbc282f44d4b198fd6d2'
             '3bf7629cefda8f85f4647adfd27efec86a62eb056caae5debb5848ff7ead56ed'
