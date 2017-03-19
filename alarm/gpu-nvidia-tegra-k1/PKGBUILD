@@ -6,7 +6,7 @@ _nv_full_release=r21_Release_v5.0
 _nv_version=21.5
 _nv_release=0
 pkgver="${_nv_version}.${_nv_release}"
-pkgrel=3
+pkgrel=4
 pkgdesc="NVIDIA proprietary Tegra K1 GPU drivers for Tegra K1 powered SoC"
 
 # filesystem prefix for the include files and license
@@ -26,10 +26,10 @@ source=("http://developer.download.nvidia.com/embedded/L4T/${_nv_full_release}/T
         tegra.conf)
 sha256sums=('a639e3e37e17ef11ea5754d7b703a133febdd6a5d3dd2e5b3924288930a45cca'
             'bdff89e517cd8cbba5f9e9d960bc79d7c2740bf563ff6aaab789a13a547f08fe'
-            'cc77351d44cb2fec5ff18fe523e09076148ae255927a4aa1b8514d0b27ad173a'
-            '78b70b7d40b7c9e01d065e537f383f96a784d37e3c6fb13ef2ec8bd5a5ce246a'
-            '8ab2bb84100d1be7e470acb6323e7ee49a1c93d8fa84602c0ce8456c3e0b4b1b'
-            '071cc930fb05eac8633dd02e99e6df5863ade9942e8c5a8369fa78a530a9ce42'
+            '3419d255c62ea825b07a42f466dd0acba36a267717f0cf183b445b2ed1e28850'
+            '64ac913a0f85585864f240e75562896fc58fc10bf08765aa0ca5cdfbaa59b21c'
+            'eebb090ef8874ded6be1bbdcbbc920c738b8adaa0c5cd50ceea1c817a420fa82'
+            'f6fd805ae284d8a8bb58d396872bb7fbae1e4ec9a0e367e4e44063164b717d21'
             '05cf40f5722a33a2bf13631eadb6c49be81f8f70e0bf85db896c71d1a6f519e1')
 
 conflicts=( 'X-ABI-VIDEODRV_VERSION<19'
@@ -50,7 +50,7 @@ package_gpu-nvidia-tegra-k1-nvrm() {
 
   cd "${srcdir}/Linux_for_Tegra/nv_tegra"
 
-  mkdir -p "${pkgdir}${_install_prefix}/lib"
+  mkdir -p "${pkgdir}${_install_prefix}/lib/tegra"
 
   # copy other tegra specific libs
   for lib in  libnvapputil.so \
@@ -82,7 +82,7 @@ package_gpu-nvidia-tegra-k1-nvrm() {
               libnvwinsys.so \
               libtegrav4l2.so
   do
-    cp usr/lib/arm-linux-gnueabihf/tegra/${lib} "${pkgdir}${_install_prefix}/lib"
+    cp usr/lib/arm-linux-gnueabihf/tegra/${lib} "${pkgdir}${_install_prefix}/lib/tegra"
   done
 
   for lib in  libnvidia-eglcore.so \
@@ -91,8 +91,8 @@ package_gpu-nvidia-tegra-k1-nvrm() {
               libnvidia-rmapi-tegra.so \
               libnvidia-tls.so
   do
-    cp usr/lib/arm-linux-gnueabihf/tegra/"${lib}.${_nv_version}" "${pkgdir}${_install_prefix}/lib/"
-    ln -s "${_install_prefix}/lib/${lib}.${_nv_version}" "${pkgdir}${_install_prefix}/lib/${lib}"
+    cp usr/lib/arm-linux-gnueabihf/tegra/"${lib}.${_nv_version}" "${pkgdir}${_install_prefix}/lib/tegra"
+    ln -s "${_install_prefix}/lib/${lib}.${_nv_version}" "${pkgdir}${_install_prefix}/lib/tegra/${lib}"
   done
 
   # copy license
@@ -100,7 +100,7 @@ package_gpu-nvidia-tegra-k1-nvrm() {
   cp LICENSE "$pkgdir${_install_prefix}/share/licenses/nvidia-tegra-k1/"
 
   mkdir -p "${pkgdir}/etc/ld.so.conf.d"
-  echo "${_install_prefix}/lib" > "${pkgdir}/etc/ld.so.conf.d/$pkgbase.conf"
+  echo "${_install_prefix}/lib/tegra" > "${pkgdir}/etc/ld.so.conf.d/$pkgbase.conf"
 
   # copy udev rules
   mkdir -p "${pkgdir}/usr/lib/udev/rules.d/"
@@ -111,41 +111,38 @@ package_gpu-nvidia-tegra-k1-nvrm() {
 package_gpu-nvidia-tegra-k1-x11() {
   pkgdesc="NVIDIA binary OpenGL|ES libraries and X11 drivers for Tegra K1"
   depends=('gpu-nvidia-tegra-k1="${pkgver}"' 'X-ABI-VIDEODRV_VERSION=19')
-  provides=('libgl' 'GLX=1.4' 'EGL=1.4' 'OpenGL=4.4' 'OpenGLES=3.1')
-  conflicts=('libgl' 'GLX' 'EGL' 'OpenGL' 'OpenGLES')
+  provides=('opengl-driver' 'tegra-k1-libgl')
   cd "${srcdir}/Linux_for_Tegra/nv_tegra"
 
   # prepare tegra libgl stuff
-  mkdir -p "${pkgdir}${_install_prefix}/lib/nvidia"
-  mkdir -p "${pkgdir}${_install_prefix}/lib/pkgconfig"
+  mkdir -p "${pkgdir}${_install_prefix}/lib/tegra"
+  mkdir -p "${pkgdir}${_install_prefix}/lib/tegra-egl"
 
   # first libGL
-  cp -r usr/lib/arm-linux-gnueabihf/tegra/libGL.so.1 "${pkgdir}${_install_prefix}/lib/nvidia/libGL.so.1"
-  ln -s "${_install_prefix}/lib/nvidia/libGL.so.1" "${pkgdir}${_install_prefix}/lib/libGL.so.1.2.0"
-  ln -s "${_install_prefix}/lib/libGL.so.1.2.0" "${pkgdir}${_install_prefix}/lib/libGL.so.1"
-  ln -s "${_install_prefix}/lib/libGL.so.1.2.0" "${pkgdir}${_install_prefix}/lib/libGL.so"
+  cp -r usr/lib/arm-linux-gnueabihf/tegra/libGL.so.1 "${pkgdir}${_install_prefix}/lib/tegra/libGL.so.1.2.0"
+  ln -s "${_install_prefix}/lib/tegra/libGL.so.1.2.0" "${pkgdir}${_install_prefix}/lib/tegra/libGL.so.1"
+  ln -s "${_install_prefix}/lib/tegra/libGL.so.1.2.0" "${pkgdir}${_install_prefix}/lib/tegra/libGL.so"
 
   # second libEGL, and libGLES
-  cp -r usr/lib/arm-linux-gnueabihf/tegra-egl/lib* "${pkgdir}${_install_prefix}/lib/nvidia/"
-  ln -s "${_install_prefix}/lib/nvidia/libEGL.so.1" "${pkgdir}${_install_prefix}/lib/libEGL.so.1.0.0"
-  ln -s "${_install_prefix}/lib/libEGL.so.1.0.0" "${pkgdir}${_install_prefix}/lib/libEGL.so.1"
-  ln -s "${_install_prefix}/lib/libEGL.so.1.0.0" "${pkgdir}${_install_prefix}/lib/libEGL.so"
-  ln -s "${_install_prefix}/lib/nvidia/libGLESv1_CM.so.1" "${pkgdir}${_install_prefix}/lib/libGLESv1_CM.so.1.1.0"
-  ln -s "${_install_prefix}/lib/libGLESv1_CM.so.1.1.0" "${pkgdir}${_install_prefix}/lib/libGLESv1_CM.so.1"
-  ln -s "${_install_prefix}/lib/libGLESv1_CM.so.1.1.0" "${pkgdir}${_install_prefix}/lib/libGLESv1_CM.so"
-  ln -s "${_install_prefix}/lib/nvidia/libGLESv2.so.2" "${pkgdir}${_install_prefix}/lib/libGLESv2.so.2.0.0"
-  ln -s "${_install_prefix}/lib/libGLESv2.so.2.0.0" "${pkgdir}${_install_prefix}/lib/libGLESv2.so.2"
-  ln -s "${_install_prefix}/lib/libGLESv2.so.2.0.0" "${pkgdir}${_install_prefix}/lib/libGLESv2.so"
+  cp -r usr/lib/arm-linux-gnueabihf/tegra-egl/libEGL.so.1 "${pkgdir}${_install_prefix}/lib/tegra-egl/libEGL.so.1.0.0"
+  ln -s "${_install_prefix}/libtegra-egl/libEGL.so.1.0.0" "${pkgdir}${_install_prefix}/lib/tegra-egl/libEGL.so.1"
+  ln -s "${_install_prefix}/lib/tegra-egl/libEGL.so.1.0.0" "${pkgdir}${_install_prefix}/lib/tegra-egl/libEGL.so"
+  cp -r usr/lib/arm-linux-gnueabihf/tegra-egl/libGLESv1_CM.so.1 "${pkgdir}${_install_prefix}/lib/tegra-egl/libGLESv1_CM.so.1.0.0"
+  ln -s "${_install_prefix}/lib/tegra-egl/libGLESv1_CM.so.1.1.0" "${pkgdir}${_install_prefix}/lib/tegra-egl/libGLESv1_CM.so.1"
+  ln -s "${_install_prefix}/lib/tegra-egl/libGLESv1_CM.so.1.1.0" "${pkgdir}${_install_prefix}/lib/tegra-egl/libGLESv1_CM.so"
+  cp -r usr/lib/arm-linux-gnueabihf/tegra-egl/libGLESv2.so.2 "${pkgdir}${_install_prefix}/lib/tegra-egl/libGLESv2.so.2.0.0"
+  ln -s "${_install_prefix}/lib/tegra-egl/libGLESv2.so.2.0.0" "${pkgdir}${_install_prefix}/lib/tegra-egl/libGLESv2.so.2"
+  ln -s "${_install_prefix}/lib/tegra-egl/libGLESv2.so.2.0.0" "${pkgdir}${_install_prefix}/lib/tegra-egl/libGLESv2.so"
 
-  # install pkg-config files
-  install -m0644 "${srcdir}"/{egl,gl,glesv1_cm,glesv2}.pc "${pkgdir}${_install_prefix}/lib/pkgconfig/"
+  mkdir -p "${pkgdir}/etc/ld.so.conf.d"
+  echo "${_install_prefix}/lib/tegra-egl" > "${pkgdir}/etc/ld.so.conf.d/${pkgbase}-egl.conf"
 
   # copy X11 drivers
   mkdir -p "${pkgdir}/usr/lib/xorg/modules/drivers"
   mkdir -p "${pkgdir}/usr/lib/xorg/modules/extensions"
-  cp usr/lib/arm-linux-gnueabihf/tegra/libglx.so "${pkgdir}/${_install_prefix}/lib/"
+  cp usr/lib/arm-linux-gnueabihf/tegra/libglx.so "${pkgdir}/${_install_prefix}/lib/tegra"
   cp -r usr/lib/xorg/modules/drivers/nvidia_drv.so "${pkgdir}/usr/lib/xorg/modules/drivers/"
-  ln -s ${_install_prefix}/lib/libglx.so "${pkgdir}/usr/lib/xorg/modules/extensions/libglx.so"
+  ln -s ${_install_prefix}/lib/tegra/libglx.so "${pkgdir}/usr/lib/xorg/modules/extensions/libglx.so"
 
   # install tegra X11 config
   mkdir -p "${pkgdir}/usr/share/X11/xorg.conf.d/"
@@ -159,14 +156,12 @@ package_gpu-nvidia-tegra-k1-libcuda() {
 
   cd "${srcdir}/Linux_for_Tegra/nv_tegra"
 
-  mkdir -p "${pkgdir}${_install_prefix}/lib/cuda"
+  mkdir -p "${pkgdir}${_install_prefix}/lib/tegra"
 
-  cp usr/lib/arm-linux-gnueabihf/tegra/libcuda.so.1.1 "${pkgdir}/${_install_prefix}/lib/cuda/"
-
-  ln -s "${_install_prefix}/lib/cuda/libcuda.so.1.1" "${pkgdir}${_install_prefix}/lib/libcuda.so.1.1.0"
-  ln -s "${_install_prefix}/lib/libcuda.so.1.1.0" "${pkgdir}${_install_prefix}/lib/libcuda.so.1.1"
-  ln -s "${_install_prefix}/lib/libcuda.so.1.1.0" "${pkgdir}${_install_prefix}/lib/libcuda.so.1"
-  ln -s "${_install_prefix}/lib/libcuda.so.1.1.0" "${pkgdir}${_install_prefix}/lib/libcuda.so"
+  cp usr/lib/arm-linux-gnueabihf/tegra/libcuda.so.1.1 "${pkgdir}/${_install_prefix}/lib/tegra/libcuda.so.1.1.0"
+  ln -s "${_install_prefix}/lib/tegra/libcuda.so.1.1.0" "${pkgdir}${_install_prefix}/lib/tegra/libcuda.so.1.1"
+  ln -s "${_install_prefix}/lib/tegra/libcuda.so.1.1.0" "${pkgdir}${_install_prefix}/lib/tegra/libcuda.so.1"
+  ln -s "${_install_prefix}/lib/tegra/libcuda.so.1.1.0" "${pkgdir}${_install_prefix}/lib/tegra/libcuda.so"
 
 }
 
@@ -176,14 +171,14 @@ package_gpu-nvidia-tegra-k1-openmax() {
 
   cd "${srcdir}/Linux_for_Tegra/nv_tegra"
 
-  mkdir -p "${pkgdir}${_install_prefix}/lib"
+  mkdir -p "${pkgdir}${_install_prefix}/lib/tegra"
 
   for lib in libnvomx.so libnvomxilclient.so
   do
-    cp usr/lib/arm-linux-gnueabihf/tegra/${lib} "${pkgdir}/${_install_prefix}/lib/"
+    cp usr/lib/arm-linux-gnueabihf/tegra/${lib} "${pkgdir}/${_install_prefix}/lib/tegra/"
   done
 
-  ln -s "${_install_prefix}/lib/libnvomx.so" "${pkgdir}${_install_prefix}/lib/libOmxCore.so"
+  ln -s "${_install_prefix}/lib/tegra/libnvomx.so" "${pkgdir}${_install_prefix}/lib/tegra/libOmxCore.so"
 
 }
 
