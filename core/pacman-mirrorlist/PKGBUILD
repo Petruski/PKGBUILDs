@@ -1,7 +1,7 @@
 # Maintainer: Kevin Mihelich <kevin@archlinuxarm.org>
 
 pkgname=pacman-mirrorlist
-pkgver=20170120
+pkgver=20170130
 pkgrel=1
 pkgdesc="Arch Linux ARM mirror list for use by pacman"
 arch=('any')
@@ -10,7 +10,7 @@ license=('GPL')
 groups=('base')
 backup=(etc/pacman.d/mirrorlist)
 source=(mirrorlist)
-md5sums=('91ed8297f901cbea4c63072357aaa2df')
+md5sums=('f4f3e0fb414e7a9e461c7aa5307df9c6')
 
 package() {
   mkdir -p $pkgdir/etc/pacman.d

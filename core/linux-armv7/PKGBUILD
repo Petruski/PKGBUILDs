@@ -4,12 +4,12 @@
 buildarch=4
 
 pkgbase=linux-armv7
-_srcname=linux-4.9
+_srcname=linux-4.10
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 multi-platform"
-pkgver=4.9.4
+pkgver=4.10.3
 pkgrel=1
-rcnrel=armv7-x4
+rcnrel=armv7-x1
 arch=('armv7h')
 url="http://www.kernel.org/"
 license=('GPL2')
@@ -26,27 +26,33 @@ source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
         '0006-ARM-TLV320AIC23-SoC-Audio-Codec-Fix-errors-reported-.patch'
         '0007-set-default-cubietruck-led-triggers.patch'
         '0008-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch'
+        '0009-drm-armada-tracing-fix.patch'
+        '0010-disable-USB3-port-on-ODROID-XU.patch'
         'config'
-        'cmdline'
         'kernel.its'
         'kernel.keyblock'
-        'kernel_data_key.vbprivk')
-md5sums=('0a68ef3615c64bd5ee54a3320e46667d'
-         'fbdb8676e190a85516bbc965cf086048'
-         '2dab8cb52a40764361e2089fd1aebf9c'
-         '7bad9743fd2f1690f479cbbec5a556ab'
-         '57998a8dbf42d2237f2f3a650b93ef26'
-         '75e392a161842813d0ff3d0beaf68038'
-         '5840b71b7b2600388aa9a1195a5af528'
-         '25c3f00750a1aa951b857bf06ec79a8e'
-         'dd1c99be98c43f06a07aa14fc47d6e3e'
-         'ef825f8c3563a87bab10f4782e7a0efc'
-         'ef5fd8e682fed9dce4bc3d1c821acbd1'
-         '8f06a784da37647e0421d97cbed22a56'
-         '1813b39074d01af6548951764a0f6444'
+        'kernel_data_key.vbprivk'
+        'linux.preset'
+        '99-linux.hook')
+md5sums=('b5e7f6b9b2fe1b6cc7bc56a3a0bfc090'
+         'bcbd0dead8ca701c0463f1e2744147e1'
+         '655cf6b5a882d33d53ce75b0a45f3453'
+         '88ad590a43ebe285c4df6a1c5c298b97'
+         '56e0bd2354406b132cf904c3877506c5'
+         '34a723ffcbef63e9461193061b4461a1'
+         '28bf88b2ad58937d00d2240690e59973'
+         '23fe69ef9a0e3e016eea4529e0db4268'
+         '1204a4c65fe53025bb02042e7ee105cb'
+         '5c0086e99dcc1e84d70d6809d452c52c'
+         '2a92aab5348329756f65933f919bb9ef'
+         '0429d0ffa8ccda0d69ac69dcf7cc49f1'
+         'a6b0eb95998ae11416186728e855c289'
+         '81fd6c631e3868267ad7d577455606ec'
          '4f2379ed84258050edb858ee8d281678'
          '61c5ff73c136ed07a7aadbf58db3d96a'
-         '584777ae88bce2c5659960151b64c7d8')
+         '584777ae88bce2c5659960151b64c7d8'
+         'fb034fe5f2e28a4cce30ae2d8cf6be3c'
+         '79fa396e3f9a09a85156d6d7c2d34b58')
 
 prepare() {
   cd "${srcdir}/${_srcname}"
@@ -66,6 +72,8 @@ prepare() {
   git apply ../0006-ARM-TLV320AIC23-SoC-Audio-Codec-Fix-errors-reported-.patch
   git apply ../0007-set-default-cubietruck-led-triggers.patch
   git apply ../0008-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch
+  git apply ../0009-drm-armada-tracing-fix.patch
+  git apply ../0010-disable-USB3-port-on-ODROID-XU.patch
 
   cat "${srcdir}/config" > ./.config
 
@@ -110,6 +118,7 @@ _package() {
   pkgdesc="The Linux Kernel and modules - ${_desc}"
   depends=('coreutils' 'linux-firmware' 'kmod' 'mkinitcpio>=0.7')
   optdepends=('crda: to set the correct wireless channels of your country')
+  backup=("etc/mkinitcpio.d/${pkgbase}.preset")
   provides=('kernel26' "linux=${pkgver}")
   conflicts=('linux')
   replaces=('linux-mvebu' 'linux-udoo' 'linux-sun4i' 'linux-sun5i' 'linux-sun7i' 'linux-usbarmory' 'linux-wandboard')
@@ -134,6 +143,17 @@ _package() {
     -e  "s/KERNEL_NAME=.*/KERNEL_NAME=${_kernelname}/g" \
     -e  "s/KERNEL_VERSION=.*/KERNEL_VERSION=${_kernver}/g" \
     -i "${startdir}/${pkgname}.install"
+
+  # install mkinitcpio preset file for kernel
+  install -D -m644 "${srcdir}/linux.preset" "${pkgdir}/etc/mkinitcpio.d/${pkgbase}.preset"
+  sed \
+    -e "1s|'linux.*'|'${pkgbase}'|" \
+    -e "s|ALL_kver=.*|ALL_kver=\"${_kernver}\"|" \
+    -i "${pkgdir}/etc/mkinitcpio.d/${pkgbase}.preset"
+
+  # install pacman hook for initramfs regeneration
+  sed "s|%PKGBASE%|${pkgbase}|g" "${srcdir}/99-linux.hook" |
+    install -D -m644 /dev/stdin "${pkgdir}/usr/share/libalpm/hooks/99-${pkgbase}.hook"
 
   # remove build and source links
   rm -f "${pkgdir}"/lib/modules/${_kernver}/{source,build}
@@ -355,6 +375,7 @@ _package-chromebook() {
   cp ../kernel.its .
   mkimage -D "-I dts -O dtb -p 2048" -f kernel.its vmlinux.uimg
   dd if=/dev/zero of=bootloader.bin bs=512 count=1
+  echo 'console=tty0 init=/sbin/init root=PARTUUID=%U/PARTNROFF=1 rootwait rw noinitrd' > cmdline
   vbutil_kernel \
     --pack vmlinux.kpart \
     --version 1 \
@@ -362,7 +383,7 @@ _package-chromebook() {
     --arch arm \
     --keyblock ../kernel.keyblock \
     --signprivate ../kernel_data_key.vbprivk \
-    --config ../cmdline \
+    --config cmdline \
     --bootloader bootloader.bin
 
   mkdir -p "${pkgdir}/boot"

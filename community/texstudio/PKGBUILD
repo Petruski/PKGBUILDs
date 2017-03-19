@@ -5,7 +5,7 @@
 #  - ARM patch, use NO_CRASH_HANDLER=1 for AArch64
 
 pkgname=texstudio
-pkgver=2.12.0
+pkgver=2.12.2
 pkgrel=1
 pkgdesc="Integrated writing environment for creating LaTeX documents"
 arch=('i686' 'x86_64')
@@ -18,8 +18,8 @@ optdepends=('evince: pdf reader'
 replaces=('texmakerx')
 source=("hg+http://hg.code.sf.net/p/texstudio/hg#tag=${pkgver}"
         texstudio-debughelper-arm-fix.patch)
-md5sums=('SKIP'
-         '54eba96da2c93980fd9d85f751a56905')
+sha512sums=('SKIP'
+            'dcb5ce7cd3e83fc221903fa895e6c428c54ada7468e74bb0a3e6bfac01c9e9575e4780d300b67f44064f2d25e10dd1aef531b847cdee71fbfbe7337808a0c8f4')
 
 prepare() {
     cd hg

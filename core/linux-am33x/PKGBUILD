@@ -4,12 +4,12 @@
 buildarch=4
 
 pkgbase=linux-am33x
-_srcname=linux-4.9
+_srcname=linux-4.10
 _kernelname=${pkgbase#linux}
 _desc="TI AM335x Beaglebone (Black)"
-pkgver=4.9.4
+pkgver=4.10.3
 pkgrel=1
-rcnrel=bone4
+rcnrel=bone1
 arch=('armv7h')
 url="http://www.kernel.org/"
 license=('GPL2')
@@ -21,12 +21,12 @@ source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
         "git+https://github.com/RobertCNelson/bb.org-overlays.git"
         '0001-add-lcd-cape-for-chiliboard.patch'
         'config')
-md5sums=('0a68ef3615c64bd5ee54a3320e46667d'
-         'fbdb8676e190a85516bbc965cf086048'
-         '7288e1737f82c6c8f0a2ca661c99d821'
+md5sums=('b5e7f6b9b2fe1b6cc7bc56a3a0bfc090'
+         'bcbd0dead8ca701c0463f1e2744147e1'
+         'adab96e3a25b17939acf6d36c9082348'
          'SKIP'
          'cae8b723f5e745c1106ab2ea75f72f20'
-         '8500cb8966c1879e6fffb5990d143b35')
+         '432fa7aaf0b2473b65e190aa2e75efbc')
 
 prepare() {
   cd "${srcdir}/${_srcname}"
