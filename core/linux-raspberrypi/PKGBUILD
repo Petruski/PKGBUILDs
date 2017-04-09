@@ -5,11 +5,11 @@
 buildarch=20
 
 pkgbase=linux-raspberrypi
-_commit=a102c13bd969e0dc21f6b56dc5af1b5f72a3307b
+_commit=a196d989ba49520382594a6384206f71cc8c008b
 _srcname=linux-${_commit}
 _kernelname=${pkgbase#linux}
 _desc="Raspberry Pi"
-pkgver=4.9.15
+pkgver=4.9.20
 pkgrel=1
 arch=('armv6h' 'armv7h')
 url="http://www.kernel.org/"
@@ -23,12 +23,12 @@ source=("https://github.com/raspberrypi/linux/archive/${_commit}.tar.gz"
         'config'
         'linux.preset'
         '99-linux.hook')
-md5sums=('8c43601602bd9e0d8fc5e84610f580f4'
+md5sums=('cb17b7f44de29c667e47f37612ffa963'
          '4a410ab9a1eefe82e158d36df02b3589'
          '8c3cb6d8f0609b43f09d083b4006ec5a'
          '7c6b37a1353caccf6d3786bb4161c218'
          '60bc3624123c183305677097bcd56212'
-         '688dfa837866b3acccb7663286ce8ed1'
+         '81e14dd0f27ece034fd918c91c9a0533'
          '552c43bf6c0225bc213b31ee942b7000'
          '982f9184dfcfbe52110795cf73674334')
 
