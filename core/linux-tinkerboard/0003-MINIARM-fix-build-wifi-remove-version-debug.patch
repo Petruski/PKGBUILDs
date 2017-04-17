@@ -1,0 +1,29 @@
+From 35bde9c2bacd48b44dc5f1fd736927be76f57180 Mon Sep 17 00:00:00 2001
+From: Jacob Chen <jacob2.chen@rock-chips.com>
+Date: Tue, 18 Oct 2016 09:45:24 +0800
+Subject: [PATCH 3/4] MINIARM: fix build: wifi: remove version debug
+
+Change-Id: I217d90fc2339bee8fad1997c34c74a27f4b55662
+Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
+---
+ drivers/net/wireless/rockchip_wlan/rtl8723bs/core/rtw_debug.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/rockchip_wlan/rtl8723bs/core/rtw_debug.c b/drivers/net/wireless/rockchip_wlan/rtl8723bs/core/rtw_debug.c
+index 376dc04a9821..6ee05c0a895f 100644
+--- a/drivers/net/wireless/rockchip_wlan/rtl8723bs/core/rtw_debug.c
++++ b/drivers/net/wireless/rockchip_wlan/rtl8723bs/core/rtw_debug.c
+@@ -67,8 +67,8 @@ u32 GlobalDebugLevel = _drv_err_;
+ 
+ void dump_drv_version(void *sel)
+ {
+-	DBG_871X_SEL_NL(sel, "%s %s\n", DRV_NAME, DRIVERVERSION);
+-	DBG_871X_SEL_NL(sel, "build time: %s %s\n", __DATE__, __TIME__);
++	//DBG_871X_SEL_NL(sel, "%s %s\n", DRV_NAME, DRIVERVERSION);
++	//DBG_871X_SEL_NL(sel, "build time: %s %s\n", __DATE__, __TIME__);
+ }
+ 
+ void dump_drv_cfg(void *sel)
+-- 
+2.12.2
+

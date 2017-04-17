@@ -1,0 +1,192 @@
+From c6fa13c2998e12a6ec2e9d13a3fb1f28f545c987 Mon Sep 17 00:00:00 2001
+From: Ronny Lorenz <ronny@tbi.univie.ac.at>
+Date: Sun, 16 Apr 2017 21:11:56 +0200
+Subject: [PATCH 4/4] Include Tinkerboard DTS changes from Tonymac32 for
+ Armbian
+
+---
+ arch/arm/boot/dts/rk3288-miniarm.dts | 95 +++++++++++++++++++++++++++++++-----
+ 1 file changed, 84 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arm/boot/dts/rk3288-miniarm.dts b/arch/arm/boot/dts/rk3288-miniarm.dts
+index 609e8588795a..74f7f645bc05 100644
+--- a/arch/arm/boot/dts/rk3288-miniarm.dts
++++ b/arch/arm/boot/dts/rk3288-miniarm.dts
+@@ -42,10 +42,24 @@
+ 
+ #include <dt-bindings/clock/rockchip,rk808.h>
+ #include "rk3288.dtsi"
++#include <dt-bindings/input/input.h>
+ 
+ / {
+ 	compatible = "rockchip,rk3288-miniarm", "rockchip,rk3288";
+ 
++	ion {
++		compatible = "rockchip,ion";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cma-heap {
++			reg = <0x78000000 0x08000000>;
++		};
++
++		system-heap {
++		};
++	};
++
+ 	memory {
+ 		device_type = "memory";
+ 		reg = <0x0 0x80000000>;
+@@ -66,7 +80,7 @@
+ 	wireless-wlan {
+ 		compatible = "wlan-platdata";
+ 		rockchip,grf = <&grf>;
+-		wifi_chip_type = "ap6212";
++		wifi_chip_type = "8723bs";
+ 		sdio_vref = <1800>;
+ 		WIFI,host_wake_irq = <&gpio4 30 GPIO_ACTIVE_HIGH>;
+ 		status = "okay";
+@@ -79,12 +93,6 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
+-	io-domains {
+-		compatible = "rockchip,rk3288-io-voltage-domain";
+-		rockchip,grf = <&grf>;
+-		wifi-supply = <&vcc_18>;
+-	};
+-
+ 	sdio_pwrseq: sdio-pwrseq {
+ 		compatible = "mmc-pwrseq-simple";
+ 		clocks = <&rk808 RK808_CLKOUT1>;
+@@ -129,8 +137,13 @@
+ 		};
+ 
+ 		act-led {
+-			gpios=<&gpio2 3 GPIO_ACTIVE_LOW>;
+-			linux,default-trigger="mmc0";
++			gpios = <&gpio1 0x18 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "mmc0";
++		};
++		
++		heartbeat-led {
++			gpios = <&gpio1 0x19 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "heartbeat";
+ 		};
+ 	};
+ 
+@@ -172,6 +185,13 @@
+ 		startup-delay-us = <100000>;
+ 		vin-supply = <&vcc_io>;
+ 	};
++
++	vdd_log: vdd_log {
++		compatible = "regulator-fixed";
++		regulator-min-microvolt = <1000000>;
++		regulator-max-microvolt = <1000000>;
++		regulator-name = "vdd_logic";
++	};
+ };
+ 
+ &cpu0 {
+@@ -413,6 +433,12 @@
+ 
+ &i2c2 {
+ 	status = "okay";
++
++		eeprom:m24c08@50 {
++            compatible = "at,24c08";
++            reg = <0x50>;
++        };
++
+ };
+ 
+ &i2s {
+@@ -421,9 +447,9 @@
+ };
+ 
+ &io_domains {
+-	status = "okay";
+-
++	wifi-supply = <&vcc_18>;
+ 	sdcard-supply = <&vccio_sd>;
++	status = "okay";
+ };
+ 
+ &sdio0 {
+@@ -461,6 +487,10 @@
+ 	bus-width = <4>;
+ 	cap-mmc-highspeed;
+ 	cap-sd-highspeed;
++	sd-uhs-sdr12;
++	sd-uhs-sdr25;
++	sd-uhs-sdr50;
++	sd-uhs-sdr104;
+ 	card-detect-delay = <200>;
+ 	disable-wp;			/* wp not hooked up */
+ 	num-slots = <1>;
+@@ -479,6 +509,8 @@
+ };
+ 
+ &uart0 {
++	dmas = <&dmac_peri 1>, <&dmac_peri 2>;
++	dma-names = "tx", "rx";
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_xfer>, <&uart0_cts>;
+ 	status = "okay";
+@@ -573,6 +605,12 @@
+ 		};
+ 	};
+ 
++	sdio-pwrseq {
++		wifi_enable_h: wifi-enable-h {
++			rockchip,pins = <4 28 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
+ 	pmic {
+ 		pmic_int: pmic-int {
+ 			rockchip,pins = <RK_GPIO0 4 RK_FUNC_GPIO &pcfg_pull_up>;
+@@ -634,4 +672,39 @@
+ 		};
+ 	};
+ 
++	cam_pins {
++		cam0_default_pins:cam0_default_pins {
++			rockchip,pins = <0 17 RK_FUNC_GPIO &pcfg_pull_none>,/*sensor power pin: GPIO0_C1 */
++			<2 0 RK_FUNC_GPIO &pcfg_pull_none>,/*sensor power down pin: GPIO2_A0*/
++			<2 11 RK_FUNC_1 &pcfg_pull_none>;/*sensor mclk: cif_clkout*/
++		};
++
++		cam0_sleep_pins:cam0_sleep_pins {
++			rockchip,pins = <0 17 RK_FUNC_GPIO &pcfg_pull_none>,/*sensor power pin: GPIO0_C1 */
++			<2 0 RK_FUNC_GPIO &pcfg_pull_none>,/* cif power down pin */
++			<2 11 RK_FUNC_GPIO &pcfg_pull_none>;/* cif_clkout */
++		};
++	};
++};
++
++&dmc {
++	status = "okay";
++	logic-supply = <&vdd_log>;
++	rockchip,odt-disable-freq = <666000000>;
++	rockchip,dll-disable-freq = <333000000>;
++	rockchip,sr-enable-freq = <333000000>;
++	rockchip,auto-self-refresh-cnt = <0>;
++	rockchip,auto-power-down-cnt = <64>;
++	rockchip,ddr-speed-bin = <21>;
++	rockchip,trcd = <10>;
++	rockchip,trp = <10>;
++	rockchip,pd-enable-freq = <333000000>;
++	operating-points = <
++		/* KHz    uV */
++		200000 1000000
++		333000 1000000
++		533000 1000000
++	>;
++
++	#cooling-cells = <2>; /* min followed by max */
+ };
+-- 
+2.12.2
+
