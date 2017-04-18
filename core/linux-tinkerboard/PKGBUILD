@@ -1,4 +1,4 @@
-# Rockchip-Linux Kernel for ASUS TinkerBoard
+# Rochchip kernel for ASUS TinkerBoard
 # Maintainer: Ronny Lorenz <ronny@tbi.univie.ac.at>
 
 buildarch=4
@@ -7,9 +7,9 @@ pkgbase=linux-tinkerboard
 _commit=49c16833b723b2c4fd0768483790a4f890cf2e10
 _srcname=kernel-${_commit}
 _kernelname=${pkgbase#linux}
-_desc="Rockchip-Linux Kernel for ASUS TinkerBoard"
+_desc="Rochchip-Linux kernel for ASUS TinkerBoard"
 pkgver=4.4.55
-pkgrel=1
+pkgrel=2
 arch=('armv7h')
 url="https://github.com/rockchip-linux/kernel"
 license=('GPL2')
@@ -23,7 +23,7 @@ source=("https://github.com/rockchip-linux/kernel/archive/${_commit}.tar.gz"
         '0001-MINIARM-wifi.patch'
         '0002-MINIARM-wifi-disable-wifi-debug-log.patch'
         '0003-MINIARM-fix-build-wifi-remove-version-debug.patch'
-        '0004-Include-Tinkerboard-DTS-changes-from-Tonymac32-for-A.patch')
+        '0004-Fix-rk3288.dtsi-and-add-Tinkerboard-changes-to-rk328.patch')
 md5sums=('2f7b5cbe1b84df6c341ec04995ee48fa'
          '8a29626bd3d52740b783722778f1b559'
          '742d6a09e8c32e93d049b8ff56f94a3a'
@@ -32,7 +32,7 @@ md5sums=('2f7b5cbe1b84df6c341ec04995ee48fa'
          'f3e8532729418c7b1111a3eb04218f39'
          '02aaf4ce2987783782a995e2222b0ad8'
          'af1e3ea8f7fb49f2aecac7e567f316ac'
-         '34b407d4aaff6cc55530f1067d6d9fcb')
+         'd98860ea5f2f6172d9a5ce729632db92')
 
 prepare() {
   cd "${srcdir}/${_srcname}"
@@ -41,7 +41,7 @@ prepare() {
   patch -p1 < "${srcdir}/0001-MINIARM-wifi.patch"
   patch -p1 < "${srcdir}/0002-MINIARM-wifi-disable-wifi-debug-log.patch"
   patch -p1 < "${srcdir}/0003-MINIARM-fix-build-wifi-remove-version-debug.patch"
-  patch -p1 < "${srcdir}/0004-Include-Tinkerboard-DTS-changes-from-Tonymac32-for-A.patch"
+  patch -p1 < "${srcdir}/0004-Fix-rk3288.dtsi-and-add-Tinkerboard-changes-to-rk328.patch"
 
   cat "${srcdir}/config" > ./.config
 

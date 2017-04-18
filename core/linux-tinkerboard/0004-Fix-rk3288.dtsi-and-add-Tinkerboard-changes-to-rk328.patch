@@ -1,15 +1,17 @@
-From 6d17a20f0c7628a22bb1c248bf9dea552ef21e97 Mon Sep 17 00:00:00 2001
+From 69b71356b74faee074136ca05c78e0bed72f13d8 Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Sun, 16 Apr 2017 21:11:56 +0200
-Subject: [PATCH 4/4] Include Tinkerboard DTS changes from Tonymac32 for
- Armbian
+Subject: [PATCH 4/4] Fix rk3288.dtsi and add Tinkerboard changes to
+ rk3288-miniarm.dts
 
+This applies changes made available through Armbian and some more upstream fixes
 ---
- arch/arm/boot/dts/rk3288-miniarm.dts | 95 +++++++++++++++++++++++++++++++-----
- 1 file changed, 84 insertions(+), 11 deletions(-)
+ arch/arm/boot/dts/rk3288-miniarm.dts | 99 +++++++++++++++++++++++++++++++-----
+ arch/arm/boot/dts/rk3288.dtsi        |  8 +--
+ 2 files changed, 90 insertions(+), 17 deletions(-)
 
 diff --git a/arch/arm/boot/dts/rk3288-miniarm.dts b/arch/arm/boot/dts/rk3288-miniarm.dts
-index 609e8588795a..74f7f645bc05 100644
+index 609e8588795a..5fe4547bf52c 100644
 --- a/arch/arm/boot/dts/rk3288-miniarm.dts
 +++ b/arch/arm/boot/dts/rk3288-miniarm.dts
 @@ -42,10 +42,24 @@
@@ -42,7 +44,7 @@ index 609e8588795a..74f7f645bc05 100644
  		compatible = "wlan-platdata";
  		rockchip,grf = <&grf>;
 -		wifi_chip_type = "ap6212";
-+		wifi_chip_type = "8723bs";
++		wifi_chip_type = "rtl8723bs";
  		sdio_vref = <1800>;
  		WIFI,host_wake_irq = <&gpio4 30 GPIO_ACTIVE_HIGH>;
  		status = "okay";
@@ -89,6 +91,15 @@ index 609e8588795a..74f7f645bc05 100644
  };
  
  &cpu0 {
+@@ -191,7 +211,7 @@
+ 	pinctrl-0 = <&rgmii_pins>;
+ 	tx_delay = <0x30>;
+ 	rx_delay = <0x10>;
+-	status = "ok";
++	status = "okay";
+ };
+ 
+ &gpu {
 @@ -413,6 +433,12 @@
  
  &i2c2 {
@@ -114,6 +125,15 @@ index 609e8588795a..74f7f645bc05 100644
  };
  
  &sdio0 {
+@@ -439,7 +465,7 @@
+ 	non-removable;
+ 	num-slots = <1>;
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&sdio0_bus4 &sdio0_cmd &sdio0_clk>;
++	pinctrl-0 = <&sdio0_bus4 &sdio0_cmd &sdio0_clk &sdio0_int>;
+ 	sd-uhs-sdr104;
+ 	supports-sdio;
+ };
 @@ -461,6 +487,10 @@
  	bus-width = <4>;
  	cap-mmc-highspeed;
@@ -187,6 +207,46 @@ index 609e8588795a..74f7f645bc05 100644
 +
 +	#cooling-cells = <2>; /* min followed by max */
  };
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index 1a8de87b02d1..532d98977ef7 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -1043,7 +1043,7 @@
+ 		status = "disabled";
+ 	};
+ 
+-	spdif: sound@ff88b0000 {
++	spdif: sound@ff8b0000 {
+ 		compatible = "rockchip,rk3288-spdif", "rockchip,rk3066-spdif";
+ 		reg = <0xff8b0000 0x10000>;
+ 		#sound-dai-cells = <0>;
+@@ -1213,7 +1213,7 @@
+ 	mipi_dsi: mipi@ff960000 {
+ 		compatible = "rockchip,rk3288-mipi-dsi", "snps,dw-mipi-dsi";
+ 		reg = <0xff960000 0x4000>;
+-		interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru SCLK_MIPIDSI_24M>, <&cru PCLK_MIPI_DSI0>;
+ 		clock-names = "ref", "pclk";
+ 		power-domains = <&power RK3288_PD_VIO>;
+@@ -1506,7 +1506,7 @@
+ 		#address-cells = <0>;
+ 
+ 		reg = <0xffc01000 0x1000>,
+-		      <0xffc02000 0x1000>,
++		      <0xffc02000 0x2000>,
+ 		      <0xffc04000 0x2000>,
+ 		      <0xffc06000 0x2000>;
+ 		interrupts = <GIC_PPI 9 0xf04>;
+@@ -1756,7 +1756,7 @@
+ 				rockchip,pins = <6 21 RK_FUNC_1 &pcfg_pull_up>;
+ 			};
+ 
+-			sdmmc_cd: sdmcc-cd {
++			sdmmc_cd: sdmmc-cd {
+ 				rockchip,pins = <6 22 RK_FUNC_1 &pcfg_pull_up>;
+ 			};
+ 
 -- 
 2.12.2
 

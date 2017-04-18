@@ -1,0 +1,51 @@
+From patchwork Thu Feb 18 16:26:56 2016
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: [v2] ARM: atags_to_fdt: don't warn about stack size
+From: Arnd Bergmann <arnd@arndb.de>
+X-Patchwork-Id: 8352011
+Message-Id: <7301172.5fH67MHlU9@wuerfel>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Nicolas Pitre <nicolas.pitre@linaro.org>, Jon Medhurst <tixy@linaro.org>, 
+ Russell King <linux@arm.linux.org.uk>,
+ Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+ Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org
+Date: Thu, 18 Feb 2016 17:26:56 +0100
+
+The merge_fdt_bootargs() function by definition consumes more than 1024
+bytes of stack because it has a 1024 byte command line on the stack,
+meaning that we always get a warning when building this file:
+
+arch/arm/boot/compressed/atags_to_fdt.c: In function 'merge_fdt_bootargs':
+arch/arm/boot/compressed/atags_to_fdt.c:98:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+
+However, as this is the decompressor and we know that it has a very shallow
+call chain, and we do not actually risk overflowing the kernel stack
+at runtime here.
+
+This just shuts up the warning by slightly increasing the limit for this
+file.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Nicolas Pitre <nico@linaro.org>
+---
+On Thursday 18 February 2016 11:13:52 Nicolas Pitre wrote:
+> What about setting the warning to 2048 instead?
+
+Sure, actually 1280 is more than enough I think.
+
+diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
+index 7a6a58ef8aaf..2cc63038d6c8 100644
+--- a/arch/arm/boot/compressed/Makefile
++++ b/arch/arm/boot/compressed/Makefile
+@@ -85,6 +85,9 @@ $(addprefix $(obj)/,$(libfdt) $(libfdt_hdrs)): $(obj)/%: $(srctree)/scripts/dtc/
+ $(addprefix $(obj)/,$(libfdt_objs) atags_to_fdt.o): \
+ 	$(addprefix $(obj)/,$(libfdt_hdrs))
+ 
++CFLAGS_REMOVE_atags_to_fdt.o += -Wframe-larger-than=${CONFIG_FRAME_WARN}
++CFLAGS_atags_to_fdt.o += -Wframe-larger-than=1280
++
+ ifeq ($(CONFIG_ARM_ATAG_DTB_COMPAT),y)
+ OBJS	+= $(libfdt_objs) atags_to_fdt.o
+ endif
