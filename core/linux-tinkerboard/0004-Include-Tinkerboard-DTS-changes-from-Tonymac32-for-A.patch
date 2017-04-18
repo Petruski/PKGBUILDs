@@ -1,4 +1,4 @@
-From c6fa13c2998e12a6ec2e9d13a3fb1f28f545c987 Mon Sep 17 00:00:00 2001
+From 6d17a20f0c7628a22bb1c248bf9dea552ef21e97 Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Sun, 16 Apr 2017 21:11:56 +0200
 Subject: [PATCH 4/4] Include Tinkerboard DTS changes from Tonymac32 for

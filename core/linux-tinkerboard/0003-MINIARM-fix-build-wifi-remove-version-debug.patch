@@ -1,4 +1,4 @@
-From 35bde9c2bacd48b44dc5f1fd736927be76f57180 Mon Sep 17 00:00:00 2001
+From 43a71a0e69f326c51b11d4e8c4540d35195e4e5c Mon Sep 17 00:00:00 2001
 From: Jacob Chen <jacob2.chen@rock-chips.com>
 Date: Tue, 18 Oct 2016 09:45:24 +0800
 Subject: [PATCH 3/4] MINIARM: fix build: wifi: remove version debug
