@@ -7,14 +7,15 @@
 #  - patch to use system ffmpeg
 
 buildarch=12
+highmem=1
 
 pkgname=qt5-webengine
 _qtver=5.8.0
 pkgver=${_qtver/-/}
-pkgrel=5
+pkgrel=8
 arch=('i686' 'x86_64')
 url='http://qt-project.org/'
-license=('GPL3' 'LGPL3' 'FDL' 'custom')
+license=('LGPL3' 'LGPL2.1' 'BSD')
 pkgdesc='Provides support for web applications using the Chromium browser project'
 depends=('qt5-webchannel' 'qt5-location' 'libxcomposite' 'libxrandr' 'pciutils' 'libxss' 'libvpx' 
          'libevent' 'libsrtp' 'snappy' 'nss' 'protobuf' 'libxslt' 'libxdamage' 'minizip' 'ffmpeg')
@@ -24,11 +25,13 @@ groups=('qt' 'qt5')
 _pkgfqn="${pkgname/5-/}-opensource-src-${_qtver}"
 source=("http://download.qt.io/official_releases/qt/${pkgver%.*}/${_qtver}/submodules/${_pkgfqn}.tar.xz" qt5-webengine-nss.patch
         qtwebengine-opensource-src-5.6.0-beta-no-neon.patch
-        qtwebengine-5.7.0-icu58.patch qtbug-58488.patch::"https://github.com/qt/qtwebengine/commit/7e7dd262.patch"
+        qtwebengine-5.7.0-icu58.patch
+        qtbug-58488.patch::"https://github.com/qt/qtwebengine/commit/7e7dd262.patch"
         qtbug-58381.patch::"https://github.com/qt/qtwebengine/commit/8e147ed3.patch"
         qtbug-58515.patch::"https://github.com/qt/qtwebengine/commit/a6c6665d.patch"
         qtbug-58673.patch::"https://github.com/qt/qtwebengine/commit/90501711.patch"
         qtbug-58362.patch::"https://github.com/qt/qtwebengine/commit/31374ba9.patch"
+        qtbug-57778.patch::"https://github.com/qt/qtwebengine/commit/5c2cbfcc.patch"
         system-ffmpeg.patch)
 
 md5sums=('6e7fb2be161c6db4d988a4f5b329672f'
@@ -40,6 +43,7 @@ md5sums=('6e7fb2be161c6db4d988a4f5b329672f'
          'd5da5608285ad764f37fe196f9afe5a1'
          'c7b5acd58319d23d769c19f42323e8ec'
          '663f8454990de96fad4c8c78bcd6f819'
+         '849ab18980b0523405f0282c83b4a54c'
          '9f79b14f7c5ff603c1fcd87f37a8904f')
 
 prepare() {
@@ -54,7 +58,7 @@ prepare() {
  # patch -p1 -i ../qt5-webengine-nss.patch
 
   # Fix build with ICU 58 (gentoo)
-  patch -p1 -i "$srcdir"/qtwebengine-5.7.0-icu58.patch
+  #patch -p1 -i "$srcdir"/qtwebengine-5.7.0-icu58.patch
 
   # Prevent drop-down popups form stealing focus https://bugreports.qt.io/browse/QTBUG-58488
   patch -p1 -i ../qtbug-58488.patch
@@ -62,10 +66,13 @@ prepare() {
   # Backport some focus fixes
   patch -p1 -i ../qtbug-58381.patch
   patch -p1 -i ../qtbug-58515.patch
-  patch -p1 -i ../qtbug-58673.patch
+  patch -p1 -i ../qtbug-58673.patch 
 
   # Fix IME support
   patch -p1 -i ../qtbug-58362.patch
+
+  # Fix incorrectly overriding new and delete
+  patch -p1 -i ../qtbug-57778.patch
 
   [[ $CARCH == "armv7h" ]] && patch -p0 -i ../qtwebengine-opensource-src-5.6.0-beta-no-neon.patch
   patch -p1 -i ../system-ffmpeg.patch
@@ -75,7 +82,7 @@ build() {
   cd build
 
   export PATH="$srcdir/bin:$PATH"
-  qmake CONFIG+="proprietary-codecs" WEBENGINE_CONFIG+="use_proprietary_codecs use_system_ffmpeg use_system_icu" ../${_pkgfqn}
+  qmake CONFIG+="proprietary-codecs" WEBENGINE_CONFIG+="use_proprietary_codecs use_system_ffmpeg" ../${_pkgfqn}
   make
 }
 
@@ -87,6 +94,5 @@ package() {
   find "$pkgdir/usr/lib" -type f -name '*.prl' \
     -exec sed -i -e '/^QMAKE_PRL_BUILD_DIR/d' {} \;
 
-  install -d "$pkgdir"/usr/share/licenses
-  ln -s /usr/share/licenses/qt5-base "$pkgdir"/usr/share/licenses/${pkgname}
+  install -Dm644 "$srcdir"/${_pkgfqn}/src/3rdparty/chromium/LICENSE "$pkgdir"/usr/share/licenses/${pkgname}/LICENSE.chromium
 }

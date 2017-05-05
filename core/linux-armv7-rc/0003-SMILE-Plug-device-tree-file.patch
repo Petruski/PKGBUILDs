@@ -1,4 +1,4 @@
-From d3f5ada94549b2c868f1114afbadccf1c2bdd398 Mon Sep 17 00:00:00 2001
+From e028a068903ac27bff5161f13deca6012e8ee885 Mon Sep 17 00:00:00 2001
 From: Kevin Mihelich <kevin@archlinuxarm.org>
 Date: Fri, 5 Sep 2014 15:41:19 -0600
 Subject: [PATCH 3/9] SMILE Plug device tree file
@@ -205,5 +205,5 @@ index 000000000000..d01308ab848b
 +	};
 +};
 -- 
-2.12.0
+2.12.2
 

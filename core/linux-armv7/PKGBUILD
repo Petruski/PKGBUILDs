@@ -4,19 +4,19 @@
 buildarch=4
 
 pkgbase=linux-armv7
-_srcname=linux-4.10
+_srcname=linux-4.11
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 multi-platform"
-pkgver=4.10.8
+pkgver=4.11.0
 pkgrel=1
-rcnrel=armv7-x1
+rcnrel=armv7-x0
 arch=('armv7h')
 url="http://www.kernel.org/"
 license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-tools' 'vboot-utils' 'dtc')
 options=('!strip')
 source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
-        "http://www.kernel.org/pub/linux/kernel/v4.x/patch-${pkgver}.xz"
+        #"http://www.kernel.org/pub/linux/kernel/v4.x/patch-${pkgver}.xz"
         "http://rcn-ee.com/deb/sid-armhf/v${pkgver}-${rcnrel}/patch-${pkgver%.0}-${rcnrel}.diff.gz"
         '0001-ARM-atags-add-support-for-Marvell-s-u-boot.patch'
         '0002-ARM-atags-fdt-retrieve-MAC-addresses-from-Marvell-bo.patch'
@@ -26,28 +26,25 @@ source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
         '0006-ARM-TLV320AIC23-SoC-Audio-Codec-Fix-errors-reported-.patch'
         '0007-set-default-cubietruck-led-triggers.patch'
         '0008-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch'
-        '0009-drm-armada-tracing-fix.patch'
-        '0010-disable-USB3-port-on-ODROID-XU.patch'
+        '0009-disable-USB3-port-on-ODROID-XU.patch'
         'config'
         'kernel.its'
         'kernel.keyblock'
         'kernel_data_key.vbprivk'
         'linux.preset'
         '99-linux.hook')
-md5sums=('b5e7f6b9b2fe1b6cc7bc56a3a0bfc090'
-         'feaec4930aacd966b70c234ce43178c9'
-         'bab8688dba139aad363bae621e559f33'
-         '88ad590a43ebe285c4df6a1c5c298b97'
-         '56e0bd2354406b132cf904c3877506c5'
-         '34a723ffcbef63e9461193061b4461a1'
-         '28bf88b2ad58937d00d2240690e59973'
-         '23fe69ef9a0e3e016eea4529e0db4268'
-         '1204a4c65fe53025bb02042e7ee105cb'
-         '5c0086e99dcc1e84d70d6809d452c52c'
-         '2a92aab5348329756f65933f919bb9ef'
-         '0429d0ffa8ccda0d69ac69dcf7cc49f1'
-         'a6b0eb95998ae11416186728e855c289'
-         '81fd6c631e3868267ad7d577455606ec'
+md5sums=('251a5deee0fa6daf3f356b1bbda9eab8'
+         '57eddb3aee93070a2be1a735f35e6770'
+         '35050d4086083976228b1aad40eb9685'
+         'b1f82c5ab2c1f49839a55f3bfd79e3b4'
+         '7d2eb3a79013bbcc9eac8aae14ec95ed'
+         '887172b2dbca6a024d2fc7dd2865ca17'
+         'cc15319d42d3dac4225523ee319f0b4e'
+         '5be4c09f985310ec1c157621a1e0bb8e'
+         '7902ffb9e4e48cd3426777d6fb3f2e9b'
+         '3cd8942f980b0e85eb832168d086988b'
+         '9f62b9c953a01b64b7dcf2e90aac6e37'
+         '87f000b1f2c75c21aee754f49927e4ad'
          '4f2379ed84258050edb858ee8d281678'
          '61c5ff73c136ed07a7aadbf58db3d96a'
          '584777ae88bce2c5659960151b64c7d8'
@@ -58,7 +55,7 @@ prepare() {
   cd "${srcdir}/${_srcname}"
 
   # add upstream patch
-  git apply --whitespace=nowarn ../patch-${pkgver}
+  #git apply --whitespace=nowarn ../patch-${pkgver}
 
   # RCN patch
   git apply ../patch-${pkgver%.0}-${rcnrel}.diff
@@ -72,8 +69,7 @@ prepare() {
   git apply ../0006-ARM-TLV320AIC23-SoC-Audio-Codec-Fix-errors-reported-.patch
   git apply ../0007-set-default-cubietruck-led-triggers.patch
   git apply ../0008-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch
-  git apply ../0009-drm-armada-tracing-fix.patch
-  git apply ../0010-disable-USB3-port-on-ODROID-XU.patch
+  git apply ../0009-disable-USB3-port-on-ODROID-XU.patch
 
   cat "${srcdir}/config" > ./.config
 
