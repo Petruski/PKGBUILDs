@@ -7,8 +7,8 @@ pkgbase=linux-nyan
 _kernelname=${pkgbase#linux}
 _desc="TegraK1 Chromebooks (Nyan)"
 pkgver=3.10.18
-pkgrel=20
-_commit=8837cd841373fe1c431bb4d9eb58223d28d1a810
+pkgrel=21
+_commit=471d6d8dc0dfbc06a93b0f13e39fb7a9f4f7ce85
 _coreboot_commit=5bb7ca8a308a5800a02842447259cc8191c32fa5
 arch=('armv7h')
 url="https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.10"
@@ -38,13 +38,14 @@ source=(  "https://chromium.googlesource.com/chromiumos/third_party/kernel/+arch
           'kernel.keyblock'
           'kernel_data_key.vbprivk'
           'cmdline')
-sha256sums=('SKIP'
-            'SKIP'
+
+sha256sums=('2ebe76e24f759f161e9fa7bc48d83496444c70d58db149246b891a296e6bdc99'
+            '70e31e5c96c5e00fd673f83cde314070cc177ae07fe95b4b6074cffc42d74b2a'
             '72c9d88552505ee28dc9db342cd1ac1f4efee56f2884e710d66d3f60584c321d'
             '35f60f174da4bb367f37e355ca5f037a8528021d33d475cae91e968beb2f8325'
             'da63c1035c0d6c53a71901ff4ad4e7abca697b297b5446de4ed5bed0badd976b'
             'f25cd8269cc107108560b07a68d701870fb91e3ed195917113918d1cb1cbb74f'
-            'd6914aee62ba6d9a5ffef506e3f17d3485a84c138f666c96d3e4f4da88a8797f'
+            'f75ed13e9dd0e7f0d5a5fd1afe3574df8d4a34bae1d05268753e098402c56dd1'
             '05f543cbd29c1fd4146922658007f8c31a0522d14b9b2a3b4391988f7a3cb80a'
             '7a13bfeede38d47845027c4ef10b050f24eeea44db7bbbc282f44d4b198fd6d2'
             '3bf7629cefda8f85f4647adfd27efec86a62eb056caae5debb5848ff7ead56ed'
@@ -63,6 +64,7 @@ sha256sums=('SKIP'
             '4e708c9ec43ac4a5d718474c9431ba6b6da3e64a9dda6afd2853a9e9e3079ffb'
             'bc9e707a86e55a93f423e7bcdae4a25fd470b868e53829b91bbe2ccfbc6da27b'
             'a6e15c62a4310627c50ce378bb1d614decd6bd6f24faa2167025382519e84584')
+
 
 noextract=("${_coreboot_commit}.tar.gz")
 
