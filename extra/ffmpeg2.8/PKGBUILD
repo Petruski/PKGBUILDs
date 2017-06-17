@@ -10,8 +10,8 @@
 #  - rename ld.so.conf.d config so nothing is loaded before it
 
 pkgname=ffmpeg2.8
-pkgver=2.8.11
-pkgrel=6
+pkgver=2.8.12
+pkgrel=1
 pkgdesc='Complete solution to record, convert and stream audio and video'
 arch=('i686' 'x86_64')
 url='https://ffmpeg.org/'
@@ -22,14 +22,14 @@ depends=('alsa-lib' 'bzip2' 'fontconfig' 'fribidi' 'gnutls' 'gsm' 'lame'
          'opus' 'schroedinger' 'sdl' 'speex' 'v4l-utils' 'xvidcore' 'zlib'
          'libdcadec.so' 'libvidstab.so' 'libvorbis.so' 'libvorbisenc.so'
          'libvpx.so' 'libx264.so' 'libx265.so')
-makedepends=('hardening-wrapper' 'ladspa' 'libvdpau' 'yasm')
+makedepends=('hardening-wrapper' 'ladspa' 'libvdpau' 'libx264' 'yasm')
 optdepends=('ladspa: LADSPA filters')
 provides=('libavcodec.so' 'libavdevice.so' 'libavfilter.so' 'libavformat.so'
           'libavresample.so' 'libavutil.so' 'libpostproc.so' 'libswresample.so'
           'libswscale.so')
 source=("http://ffmpeg.org/releases/ffmpeg-${pkgver}.tar.xz"{,.asc})
 validpgpkeys=('FCF986EA15E6E293A5644F10B4322F04D67658D8') # ffmpeg-devel
-sha256sums=('38aa3aec93c480b34d33f3648aff9278581d151488b521995c084258613e1fe6'
+sha256sums=('6213f18a8bb93415724c40a1840a4591458c2949575978b9cf43d7b6a71283bd'
             'SKIP')
 
 build() {
