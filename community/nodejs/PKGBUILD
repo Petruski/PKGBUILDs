@@ -9,7 +9,7 @@
 # Contributor: Jason Plum <jplum@archlinuxarm.org>
 
 pkgname=nodejs
-pkgver=8.1.2
+pkgver=8.3.0
 pkgrel=1
 pkgdesc='Evented I/O for V8 javascript'
 arch=('i686' 'x86_64')
@@ -21,7 +21,7 @@ makedepends=('python2' 'procps-ng')
 optdepends=('npm: nodejs package manager')
 source=("nodejs-$pkgver.tar.gz::https://github.com/nodejs/node/archive/v$pkgver.tar.gz"
         '0001-arm-fixes.patch')
-sha512sums=('328b85d0ad8906dbbadc8ec989999de29a6ccbb4c11def743c5ca74bc191e89003a9c6c1f76a8b2bdbfeb26c793bfe637bca2a0907259dbcc3e2b93eabb5c483'
+sha512sums=('d3d92d0c5ce39f3f359ea9504c86f71c9f7fcfcd2c4fde9cc0881a840f762cb90e3589afe7190d65e20369fc051deaa0150bf3f632fa728cad80bdb0ae344f6f'
             '4811e1d9bc0e03458072cad6af9284e3ceb6c74005ae00e3407c18d0e6eae0bce2edcbdbe547975ade916c1bcdb2bb53101edce2afeca0bcac84d8807934fc8c')
 
 set_flags_for_arm() {
