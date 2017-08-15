@@ -4,12 +4,12 @@
 buildarch=4
 
 pkgbase=linux-armv7
-_srcname=linux-4.10
+_srcname=linux-4.11
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 multi-platform"
-pkgver=4.10.10
+pkgver=4.11.5
 pkgrel=1
-rcnrel=armv7-x1
+rcnrel=armv7-x0
 arch=('armv7h')
 url="http://www.kernel.org/"
 license=('GPL2')
@@ -27,25 +27,27 @@ source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
         '0007-set-default-cubietruck-led-triggers.patch'
         '0008-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch'
         '0009-disable-USB3-port-on-ODROID-XU.patch'
+        '0010-ARM-dove-enable-ethernet-on-D3Plug.patch'
         'config'
         'kernel.its'
         'kernel.keyblock'
         'kernel_data_key.vbprivk'
         'linux.preset'
         '99-linux.hook')
-md5sums=('b5e7f6b9b2fe1b6cc7bc56a3a0bfc090'
-         '52732dd4297965749b0f7154b6bda41e'
-         '8c42737db6ae8c3eb29545b118c90af6'
-         'a34bb1acbb7aa9cd6c485f7552d6c079'
-         '4bff9dfa64302cfe823ac9e8e705f52d'
-         '533c823f8f34acbc510f0f1489780cd0'
-         '93f0ccbd9e80b3ab4804e87364ea9c50'
-         'c99613057280d24911373a6d45bf6421'
-         '7fe3fa1a14b8cf191d648f5e2413baf5'
-         '4a773f2a5d4d271a3dffacbed36ba46d'
-         '352d9956b94696eda4a73d2841da524b'
-         'b5466a24782fbe8b534886cc8ac9aefd'
-         '81fd6c631e3868267ad7d577455606ec'
+md5sums=('251a5deee0fa6daf3f356b1bbda9eab8'
+         'dafc96c0d6f9acdca96f318ebc376486'
+         '362a17be58e417bd92fd576d776c1417'
+         'e3025634513b4e76f280768a20bc8e16'
+         'bc7ced14bd4dcc9e5ebfb39791a696d8'
+         '8e4187645e1abc78798e4b58960f7f8f'
+         '4f1909990d16def2693876d62e370c51'
+         'c27816e523f1bd6432ec1966c89d3f8e'
+         '4cb1abc196fcd4bcf20128f893978849'
+         '6f2a72c08edc24191001d3ce77e238a9'
+         '9a6ca27f3a4035a0e1c0cd0a93f63ce4'
+         '1d69d4bb563bbd9b12cf23371b1d1419'
+         'eef6e37ace0d9bb9dd8e23459f0eb3e9'
+         '9f8693c57a1dc87513bb880ebd9c371d'
          '4f2379ed84258050edb858ee8d281678'
          '61c5ff73c136ed07a7aadbf58db3d96a'
          '584777ae88bce2c5659960151b64c7d8'
@@ -71,6 +73,7 @@ prepare() {
   git apply ../0007-set-default-cubietruck-led-triggers.patch
   git apply ../0008-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch
   git apply ../0009-disable-USB3-port-on-ODROID-XU.patch
+  git apply ../0010-ARM-dove-enable-ethernet-on-D3Plug.patch
 
   cat "${srcdir}/config" > ./.config
 
@@ -339,7 +342,7 @@ _package-d3plug() {
   depends=('linux-armv7')
   provides=('linux-armv7-uimage')
   conflicts=('linux-armv7-uimage')
-  #replaces=('linux-d3plug')
+  replaces=('linux-d3plug')
 
   cd "${srcdir}/${_srcname}"
 

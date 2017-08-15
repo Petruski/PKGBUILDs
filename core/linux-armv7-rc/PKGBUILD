@@ -3,8 +3,8 @@
 
 buildarch=4
 
-_rcver=4.11
-_rcrel=7
+_rcver=4.12
+_rcrel=5
 _rcnrel=armv7-x0
 
 pkgbase=linux-armv7-rc
@@ -18,37 +18,35 @@ url="http://www.kernel.org/"
 license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-tools' 'vboot-utils' 'dtc')
 options=('!strip')
-source=("https://www.kernel.org/pub/linux/kernel/v4.x/testing/${_srcname}.tar.xz"
+source=("https://git.kernel.org/torvalds/t/${_srcname}.tar.gz"
         "http://rcn-ee.com/deb/sid-armhf/v${_rcver}.0-rc${_rcrel}-${_rcnrel}/patch-${_rcver}-rc${_rcrel}-${_rcnrel}.diff.gz"
         '0001-ARM-atags-add-support-for-Marvell-s-u-boot.patch'
         '0002-ARM-atags-fdt-retrieve-MAC-addresses-from-Marvell-bo.patch'
         '0003-SMILE-Plug-device-tree-file.patch'
         '0004-fix-mvsdio-eMMC-timing.patch'
         '0005-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch'
-        '0006-ARM-TLV320AIC23-SoC-Audio-Codec-Fix-errors-reported-.patch'
-        '0007-set-default-cubietruck-led-triggers.patch'
-        '0008-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch'
-        '0009-disable-USB3-port-on-ODROID-XU.patch'
-        '0010-mmc-dw_mmc-Don-t-allow-Runtime-PM-for-SDIO-cards.patch'
+        '0006-set-default-cubietruck-led-triggers.patch'
+        '0007-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch'
+        '0008-disable-USB3-port-on-ODROID-XU.patch'
+        '0009-ARM-dove-enable-ethernet-on-D3Plug.patch'
         'config'
         'kernel.its'
         'kernel.keyblock'
         'kernel_data_key.vbprivk'
         'linux.preset'
         '99-linux.hook')
-md5sums=('4eeb08204584dea7d2581420a1e5808b'
-         'b7322b13126c039f4baa1ee0f2d26e68'
-         '9744ba999ef16ca72418b567a81a07b3'
-         '15dadd9a797cbbb9ea5946503ce4b894'
-         '6c9dbd501d56c9502d7a091df40c9ff9'
-         'f72f093000716f9c59bd993c6519c075'
-         '8c874fb48bc133e547d10ca7d119f5df'
-         '4af65bd9bf6f5f0b04194bb561e3ae00'
-         'c327647f6f183d9218b21340cf74e7bd'
-         'e2ad1eb88b23ae2a1863f1d4445b4321'
-         'e435bb7d5ebdbe45bb2e92e320343542'
-         '35b7f0485d37532e6d02860de082b192'
-         'd4a3f20ff5211f68f8d4822bfc2ef1eb'
+md5sums=('026421981675bb42c005ea7f8a910a68'
+         'f1b161d96f5a13a1ffdebdf6a5444d4a'
+         '722bc867ef5285e2719ce3e526425a65'
+         'c2e8438c4e7a93bb8fbf1576f23773f7'
+         'def3e95ff11cffe49d4624f4e00b59a2'
+         'bfe387475c4c42551dadd6d4aeb724ee'
+         'bd455ff6f763350f2f7c723141d90803'
+         '125c70a670250e1db8771a828daaef61'
+         'ff5f4ca7f97b8ebfbb09ec76363e71ec'
+         'f9282ee13ad2c393c462ef20b143ae22'
+         '9fb6cef04dd98e38094803c56e9c453b'
+         '4e637fa73658afeb65e4390ef3e6a524'
          '4f2379ed84258050edb858ee8d281678'
          '61c5ff73c136ed07a7aadbf58db3d96a'
          '584777ae88bce2c5659960151b64c7d8'
@@ -68,11 +66,10 @@ prepare() {
   git apply ../0003-SMILE-Plug-device-tree-file.patch
   git apply ../0004-fix-mvsdio-eMMC-timing.patch
   git apply ../0005-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch
-  git apply ../0006-ARM-TLV320AIC23-SoC-Audio-Codec-Fix-errors-reported-.patch
-  git apply ../0007-set-default-cubietruck-led-triggers.patch
-  git apply ../0008-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch
-  git apply ../0009-disable-USB3-port-on-ODROID-XU.patch
-  git apply ../0010-mmc-dw_mmc-Don-t-allow-Runtime-PM-for-SDIO-cards.patch
+  git apply ../0006-set-default-cubietruck-led-triggers.patch
+  git apply ../0007-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch
+  git apply ../0008-disable-USB3-port-on-ODROID-XU.patch
+  git apply ../0009-ARM-dove-enable-ethernet-on-D3Plug.patch
 
   cat "${srcdir}/config" > ./.config
 
