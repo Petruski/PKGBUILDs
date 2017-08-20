@@ -1,7 +1,7 @@
-From 433ec98199ee4cd085a2aad27cd20e9bae0b19af Mon Sep 17 00:00:00 2001
+From de3ff6641b02eaa9e83f03baab9125684538738c Mon Sep 17 00:00:00 2001
 From: Joe Perches <joe@perches.com>
 Date: Thu, 25 Jun 2015 15:01:02 -0700
-Subject: [PATCH 10/14] compiler-gcc: integrate the various compiler-gcc[345].h
+Subject: [PATCH 10/27] compiler-gcc: integrate the various compiler-gcc[345].h
  files
 
 As gcc major version numbers are going to advance rather rapidly in the
@@ -33,7 +33,7 @@ Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
  delete mode 100644 include/linux/compiler-gcc5.h
 
 diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 0b008ad..e28b089 100644
+index 0b008ade320e..e28b08957bb4 100644
 --- a/include/linux/compiler-gcc.h
 +++ b/include/linux/compiler-gcc.h
 @@ -108,10 +108,122 @@
@@ -165,7 +165,7 @@ index 0b008ad..e28b089 100644
  #define __noclone	/* not needed */
 diff --git a/include/linux/compiler-gcc3.h b/include/linux/compiler-gcc3.h
 deleted file mode 100644
-index 7d89feb..0000000
+index 7d89febe4d79..000000000000
 --- a/include/linux/compiler-gcc3.h
 +++ /dev/null
 @@ -1,23 +0,0 @@
@@ -194,7 +194,7 @@ index 7d89feb..0000000
 -#endif /* CONFIG_GCOV_KERNEL */
 diff --git a/include/linux/compiler-gcc4.h b/include/linux/compiler-gcc4.h
 deleted file mode 100644
-index ded4299..0000000
+index ded429966c1f..000000000000
 --- a/include/linux/compiler-gcc4.h
 +++ /dev/null
 @@ -1,92 +0,0 @@
@@ -292,7 +292,7 @@ index ded4299..0000000
 -#endif /* CONFIG_ARCH_USE_BUILTIN_BSWAP */
 diff --git a/include/linux/compiler-gcc5.h b/include/linux/compiler-gcc5.h
 deleted file mode 100644
-index cdd1cc2..0000000
+index cdd1cc202d51..000000000000
 --- a/include/linux/compiler-gcc5.h
 +++ /dev/null
 @@ -1,66 +0,0 @@
@@ -363,5 +363,5 @@ index cdd1cc2..0000000
 -#define __HAVE_BUILTIN_BSWAP16__
 -#endif /* CONFIG_ARCH_USE_BUILTIN_BSWAP */
 -- 
-2.8.3
+2.13.3
 

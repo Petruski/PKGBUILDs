@@ -1,7 +1,7 @@
-From 249c31d3b7f09653a7597f968e92730173a53700 Mon Sep 17 00:00:00 2001
+From 65164ee14fc69b2fdda73b0f5377471ebbe0e50d Mon Sep 17 00:00:00 2001
 From: A Raghavendra Rao <raghav3276@gmail.com>
 Date: Thu, 7 Aug 2014 14:10:39 +0530
-Subject: [PATCH 02/14] Staging: wlan-ng: fix sparse warning in prism2fw.c
+Subject: [PATCH 02/27] Staging: wlan-ng: fix sparse warning in prism2fw.c
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -27,7 +27,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  1 file changed, 19 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/staging/wlan-ng/prism2fw.c b/drivers/staging/wlan-ng/prism2fw.c
-index 0dfd2a4..54a3bf5 100644
+index 0dfd2a4933ef..54a3bf57a86e 100644
 --- a/drivers/staging/wlan-ng/prism2fw.c
 +++ b/drivers/staging/wlan-ng/prism2fw.c
 @@ -767,30 +767,35 @@ static int plugimage(struct imgchunk *fchunk, unsigned int nfchunks,
@@ -81,5 +81,5 @@ index 0dfd2a4..54a3bf5 100644
  }
  
 -- 
-2.8.3
+2.13.3
 

@@ -7,9 +7,9 @@ pkgbase=linux-nyan
 _kernelname=${pkgbase#linux}
 _desc="TegraK1 Chromebooks (Nyan)"
 pkgver=3.10.18
-pkgrel=21
-_commit=471d6d8dc0dfbc06a93b0f13e39fb7a9f4f7ce85
-_coreboot_commit=5bb7ca8a308a5800a02842447259cc8191c32fa5
+pkgrel=22
+_commit=116728a6b84c42452a3c80337abd59faace99da9
+_coreboot_commit=53a6a572138e42b81e33a87b59773e387f369766
 arch=('armv7h')
 url="https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.10"
 license=('GPL2')
@@ -34,56 +34,98 @@ source=(  "https://chromium.googlesource.com/chromiumos/third_party/kernel/+arch
           '0012-include-linux-compiler-gcc.h-improve-__visible-docum.patch'
           '0013-compiler-gcc-disable-ftracer-for-__noclone-functions.patch'
           '0014-compiler-gcc-require-gcc-4.8-for-powerpc-__builtin_b.patch'
+          '0015-BACKPORT-elevator-fix-truncation-of-icq_cache_name.patch'
+          '0016-BACKPORT-V4L-DVB-ir-core-fix-gcc-7-warning-on-bool-a.patch'
+          '0017-BACKPORT-nfs-Fix-showing-truncated-fsid-dev-in-proc-.patch'
+          '0018-BACKPORT-video-fbdev-avoid-int-in-bool-context-warni.patch'
+          '0019-isl29018-remove-duplicate-const.patch'
+          '0020-tegra_soctherm-make-middle-operand-explicit.patch'
+          '0021-BACKPORT-platform-chrome-cros_ec_dev-fix-Unknown-esc.patch'
+          '0022-BACKPORT-platform-chrome-cros_ec_lightbar-fix-duplic.patch'
+          '0023-BACKPORT-random32-fix-off-by-one-in-seeding-requirem.patch'
+          '0024-BACKPORT-random32-add-periodic-reseeding.patch'
+          '0025-BACKPORT-random32-add-prandom_reseed_late-and-call-w.patch'
+          '0026-BACKPORT-random-introduce-getrandom-2-system-call.patch'
+          '0027-BACKPORT-ARM-wire-up-getrandom-syscall.patch'
           'kernel-nyan.its'
           'kernel.keyblock'
           'kernel_data_key.vbprivk'
           'cmdline')
 
-sha256sums=('2ebe76e24f759f161e9fa7bc48d83496444c70d58db149246b891a296e6bdc99'
-            '70e31e5c96c5e00fd673f83cde314070cc177ae07fe95b4b6074cffc42d74b2a'
+sha256sums=('fb913621c9202b03c8f0c95266b53c7ef2b1eba7047efbd9defb1ed20e69628a'
+            '5f0dbb3afa722eaf58b8ed677a45097ae3cf3dcf74423ee44570d5b0da4a3b9d'
             '72c9d88552505ee28dc9db342cd1ac1f4efee56f2884e710d66d3f60584c321d'
             '35f60f174da4bb367f37e355ca5f037a8528021d33d475cae91e968beb2f8325'
             'da63c1035c0d6c53a71901ff4ad4e7abca697b297b5446de4ed5bed0badd976b'
             'f25cd8269cc107108560b07a68d701870fb91e3ed195917113918d1cb1cbb74f'
             'f75ed13e9dd0e7f0d5a5fd1afe3574df8d4a34bae1d05268753e098402c56dd1'
-            '05f543cbd29c1fd4146922658007f8c31a0522d14b9b2a3b4391988f7a3cb80a'
-            '7a13bfeede38d47845027c4ef10b050f24eeea44db7bbbc282f44d4b198fd6d2'
-            '3bf7629cefda8f85f4647adfd27efec86a62eb056caae5debb5848ff7ead56ed'
-            'd5968c578af70faa373baf0ff610d220348f9706da072eb89282f028c8045e2b'
-            'a8f63530ed831c9ab48b12cb78882a273e19c955c1fe30ca088f45616f8c6c94'
-            '654875430280155bd78d64dee6234a206f8bf1603bfcb81d7f35cce5e358cbf4'
-            '7be7640984c0b7a614a9b651f63d041528e141b301738de44b29945cc49b5500'
-            '4f33885b9b403f7ab100b68ebb8e36a75bf198238f5349695c932bdf1ab931d2'
-            'c318f140c2fd9490277b60ed7a3f6e1202956f8391bae717c48cf155a431d72a'
-            'b6200e43ab0ebbaf88aa05c4a273f092b670bb3a2df1fd34977a82845db107d9'
-            '0258649ae2912843f4d75f36abda1c807d2d38ab77840b12712634d3ed67eb6d'
-            'f3e601f702a11f21f264b22265760dc35f8454f4a2904d48ae9928069bf8f472'
-            '5ea0a834018f753863b81c7c412c596cc9771b9a633017a8d128c38fba478b5c'
-            'b9f071fd5fc387f3f39af85cb073117d116ef1097c4e269a4d4026ceee4b6724'
+            '79b7be6d1a2b16412c81a1fbcb21ae3879afd5a03aa9d2a2cd07975b91cd747d'
+            'e9e9a9763545b3c20d10c8fd60cf98bd9485ecc325a5e6a597c37fb557a50f4e'
+            '62eb1312b19e5c32566162677b146d304b6ced3d661390d3ff70d646618229de'
+            '4cc0a276915d4cdc5e6ae83efc3efe5c8caefaf2e4b35a9a9b8d6ffdd7d98977'
+            'd0b8e20e1912043010b4f75c3672e4b0aefd0cc4a1388f15e621d287247b506f'
+            'be86aa8335f9f2571a46b976813a987b59ed5d8f0588288f694b543caf7e13f3'
+            'd7b22cdf4aa9d8baf3bd474c143fb0766efefc826a4d92a3ea7324cc9de3ba30'
+            'a208b7c6dfa1b0ffadde6c9f54a90841ed7b4fd0751fda5d947e21e271b34ca1'
+            'dd4c6373bb68712e37d84ceb372bdafb884aa80044d900b86cb6efb2dfd59b69'
+            '301965151cb54ff9d03784c090da80267eb9de2f550ccb8f9e06c8535573b133'
+            '67e5d1a82b88242b5a81d1db9af7ee79b045f1b0ea9bcc7f1a585aae7ff45ebd'
+            '39ad1769400bc2b3b90610611214c63e1d947caab800137a2b0a14fe0050dfc8'
+            '1076b2bb156cb8da927e9c93a620398404df9d2779921b43f502fb414e977eaf'
+            '02a736dbe5f8b57e7e8154101dab7e3c8440b7ea344bb536afeafa3ab1b07284'
+            '5c589f84d87774173f418a9f886d6e4d186a6f8ee7f61d9c8b1625a5f78b4406'
+            'b3db7972a2e905544cb6409db65732327f9a81ab37eb02ac215bf1cbaf0bfcdf'
+            '09df0685a41eb9b927d4bf5910891082e8eecf276a1d979176d5fc4daaa1240f'
+            '11fe791275e259db2b796217091aa78a88856fbc0f0a918a3d9ae164d8d9e225'
+            '9ac44967cfcb23e4c38ddd03d6a22c2c87f571c94fdbd033ce0bf03119bb5eb3'
+            '7b1272bfffe1d33bf78483f8206bf156103f2fce61550d39e8061d15d5b4d232'
+            '1aee75b3566d1999a6e7f3b9a1a60ae0b6061a663e61334d3bfedabc2cb45a40'
+            '08551a43d254445caa4899e40b7d451c8d35f2cf9c48dabf569440d867210bbf'
+            'dc0a111fa93da355a0b29e4562f4e0022cb0e19a7376f60503bc19ae963d1ff6'
+            '3b2bb94e422b99b36336face740e61ea7c4f438bc5f081fa2a94f5a01aaeb38f'
+            '455b8a965de70d3d8af4bf418260c21fc1334690918be2867af2fd6866e97a61'
+            '78c4266d72d6de61640cec4e745840b7b8f512ffbf3c786b0554cf12e457436e'
+            'c282d297d60304eb3f1d904b8793f20927d06ec68a1a8e39a340948c11b4e59e'
             '545446be6b8bdb6e46743f3ff3ba5a1a80f8f101649736939eb7e862061e4d61'
             '4e708c9ec43ac4a5d718474c9431ba6b6da3e64a9dda6afd2853a9e9e3079ffb'
             'bc9e707a86e55a93f423e7bcdae4a25fd470b868e53829b91bbe2ccfbc6da27b'
             'a6e15c62a4310627c50ce378bb1d614decd6bd6f24faa2167025382519e84584')
 
-
 noextract=("${_coreboot_commit}.tar.gz")
 
 prepare() {
 
-  patch -p1 < 0001-kernel-add-support-for-gcc-5.patch
-  patch -p1 < 0002-Staging-wlan-ng-fix-sparse-warning-in-prism2fw.c.patch
-  patch -p1 < 0003-netfilter-nfnetlink_cthelper-Remove-const-and-to-avo.patch
-  patch -p1 < 0004-mwifiex-do-not-create-AP-and-P2P-interfaces-upon-dri.patch
-  patch -p1 < 0005-use-chromiumos-mwifiex-drivers.patch
-  patch -p1 < 0006-Fix-reversed-logic-in-drivers-md-md.c.patch
-  patch -p1 < 0007-Fix-several-compilation-issues-with-GCC5.2.patch
-  patch -p1 < 0008-zd1201-drop-the-node-parameter-from-the-hlist-iterat.patch
-  patch -p1 < 0009-compiler-gcc.h-neatening.patch
-  patch -p1 < 0010-compiler-gcc-integrate-the-various-compiler-gcc-345-.patch
-  patch -p1 < 0011-include-linux-compiler-gcc.h-hide-assume_aligned-att.patch
-  patch -p1 < 0012-include-linux-compiler-gcc.h-improve-__visible-docum.patch
-  patch -p1 < 0013-compiler-gcc-disable-ftracer-for-__noclone-functions.patch
-  patch -p1 < 0014-compiler-gcc-require-gcc-4.8-for-powerpc-__builtin_b.patch
+  for p in \
+    0001-kernel-add-support-for-gcc-5.patch \
+    0002-Staging-wlan-ng-fix-sparse-warning-in-prism2fw.c.patch \
+    0003-netfilter-nfnetlink_cthelper-Remove-const-and-to-avo.patch \
+    0004-mwifiex-do-not-create-AP-and-P2P-interfaces-upon-dri.patch \
+    0005-use-chromiumos-mwifiex-drivers.patch \
+    0006-Fix-reversed-logic-in-drivers-md-md.c.patch \
+    0007-Fix-several-compilation-issues-with-GCC5.2.patch \
+    0008-zd1201-drop-the-node-parameter-from-the-hlist-iterat.patch \
+    0009-compiler-gcc.h-neatening.patch \
+    0010-compiler-gcc-integrate-the-various-compiler-gcc-345-.patch \
+    0011-include-linux-compiler-gcc.h-hide-assume_aligned-att.patch \
+    0012-include-linux-compiler-gcc.h-improve-__visible-docum.patch \
+    0013-compiler-gcc-disable-ftracer-for-__noclone-functions.patch \
+    0014-compiler-gcc-require-gcc-4.8-for-powerpc-__builtin_b.patch \
+    0015-BACKPORT-elevator-fix-truncation-of-icq_cache_name.patch \
+    0016-BACKPORT-V4L-DVB-ir-core-fix-gcc-7-warning-on-bool-a.patch \
+    0017-BACKPORT-nfs-Fix-showing-truncated-fsid-dev-in-proc-.patch \
+    0018-BACKPORT-video-fbdev-avoid-int-in-bool-context-warni.patch \
+    0019-isl29018-remove-duplicate-const.patch \
+    0020-tegra_soctherm-make-middle-operand-explicit.patch \
+    0021-BACKPORT-platform-chrome-cros_ec_dev-fix-Unknown-esc.patch \
+    0022-BACKPORT-platform-chrome-cros_ec_lightbar-fix-duplic.patch \
+    0023-BACKPORT-random32-fix-off-by-one-in-seeding-requirem.patch \
+    0024-BACKPORT-random32-add-periodic-reseeding.patch \
+    0025-BACKPORT-random32-add-prandom_reseed_late-and-call-w.patch \
+    0026-BACKPORT-random-introduce-getrandom-2-system-call.patch \
+    0027-BACKPORT-ARM-wire-up-getrandom-syscall.patch
+  do
+    patch -p1 < ${p}
+  done
 
   # copy kernel-nyan.its
   cp "${srcdir}/kernel-nyan.its" kernel.its
@@ -130,7 +172,13 @@ build() {
 
   # build!
   WIFIVERSION=-3.8 make ${MAKEFLAGS} \
-  KCFLAGS="${KCFLAGS} -Wno-error=unused-const-variable -Wno-error=misleading-indentation -Wno-error=array-bounds" \
+  CFLAGS_MODULE=-fno-pic \
+  KCFLAGS="${KCFLAGS} \
+            -Wno-error=unused-const-variable \
+            -Wno-error=misleading-indentation \
+            -Wno-error=array-bounds \
+            -Wformat-truncation=0 \
+            -Wformat-overflow=0" \
   zImage modules dtbs
 
   # make tegra lp0_resume firmware

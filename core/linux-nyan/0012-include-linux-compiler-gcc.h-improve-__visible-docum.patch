@@ -1,7 +1,7 @@
-From ec57befb31ff41195df98b5cbd78ebce42419019 Mon Sep 17 00:00:00 2001
+From 489beec03a81dc4e7b90e385ce85f1228c5239e0 Mon Sep 17 00:00:00 2001
 From: Andrew Morton <akpm@linux-foundation.org>
 Date: Fri, 6 Nov 2015 16:30:09 -0800
-Subject: [PATCH 12/14] include/linux/compiler-gcc.h: improve __visible
+Subject: [PATCH 12/27] include/linux/compiler-gcc.h: improve __visible
  documentation
 
 Cc: Andi Kleen <andi@firstfloor.org>
@@ -13,7 +13,7 @@ Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index d536812..667b40a 100644
+index d53681205635..667b40ad2700 100644
 --- a/include/linux/compiler-gcc.h
 +++ b/include/linux/compiler-gcc.h
 @@ -191,7 +191,10 @@
@@ -29,5 +29,5 @@ index d536812..667b40a 100644
  #define __visible	__attribute__((externally_visible))
  #endif
 -- 
-2.8.3
+2.13.3
 
