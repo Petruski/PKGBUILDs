@@ -6,7 +6,7 @@ _nv_full_release=r21_Release_v5.0
 _nv_version=21.5
 _nv_release=0
 pkgver="${_nv_version}.${_nv_release}"
-pkgrel=4
+pkgrel=5
 pkgdesc="NVIDIA proprietary Tegra K1 GPU drivers for Tegra K1 powered SoC"
 
 # filesystem prefix for the include files and license
@@ -19,17 +19,9 @@ license=('proprietary')
 
 source=("http://developer.download.nvidia.com/embedded/L4T/${_nv_full_release}/Tegra124_Linux_R${pkgver}_armhf.tbz2"
         51-nvrm.rules
-        egl.pc
-        gl.pc
-        glesv1_cm.pc
-        glesv2.pc
         tegra.conf)
 sha256sums=('a639e3e37e17ef11ea5754d7b703a133febdd6a5d3dd2e5b3924288930a45cca'
             'bdff89e517cd8cbba5f9e9d960bc79d7c2740bf563ff6aaab789a13a547f08fe'
-            '3419d255c62ea825b07a42f466dd0acba36a267717f0cf183b445b2ed1e28850'
-            '64ac913a0f85585864f240e75562896fc58fc10bf08765aa0ca5cdfbaa59b21c'
-            'eebb090ef8874ded6be1bbdcbbc920c738b8adaa0c5cd50ceea1c817a420fa82'
-            'f6fd805ae284d8a8bb58d396872bb7fbae1e4ec9a0e367e4e44063164b717d21'
             '05cf40f5722a33a2bf13631eadb6c49be81f8f70e0bf85db896c71d1a6f519e1')
 
 conflicts=( 'X-ABI-VIDEODRV_VERSION<19'
@@ -92,7 +84,7 @@ package_gpu-nvidia-tegra-k1-nvrm() {
               libnvidia-tls.so
   do
     cp usr/lib/arm-linux-gnueabihf/tegra/"${lib}.${_nv_version}" "${pkgdir}${_install_prefix}/lib/tegra"
-    ln -s "${_install_prefix}/lib/${lib}.${_nv_version}" "${pkgdir}${_install_prefix}/lib/tegra/${lib}"
+    ln -s "${_install_prefix}/lib/tegra/${lib}.${_nv_version}" "${pkgdir}${_install_prefix}/lib/tegra/${lib}"
   done
 
   # copy license
@@ -128,8 +120,8 @@ package_gpu-nvidia-tegra-k1-x11() {
   ln -s "${_install_prefix}/libtegra-egl/libEGL.so.1.0.0" "${pkgdir}${_install_prefix}/lib/tegra-egl/libEGL.so.1"
   ln -s "${_install_prefix}/lib/tegra-egl/libEGL.so.1.0.0" "${pkgdir}${_install_prefix}/lib/tegra-egl/libEGL.so"
   cp -r usr/lib/arm-linux-gnueabihf/tegra-egl/libGLESv1_CM.so.1 "${pkgdir}${_install_prefix}/lib/tegra-egl/libGLESv1_CM.so.1.0.0"
-  ln -s "${_install_prefix}/lib/tegra-egl/libGLESv1_CM.so.1.1.0" "${pkgdir}${_install_prefix}/lib/tegra-egl/libGLESv1_CM.so.1"
-  ln -s "${_install_prefix}/lib/tegra-egl/libGLESv1_CM.so.1.1.0" "${pkgdir}${_install_prefix}/lib/tegra-egl/libGLESv1_CM.so"
+  ln -s "${_install_prefix}/lib/tegra-egl/libGLESv1_CM.so.1.0.0" "${pkgdir}${_install_prefix}/lib/tegra-egl/libGLESv1_CM.so.1"
+  ln -s "${_install_prefix}/lib/tegra-egl/libGLESv1_CM.so.1.0.0" "${pkgdir}${_install_prefix}/lib/tegra-egl/libGLESv1_CM.so"
   cp -r usr/lib/arm-linux-gnueabihf/tegra-egl/libGLESv2.so.2 "${pkgdir}${_install_prefix}/lib/tegra-egl/libGLESv2.so.2.0.0"
   ln -s "${_install_prefix}/lib/tegra-egl/libGLESv2.so.2.0.0" "${pkgdir}${_install_prefix}/lib/tegra-egl/libGLESv2.so.2"
   ln -s "${_install_prefix}/lib/tegra-egl/libGLESv2.so.2.0.0" "${pkgdir}${_install_prefix}/lib/tegra-egl/libGLESv2.so"
