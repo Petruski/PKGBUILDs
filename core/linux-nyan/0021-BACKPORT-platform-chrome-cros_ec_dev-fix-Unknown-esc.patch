@@ -1,7 +1,7 @@
-From 0ea2001019884549a5652a2e32c52b017ef5f593 Mon Sep 17 00:00:00 2001
+From e82ac980e64819e1c054b21f5dfc7fb32141781f Mon Sep 17 00:00:00 2001
 From: Olof Johansson <olofj@chromium.org>
 Date: Tue, 3 Mar 2015 13:22:32 +0100
-Subject: [PATCH 21/27] BACKPORT: platform/chrome: cros_ec_dev - fix Unknown
+Subject: [PATCH 21/28] BACKPORT: platform/chrome: cros_ec_dev - fix Unknown
  escape '%' warning
 
 Almost clean cherry-pick of ef59c25d1be9539890c03c4915cdd4b868191b6f
@@ -34,5 +34,5 @@ index 26ea7bbfc9f5..a52922cc2220 100644
  		 current_image_name[resp.current_image]);
  
 -- 
-2.13.3
+2.14.1
 

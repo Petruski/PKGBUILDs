@@ -1,7 +1,7 @@
-From 6b3e186ce4340339dad044a2be3382e60189e903 Mon Sep 17 00:00:00 2001
+From bb4fd3472d2d6e6785932d32a1d90d20446ec417 Mon Sep 17 00:00:00 2001
 From: Arnd Bergmann <arnd@arndb.de>
 Date: Wed, 14 Jun 2017 12:40:36 +0200
-Subject: [PATCH 18/27] BACKPORT: video: fbdev: avoid int-in-bool-context
+Subject: [PATCH 18/28] BACKPORT: video: fbdev: avoid int-in-bool-context
  warning
 
 Almost clean cherry-pick of c544ad18bd47ee989eb433f09b6574a7f6d415c7
@@ -37,5 +37,5 @@ index 67f6dc347df5..d05c0d581ac5 100644
  
  	/* Yikes, EDID data is totally useless */
 -- 
-2.13.3
+2.14.1
 

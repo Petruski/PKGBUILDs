@@ -1,7 +1,7 @@
-From 40a21d8f39dc119105043ba2971e8a7009af067e Mon Sep 17 00:00:00 2001
+From b780b74a7c17763dddd6b2a7833e4b1e54cc1de5 Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Wed, 9 Dec 2015 18:06:12 +0100
-Subject: [PATCH 08/27] zd1201: drop the node parameter from the hlist
+Subject: [PATCH 08/28] zd1201: drop the node parameter from the hlist
  iterators
 
 This fixes the problem of drivers/net/wireless-3.8/zd1201.c
@@ -58,5 +58,5 @@ index 48273dd05b63..4941f201d6c8 100644
  		kfree_skb(frag->skb);
  		kfree(frag);
 -- 
-2.13.3
+2.14.1
 

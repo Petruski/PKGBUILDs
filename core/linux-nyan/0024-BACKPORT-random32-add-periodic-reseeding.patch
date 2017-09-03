@@ -1,7 +1,7 @@
-From de303682d160b29ba13a5da7983148cdacabb608 Mon Sep 17 00:00:00 2001
+From c730abb84f65cdcf7cb30589b1523c0b9cbe0d96 Mon Sep 17 00:00:00 2001
 From: Hannes Frederic Sowa <hannes@stressinduktion.org>
 Date: Mon, 11 Nov 2013 12:20:33 +0100
-Subject: [PATCH 24/27] BACKPORT: random32: add periodic reseeding
+Subject: [PATCH 24/28] BACKPORT: random32: add periodic reseeding
 
 Clean cherry-pick of 6d31920246a9fc80be4f16acd27c0bbe8d7b8494
 
@@ -84,5 +84,5 @@ index 01e8890d1089..c2b6e62e7b7f 100644
  }
  late_initcall(prandom_reseed);
 -- 
-2.13.3
+2.14.1
 

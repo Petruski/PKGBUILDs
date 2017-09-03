@@ -1,7 +1,7 @@
-From bc93a823fe0a2a486d6139b34268c315ebb61ebd Mon Sep 17 00:00:00 2001
+From 5f8c50212f4a9c036436eaa0b4cc54b2e92f822b Mon Sep 17 00:00:00 2001
 From: Joe Perches <joe@perches.com>
 Date: Thu, 25 Jun 2015 15:01:00 -0700
-Subject: [PATCH 09/27] compiler-gcc.h: neatening
+Subject: [PATCH 09/28] compiler-gcc.h: neatening
 
  - Move the inline and noinline blocks together
 
@@ -162,5 +162,5 @@ index 24545cd90a25..0b008ade320e 100644
 -
 -#define __always_inline		inline __attribute__((always_inline))
 -- 
-2.13.3
+2.14.1
 

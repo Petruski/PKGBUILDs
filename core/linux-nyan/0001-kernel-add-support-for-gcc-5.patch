@@ -1,7 +1,7 @@
-From 3d013735baab2d19526e7076a15b1665cd6f2aa3 Mon Sep 17 00:00:00 2001
+From 0186a3453ad3268db765235974312a0deffdee66 Mon Sep 17 00:00:00 2001
 From: Sasha Levin <sasha.levin@oracle.com>
 Date: Mon, 13 Oct 2014 15:51:05 -0700
-Subject: [PATCH 01/27] kernel: add support for gcc 5
+Subject: [PATCH 01/28] kernel: add support for gcc 5
 
 We're missing include/linux/compiler-gcc5.h which is required now
 because gcc branched off to v5 in trunk.
@@ -94,5 +94,5 @@ index 000000000000..cdd1cc202d51
 +#define __HAVE_BUILTIN_BSWAP16__
 +#endif /* CONFIG_ARCH_USE_BUILTIN_BSWAP */
 -- 
-2.13.3
+2.14.1
 

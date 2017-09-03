@@ -1,7 +1,7 @@
-From 28405107a575dcf3bc25358f15b97d23f70237e1 Mon Sep 17 00:00:00 2001
+From 06062829c07e9cbd58711610cb380ab1e96137a3 Mon Sep 17 00:00:00 2001
 From: Theodore Ts'o <tytso@mit.edu>
 Date: Thu, 17 Jul 2014 04:13:05 -0400
-Subject: [PATCH 26/27] BACKPORT: random: introduce getrandom(2) system call
+Subject: [PATCH 26/28] BACKPORT: random: introduce getrandom(2) system call
 
 Almost clean cherry-pick of c6e9d6f38894798696f23c8084ca7edbf16ee895
 
@@ -230,19 +230,19 @@ index a1c4cead519d..0cb62126cbe6 100644
  				retval = -EAGAIN;
  				break;
  			}
-@@ -1215,6 +1219,12 @@ random_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
+@@ -1214,6 +1218,12 @@ random_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
+ 	return (count ? count : retval);
  }
  
- static ssize_t
++static ssize_t
 +random_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
 +{
 +	return _random_read(file->f_flags & O_NONBLOCK, buf, nbytes);
 +}
 +
-+static ssize_t
+ static ssize_t
  urandom_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
  {
- 	return extract_entropy_user(&nonblocking_pool, buf, nbytes);
 @@ -1340,6 +1350,29 @@ const struct file_operations urandom_fops = {
  	.llseek = noop_llseek,
  };
@@ -323,5 +323,5 @@ index 7471b5b3b8ba..f9c5282f1374 100644
  
  
 -- 
-2.13.3
+2.14.1
 

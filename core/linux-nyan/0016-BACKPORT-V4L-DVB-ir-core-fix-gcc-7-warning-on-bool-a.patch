@@ -1,7 +1,7 @@
-From 59d43705d41ac221a7123db6b41f960666c31afd Mon Sep 17 00:00:00 2001
+From 787abf5a986f886c4461c9fb13fdbf43490a7509 Mon Sep 17 00:00:00 2001
 From: Arnd Bergmann <arnd@arndb.de>
 Date: Thu, 11 May 2017 13:46:44 +0200
-Subject: [PATCH 16/27] BACKPORT: V4L/DVB: ir-core: fix gcc-7 warning on bool
+Subject: [PATCH 16/28] BACKPORT: V4L/DVB: ir-core: fix gcc-7 warning on bool
  arithmetic
 
 gcc-7 suggests that an expression using a bitwise not and a bitmask
@@ -36,5 +36,5 @@ index 72e3fa652481..257bb7a6ff54 100644
  				ictx->pad_mouse ? "mouse" : "keyboard");
  			spin_unlock_irqrestore(&ictx->kc_lock, flags);
 -- 
-2.13.3
+2.14.1
 

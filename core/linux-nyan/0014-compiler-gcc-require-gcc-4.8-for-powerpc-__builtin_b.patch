@@ -1,7 +1,7 @@
-From 32b2511cd5e43e18301259471adff05168b935f6 Mon Sep 17 00:00:00 2001
+From 8dfc307160c4275e962dd417d86c95470b6eff6f Mon Sep 17 00:00:00 2001
 From: Josh Poimboeuf <jpoimboe@redhat.com>
 Date: Fri, 6 May 2016 09:22:25 -0500
-Subject: [PATCH 14/27] compiler-gcc: require gcc 4.8 for powerpc
+Subject: [PATCH 14/28] compiler-gcc: require gcc 4.8 for powerpc
  __builtin_bswap16()
 
 gcc support for __builtin_bswap16() was supposedly added for powerpc in
@@ -58,5 +58,5 @@ index ed297f0eecef..c6196ad793f7 100644
  #endif
  #endif /* CONFIG_ARCH_USE_BUILTIN_BSWAP */
 -- 
-2.13.3
+2.14.1
 

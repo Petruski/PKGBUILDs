@@ -1,7 +1,7 @@
-From de89a62fe2273241e212775f7d8f2a8f9ef23028 Mon Sep 17 00:00:00 2001
+From d5dc1779b2535b148159fa8f855a8e3ee46556b3 Mon Sep 17 00:00:00 2001
 From: Paolo Bonzini <pbonzini@redhat.com>
 Date: Thu, 31 Mar 2016 09:38:51 +0200
-Subject: [PATCH 13/27] compiler-gcc: disable -ftracer for __noclone functions
+Subject: [PATCH 13/28] compiler-gcc: disable -ftracer for __noclone functions
 
 -ftracer can duplicate asm blocks causing compilation to fail in
 noclone functions.  For example, KVM declares a global variable
@@ -39,5 +39,5 @@ index 667b40ad2700..ed297f0eecef 100644
  #endif /* GCC_VERSION >= 40500 */
  
 -- 
-2.13.3
+2.14.1
 

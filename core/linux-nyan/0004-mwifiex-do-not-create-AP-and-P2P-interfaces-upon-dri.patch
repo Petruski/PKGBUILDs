@@ -1,7 +1,7 @@
-From eae521539fbec6de57b8b37d060b30666df44a55 Mon Sep 17 00:00:00 2001
+From 6aca2330d8a3b083be261839ed55ab2fdfbb0191 Mon Sep 17 00:00:00 2001
 From: Bing Zhao <bzhao@marvell.com>
 Date: Mon, 19 Aug 2013 16:10:21 -0700
-Subject: [PATCH 04/27] mwifiex: do not create AP and P2P interfaces upon
+Subject: [PATCH 04/28] mwifiex: do not create AP and P2P interfaces upon
  driver loading
 
 Bug 60747 - 1286:2044 [Microsoft Surface Pro]
@@ -37,10 +37,10 @@ Signed-off-by: John W. Linville <linville@tuxdriver.com>
  1 file changed, 15 deletions(-)
 
 diff --git a/drivers/net/wireless-3.8/mwifiex/main.c b/drivers/net/wireless-3.8/mwifiex/main.c
-index 17b7c05d4bd6..3804ed9594ec 100644
+index 41ab3f6c5445..02dc799ffdd2 100644
 --- a/drivers/net/wireless-3.8/mwifiex/main.c
 +++ b/drivers/net/wireless-3.8/mwifiex/main.c
-@@ -523,21 +523,6 @@ static void mwifiex_fw_dpc(const struct firmware *firmware, void *context)
+@@ -537,21 +537,6 @@ static void mwifiex_fw_dpc(const struct firmware *firmware, void *context)
  		goto err_add_intf;
  	}
  
@@ -63,5 +63,5 @@ index 17b7c05d4bd6..3804ed9594ec 100644
  
  	mwifiex_drv_get_driver_version(adapter, fmt, sizeof(fmt) - 1);
 -- 
-2.13.3
+2.14.1
 

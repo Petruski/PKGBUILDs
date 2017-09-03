@@ -1,7 +1,7 @@
-From ef119225094ef975c6f4fa6bc7896e34d1f94a68 Mon Sep 17 00:00:00 2001
+From eb5dff9e0ecf34bdcff2932bfaeba399254955ba Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Sun, 20 Aug 2017 00:44:35 +0200
-Subject: [PATCH 19/27] isl29018: remove duplicate const
+Subject: [PATCH 19/28] isl29018: remove duplicate const
 
 ---
  drivers/staging/iio/light/isl29018.c | 2 +-
@@ -21,5 +21,5 @@ index aff325ae37da..d5a141e5cd0c 100644
  	"als",
  	"ir",
 -- 
-2.13.3
+2.14.1
 

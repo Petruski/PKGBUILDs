@@ -1,7 +1,7 @@
-From 05dac447254a285cf7f1532d11cb3b1d20a69011 Mon Sep 17 00:00:00 2001
+From b45d5a3400c9e98b1b27d9bc7d1a9aba8b7830f4 Mon Sep 17 00:00:00 2001
 From: Eddie Kovsky <ewk@edkovsky.org>
 Date: Mon, 25 May 2015 22:36:24 -0600
-Subject: [PATCH 06/27] Fix reversed logic in drivers/md/md.c
+Subject: [PATCH 06/28] Fix reversed logic in drivers/md/md.c
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -33,5 +33,5 @@ index 51f0345a4ba4..4aa19e7f82b9 100644
  	    /* ignore bottom 8 bits of state, and allow SB_BITMAP_PRESENT to change */
  	    ((state^info->state) & 0xfffffe00)
 -- 
-2.13.3
+2.14.1
 
