@@ -1,7 +1,7 @@
-From cbee0c21e2a1c57064c17568b665957ceb61e279 Mon Sep 17 00:00:00 2001
+From bb0ac2b887d822454f7603b5248717e6507c97e9 Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Wed, 9 Dec 2015 17:08:40 +0100
-Subject: [PATCH 05/14] use chromiumos mwifiex drivers
+Subject: [PATCH 05/28] use chromiumos mwifiex drivers
 
 Adapted from Kevin Mihelich <kevin@archlinuxarm.org> changes to ChromeOS-3.8 kernel
 
@@ -11,7 +11,7 @@ Signed-off-by: Ronny Lorenz <ronny@tbi.univie.ac.at>
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/wireless-3.8/mwifiex/sdio.h b/drivers/net/wireless-3.8/mwifiex/sdio.h
-index b4877f4..d366036 100644
+index b4877f4faaa9..d3660362a820 100644
 --- a/drivers/net/wireless-3.8/mwifiex/sdio.h
 +++ b/drivers/net/wireless-3.8/mwifiex/sdio.h
 @@ -30,9 +30,9 @@
@@ -28,5 +28,5 @@ index b4877f4..d366036 100644
  #define BLOCK_MODE	1
  #define BYTE_MODE	0
 -- 
-2.8.3
+2.14.1
 

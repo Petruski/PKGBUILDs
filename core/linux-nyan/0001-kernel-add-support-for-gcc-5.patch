@@ -1,7 +1,7 @@
-From f27ac22280be6d98257fbe2dafd5e3137d693374 Mon Sep 17 00:00:00 2001
+From 0186a3453ad3268db765235974312a0deffdee66 Mon Sep 17 00:00:00 2001
 From: Sasha Levin <sasha.levin@oracle.com>
 Date: Mon, 13 Oct 2014 15:51:05 -0700
-Subject: [PATCH 01/14] kernel: add support for gcc 5
+Subject: [PATCH 01/28] kernel: add support for gcc 5
 
 We're missing include/linux/compiler-gcc5.h which is required now
 because gcc branched off to v5 in trunk.
@@ -23,7 +23,7 @@ Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 
 diff --git a/include/linux/compiler-gcc5.h b/include/linux/compiler-gcc5.h
 new file mode 100644
-index 0000000..cdd1cc2
+index 000000000000..cdd1cc202d51
 --- /dev/null
 +++ b/include/linux/compiler-gcc5.h
 @@ -0,0 +1,66 @@
@@ -94,5 +94,5 @@ index 0000000..cdd1cc2
 +#define __HAVE_BUILTIN_BSWAP16__
 +#endif /* CONFIG_ARCH_USE_BUILTIN_BSWAP */
 -- 
-2.8.3
+2.14.1
 
