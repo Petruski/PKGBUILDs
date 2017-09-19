@@ -1,4 +1,4 @@
-From 787abf5a986f886c4461c9fb13fdbf43490a7509 Mon Sep 17 00:00:00 2001
+From e674c6431a472746b92be7a00b96d8e44cec9cb9 Mon Sep 17 00:00:00 2001
 From: Arnd Bergmann <arnd@arndb.de>
 Date: Thu, 11 May 2017 13:46:44 +0200
 Subject: [PATCH 16/28] BACKPORT: V4L/DVB: ir-core: fix gcc-7 warning on bool

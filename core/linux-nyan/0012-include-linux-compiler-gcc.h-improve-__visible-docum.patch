@@ -1,4 +1,4 @@
-From 310db5f9fe6b80b0d0679a970be7a3fbb1416721 Mon Sep 17 00:00:00 2001
+From 16d5cf50574482f980c6f4b0f7b5677139c15f93 Mon Sep 17 00:00:00 2001
 From: Andrew Morton <akpm@linux-foundation.org>
 Date: Fri, 6 Nov 2015 16:30:09 -0800
 Subject: [PATCH 12/28] include/linux/compiler-gcc.h: improve __visible

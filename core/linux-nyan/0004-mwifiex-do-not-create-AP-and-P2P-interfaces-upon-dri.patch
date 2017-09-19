@@ -1,4 +1,4 @@
-From 6aca2330d8a3b083be261839ed55ab2fdfbb0191 Mon Sep 17 00:00:00 2001
+From 2b92023bbec85614aba54ee9951a628f7e3fa707 Mon Sep 17 00:00:00 2001
 From: Bing Zhao <bzhao@marvell.com>
 Date: Mon, 19 Aug 2013 16:10:21 -0700
 Subject: [PATCH 04/28] mwifiex: do not create AP and P2P interfaces upon

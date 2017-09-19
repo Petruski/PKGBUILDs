@@ -1,4 +1,4 @@
-From 3b1f43bdfb3fe7e163c3aeb10bc2974a86633e1a Mon Sep 17 00:00:00 2001
+From 7cb569a85ea84f16ce185464fa21424db5877590 Mon Sep 17 00:00:00 2001
 From: Daniel Borkmann <dborkman@redhat.com>
 Date: Mon, 11 Nov 2013 12:20:32 +0100
 Subject: [PATCH 23/28] BACKPORT: random32: fix off-by-one in seeding

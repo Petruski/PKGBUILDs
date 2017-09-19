@@ -1,4 +1,4 @@
-From bb4fd3472d2d6e6785932d32a1d90d20446ec417 Mon Sep 17 00:00:00 2001
+From 94a244e5d2a91870c0331574a8cbc9ab1447da50 Mon Sep 17 00:00:00 2001
 From: Arnd Bergmann <arnd@arndb.de>
 Date: Wed, 14 Jun 2017 12:40:36 +0200
 Subject: [PATCH 18/28] BACKPORT: video: fbdev: avoid int-in-bool-context

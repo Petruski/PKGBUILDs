@@ -1,4 +1,4 @@
-From d446d5f3269d1340c465e921cbf987ff226e713e Mon Sep 17 00:00:00 2001
+From e41e6c3bf18c1f449d082980b9f83780203b50fe Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Sun, 3 Sep 2017 17:39:42 +0200
 Subject: [PATCH 28/28] BACKPORT: net: inet: API fix for net/ipv4/ip_vti.c

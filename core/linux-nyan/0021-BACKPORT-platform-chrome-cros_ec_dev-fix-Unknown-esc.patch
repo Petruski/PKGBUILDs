@@ -1,4 +1,4 @@
-From e82ac980e64819e1c054b21f5dfc7fb32141781f Mon Sep 17 00:00:00 2001
+From 95f67c4ec16291eac7173e0c9056c1a1799cc74a Mon Sep 17 00:00:00 2001
 From: Olof Johansson <olofj@chromium.org>
 Date: Tue, 3 Mar 2015 13:22:32 +0100
 Subject: [PATCH 21/28] BACKPORT: platform/chrome: cros_ec_dev - fix Unknown
