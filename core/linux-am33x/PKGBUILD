@@ -7,9 +7,9 @@ pkgbase=linux-am33x
 _srcname=linux-4.13
 _kernelname=${pkgbase#linux}
 _desc="TI AM335x Beaglebone (Black)"
-pkgver=4.13.2
+pkgver=4.13.9
 pkgrel=1
-rcnrel=bone1
+rcnrel=bone2
 arch=('armv7h')
 url="http://www.kernel.org/"
 license=('GPL2')
@@ -20,15 +20,17 @@ source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
         "http://rcn-ee.com/deb/sid-armhf/v${pkgver}-${rcnrel}/patch-${pkgver%.0}-${rcnrel}.diff.gz"
         "git+https://github.com/RobertCNelson/bb.org-overlays.git"
         '0001-add-lcd-cape-for-chiliboard.patch'
+        '0001-enable-dtc-1.4.5-flags.patch'
         'config'
         'linux.preset'
         '99-linux.hook')
 md5sums=('ab1a2abc6f37b752dd2595338bec4e78'
-         '0aed60167525cb5cecdd29e78fc5f58e'
-         'cba02a052fde7e53e5b4cf2e5615ac88'
+         '65ff24fbf4cbfff46af62393ddc901d9'
+         '8ee0ed303518b3bd2edce349cff85ce3'
          'SKIP'
          'dc780fbf3d4d1175a94232d7ba1e3cb3'
-         '165f8d755f3d86d7f1e9a7c18ea0aa44'
+         '5698870a716fed205215d258cc71e296'
+         '42a0e7cc2f87494d1318b12482874922'
          '78ccc998f27eec49a9d5490218b1b1ab'
          '79fa396e3f9a09a85156d6d7c2d34b58')
 
@@ -51,6 +53,9 @@ prepare() {
 
   # don't run depmod on 'make install'. We'll do this ourselves in packaging
   sed -i '2iexit 0' scripts/depmod.sh
+
+  cd ../bb.org-overlays
+  git apply ../0001-enable-dtc-1.4.5-flags.patch
 }
 
 build() {
