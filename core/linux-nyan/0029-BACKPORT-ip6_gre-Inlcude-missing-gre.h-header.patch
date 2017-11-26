@@ -1,0 +1,26 @@
+From 62978af97fb80ff803745c84f16098153b3d6407 Mon Sep 17 00:00:00 2001
+From: Ronny Lorenz <ronny@tbi.univie.ac.at>
+Date: Sun, 17 Sep 2017 20:30:17 +0200
+Subject: [PATCH 29/29] BACKPORT: ip6_gre: Inlcude  missing gre.h header
+
+- This fixes compilation issues after commit
+  54a30d7a - 'ip6_gre: fix ip6gre_err() invalid reads'
+---
+ net/ipv6/ip6_gre.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/ipv6/ip6_gre.c b/net/ipv6/ip6_gre.c
+index b1588bfad2c9..08736c117d9a 100644
+--- a/net/ipv6/ip6_gre.c
++++ b/net/ipv6/ip6_gre.c
+@@ -55,6 +55,7 @@
+ #include <net/ip6_fib.h>
+ #include <net/ip6_route.h>
+ #include <net/ip6_tunnel.h>
++#include <net/gre.h>
+ 
+ 
+ static bool log_ecn_error = true;
+-- 
+2.14.1
+

@@ -1,4 +1,4 @@
-From bb0ac2b887d822454f7603b5248717e6507c97e9 Mon Sep 17 00:00:00 2001
+From 27e514a2226d5e140076f4c8b4deae69ce60b712 Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Wed, 9 Dec 2015 17:08:40 +0100
 Subject: [PATCH 05/28] use chromiumos mwifiex drivers

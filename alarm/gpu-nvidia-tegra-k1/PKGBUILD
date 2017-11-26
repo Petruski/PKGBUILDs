@@ -2,11 +2,11 @@
 
 buildarch=4
 pkgbase=gpu-nvidia-tegra-k1
-_nv_full_release=r21_Release_v5.0
-_nv_version=21.5
+_nv_full_release=r21_Release_v6.0
+_nv_version=21.6
 _nv_release=0
 pkgver="${_nv_version}.${_nv_release}"
-pkgrel=5
+pkgrel=1
 pkgdesc="NVIDIA proprietary Tegra K1 GPU drivers for Tegra K1 powered SoC"
 
 # filesystem prefix for the include files and license
@@ -20,7 +20,7 @@ license=('proprietary')
 source=("http://developer.download.nvidia.com/embedded/L4T/${_nv_full_release}/Tegra124_Linux_R${pkgver}_armhf.tbz2"
         51-nvrm.rules
         tegra.conf)
-sha256sums=('a639e3e37e17ef11ea5754d7b703a133febdd6a5d3dd2e5b3924288930a45cca'
+sha256sums=('7550dc6fd9b9b293cde8b0ca38f91890adcc3d804492264fde813d076180cdc8'
             'bdff89e517cd8cbba5f9e9d960bc79d7c2740bf563ff6aaab789a13a547f08fe'
             '05cf40f5722a33a2bf13631eadb6c49be81f8f70e0bf85db896c71d1a6f519e1')
 
@@ -50,16 +50,23 @@ package_gpu-nvidia-tegra-k1-nvrm() {
               libnvdc.so \
               libnvddk_2d_v2.so \
               libnvddk_vic.so \
-              libnvmm.so \
+              libnvidia-eglcore.so.21.6 \
+              libnvidia-glcore.so.21.6 \
+              libnvidia-glsi.so.21.6 \
+              libnvidia-rmapi-tegra.so.21.6 \
+              libnvidia-tls.so.21.6 \
+              libnvjpeg.so \
+              libnvmedia.so \
               libnvmm_camera_v3.so \
               libnvmm_contentpipe.so \
-              libnvmm_parser.so \
-              libnvmm_utils.so \
-              libnvmmlite.so \
               libnvmmlite_audio.so \
               libnvmmlite_image.so \
+              libnvmmlite.so \
               libnvmmlite_utils.so \
               libnvmmlite_video.so \
+              libnvmm_parser.so \
+              libnvmm.so \
+              libnvmm_utils.so \
               libnvodm_imager.so \
               libnvodm_query.so \
               libnvos.so \
@@ -165,7 +172,9 @@ package_gpu-nvidia-tegra-k1-openmax() {
 
   mkdir -p "${pkgdir}${_install_prefix}/lib/tegra"
 
-  for lib in libnvomx.so libnvomxilclient.so
+  for lib in \
+    libnvomx.so \
+    libnvomxilclient.so
   do
     cp usr/lib/arm-linux-gnueabihf/tegra/${lib} "${pkgdir}/${_install_prefix}/lib/tegra/"
   done
@@ -182,7 +191,14 @@ package_gpu-nvidia-tegra-k1-openmax-codecs() {
 
   mkdir -p "${pkgdir}/usr/lib/firmware/tegra12x"
 
-  for f in nvhost_msenc031.fw nvhost_tsec.fw vic03_ucode.bin
+  for f in \
+    fecs.bin \
+    gpccs.bin \
+    gpmu_ucode.bin \
+    NETB_img.bin \
+    nvhost_msenc031.fw \
+    nvhost_tsec.fw \
+    vic03_ucode.bin 
   do
     cp lib/firmware/tegra12x/${f} "${pkgdir}/usr/lib/firmware/tegra12x/"
   done

@@ -1,4 +1,4 @@
-From 06062829c07e9cbd58711610cb380ab1e96137a3 Mon Sep 17 00:00:00 2001
+From 5d66dafff3cc6d9defc323564638ebfb4eac8dd9 Mon Sep 17 00:00:00 2001
 From: Theodore Ts'o <tytso@mit.edu>
 Date: Thu, 17 Jul 2014 04:13:05 -0400
 Subject: [PATCH 26/28] BACKPORT: random: introduce getrandom(2) system call

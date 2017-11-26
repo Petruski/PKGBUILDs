@@ -1,4 +1,4 @@
-From d2f224406026b16ecbcdd86028c571a4ab5a642a Mon Sep 17 00:00:00 2001
+From f478c3dd97440130887ffc2451f69e7a9b5a9c20 Mon Sep 17 00:00:00 2001
 From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Date: Thu, 5 Nov 2015 18:45:05 -0800
 Subject: [PATCH 11/28] include/linux/compiler-gcc.h: hide assume_aligned

@@ -1,4 +1,4 @@
-From d734ad5f89c4d8c42396177e17ea6a38366058c1 Mon Sep 17 00:00:00 2001
+From 5c086cfa6a4afd5253c947dabcd54807594d605e Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Wed, 9 Dec 2015 18:04:06 +0100
 Subject: [PATCH 07/28] Fix several compilation issues with GCC5.2

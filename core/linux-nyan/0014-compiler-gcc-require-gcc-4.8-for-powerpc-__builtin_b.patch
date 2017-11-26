@@ -1,4 +1,4 @@
-From 8dfc307160c4275e962dd417d86c95470b6eff6f Mon Sep 17 00:00:00 2001
+From 1f92d1e424a7d620e87f1016d3457c3b0a4326f4 Mon Sep 17 00:00:00 2001
 From: Josh Poimboeuf <jpoimboe@redhat.com>
 Date: Fri, 6 May 2016 09:22:25 -0500
 Subject: [PATCH 14/28] compiler-gcc: require gcc 4.8 for powerpc

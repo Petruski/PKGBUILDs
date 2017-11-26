@@ -1,4 +1,4 @@
-From a533f1fb092bf4366209bd8d434e893944da72ba Mon Sep 17 00:00:00 2001
+From 9eacc47ef31ca03931985163640b4e4083d3514d Mon Sep 17 00:00:00 2001
 From: Olof Johansson <olofj@chromium.org>
 Date: Tue, 3 Mar 2015 13:22:33 +0100
 Subject: [PATCH 22/28] BACKPORT: platform/chrome: cros_ec_lightbar - fix

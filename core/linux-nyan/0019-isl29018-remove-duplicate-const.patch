@@ -1,4 +1,4 @@
-From eb5dff9e0ecf34bdcff2932bfaeba399254955ba Mon Sep 17 00:00:00 2001
+From 9a352b1c710121891e168005ce1dc3fc802225eb Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Sun, 20 Aug 2017 00:44:35 +0200
 Subject: [PATCH 19/28] isl29018: remove duplicate const

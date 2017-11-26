@@ -1,4 +1,4 @@
-From 280186c4b9dd89fc863e95023d687136a379157a Mon Sep 17 00:00:00 2001
+From 12b629bfa97f138f3c4144382aff7cdc58c88229 Mon Sep 17 00:00:00 2001
 From: Russell King <rmk+kernel@arm.linux.org.uk>
 Date: Fri, 8 Aug 2014 10:56:34 +0100
 Subject: [PATCH 27/28] BACKPORT: ARM: wire up getrandom syscall

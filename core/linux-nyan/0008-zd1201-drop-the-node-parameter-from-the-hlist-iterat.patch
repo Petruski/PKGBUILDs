@@ -1,4 +1,4 @@
-From b780b74a7c17763dddd6b2a7833e4b1e54cc1de5 Mon Sep 17 00:00:00 2001
+From a69629255242f8784aedfad214ad5ab85bf087a7 Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Wed, 9 Dec 2015 18:06:12 +0100
 Subject: [PATCH 08/28] zd1201: drop the node parameter from the hlist

@@ -1,4 +1,4 @@
-From c730abb84f65cdcf7cb30589b1523c0b9cbe0d96 Mon Sep 17 00:00:00 2001
+From cbcde1d6e9a44800d2240cd4c691f114f8f1a44b Mon Sep 17 00:00:00 2001
 From: Hannes Frederic Sowa <hannes@stressinduktion.org>
 Date: Mon, 11 Nov 2013 12:20:33 +0100
 Subject: [PATCH 24/28] BACKPORT: random32: add periodic reseeding

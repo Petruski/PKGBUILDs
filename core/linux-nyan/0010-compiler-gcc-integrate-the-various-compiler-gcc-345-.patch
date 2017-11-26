@@ -1,4 +1,4 @@
-From b6840e95eac8cb2e7d7f57621b2f9db44b3a2408 Mon Sep 17 00:00:00 2001
+From e68be630ef82adf278c4eb59a6ac79d9f9af7e71 Mon Sep 17 00:00:00 2001
 From: Joe Perches <joe@perches.com>
 Date: Thu, 25 Jun 2015 15:01:02 -0700
 Subject: [PATCH 10/28] compiler-gcc: integrate the various compiler-gcc[345].h

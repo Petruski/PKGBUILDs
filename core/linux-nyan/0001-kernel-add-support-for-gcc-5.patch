@@ -1,4 +1,4 @@
-From 0186a3453ad3268db765235974312a0deffdee66 Mon Sep 17 00:00:00 2001
+From 9ea1c2884446893c0485c69c726b4540794df9ef Mon Sep 17 00:00:00 2001
 From: Sasha Levin <sasha.levin@oracle.com>
 Date: Mon, 13 Oct 2014 15:51:05 -0700
 Subject: [PATCH 01/28] kernel: add support for gcc 5

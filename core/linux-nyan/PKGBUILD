@@ -7,8 +7,8 @@ pkgbase=linux-nyan
 _kernelname=${pkgbase#linux}
 _desc="TegraK1 Chromebooks (Nyan)"
 pkgver=3.10.18
-pkgrel=23
-_commit=a25aaf5ef5f77095b5e74dd9e44e55935fe188ca
+pkgrel=24
+_commit=3a080eaf27b2094ae104f392b4cefbbe9382b8ee
 _coreboot_commit=53a6a572138e42b81e33a87b59773e387f369766
 arch=('armv7h')
 url="https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.10"
@@ -48,46 +48,48 @@ source=(  "https://chromium.googlesource.com/chromiumos/third_party/kernel/+arch
           '0026-BACKPORT-random-introduce-getrandom-2-system-call.patch'
           '0027-BACKPORT-ARM-wire-up-getrandom-syscall.patch'
           '0028-BACKPORT-net-inet-API-fix-for-net-ipv4-ip_vti.c.patch'
+	  '0029-BACKPORT-ip6_gre-Inlcude-missing-gre.h-header.patch'
 	  'kernel-nyan.its'
           'kernel.keyblock'
           'kernel_data_key.vbprivk'
           'cmdline')
 
-sha256sums=('f8fe87118103408375d908d452787db5d2d3b1aa5ddc9f31fbf6be6b2c0775ec'
-            '5f0dbb3afa722eaf58b8ed677a45097ae3cf3dcf74423ee44570d5b0da4a3b9d'
+sha256sums=('4acb82805ed1f4769c4f02c7adeef1969e48453184eb4bd300e9b8951b5b119f'
+            'f61654b69d395744460079403648269f30a3177f3d8e699da816e8465cbb5491'
             '72c9d88552505ee28dc9db342cd1ac1f4efee56f2884e710d66d3f60584c321d'
             '35f60f174da4bb367f37e355ca5f037a8528021d33d475cae91e968beb2f8325'
             'da63c1035c0d6c53a71901ff4ad4e7abca697b297b5446de4ed5bed0badd976b'
             'f25cd8269cc107108560b07a68d701870fb91e3ed195917113918d1cb1cbb74f'
             'f75ed13e9dd0e7f0d5a5fd1afe3574df8d4a34bae1d05268753e098402c56dd1'
-            '510f645d0f355f45fe4bbc2c273ef3d9feeb531d39a7b776e1af3dfeae2b1c7a'
-            'd4606e2edeed7c53e0b124f4ec44397e82e23aa34c0f2fb6aef6f1d223d76d94'
-            'e8d22fcfd079eccd23d4a5843f0c868c993af1f7a0581e599ca4f26aed7a1c11'
-            'a68ee21c401d7b6839d4d630dbf4ab3d88aaf487819d58d7dd6a983e57515b5d'
-            '703b7fd60105d3d94012a880f011f7c24d2bd762bf82a83b66849d3bdb737ecf'
-            '3e8fadf6b18cec3a4e10cad456ee4c905d659bac31d260cb1621f62c3c569123'
-            'ae6c38e8e9253161cf0226bd04e6bc1f53090dc7f1bd6eb87da570121eab6e05'
-            'ec06b41015d5aeb78190c3bf93de02cfe4c6fbed4b519739d330b4c545605139'
-            'c6d55a9eb690a62b814518d2792caefbd3388a5f77654475f3459462608c4736'
-            '3d28d5a95f9eed6a0da18dc142bcea429bdcd8178c06a474aa652888736e6564'
-            'b62245a9a07ef02cb62d973a434ae9d8d6dfc1f89b91ee44a24c791b1b45804f'
-            '2a3f05c945e4fa4d480dac187759a2f92237163e66c840f0de7d69c13afcb964'
-            '53c2a369d8d799fbf7282d0a459da99d477f5f5fc9e2bcac607c4062f18bf87b'
-            '3330d1d713b24dde2222c2dccbad26246e39619273349ef2a739930f89eb7b65'
-            '9748a11aa8d821d22ca2d21caaa459bf4eb156d7dcb761f4f276e3a67480d044'
-            '074a8093a2a414d907c4a642513bc6faf096a0e3bd8b18f757cb4a7fd64dfd9c'
-            'a19e58bb85085c13166ab4d2611b6245dc181848b9025dcd037d82cf7e7ff42c'
-            '06461ce42eca3c2fc1ff638a09f09e45957a1848237ab2a793832a85e1ecb138'
-            '706e469f570a7b286215e6738278113a9658f79009a25cd3ff330b82c8112420'
-            '46519ac202e2ff23642d294a1de1a90d539790e7f1f401e86acbcfcc588e8dfe'
-            '2c6b7e3500f0331feed5b1747fc237d62d968c90fa8928c9fef0a111064ac316'
-            'e28bd2e7bc5bc3e3de22cd7e148064ddc3ab3fef843537ce25bb3e0bbc1ce56a'
-            'a005e0f1a1655bd9fc608a45ce1ddf21e0dbc14b7825587548f4c41e091f956a'
-            'a44058e045083fb5e2b3e5ddcbc33e72f9f88b725034c6e12ec0d243727e71f1'
-            '488636d16efa73aa9cf7da5323041efbaa290eb468e31bf1245500951f8ec246'
-            '4f2c387f2f141aa714b3a5ae339edeeaa47b4cb3de0b61afafa76dfa0e2b9d5b'
-            '028465763c2219de1da01ca7499b8df69e3dc8465135d9e8ca3d8c7b49806c82'
-            'f36774ecd5a70d80c1d71ef538a11c2dd793253015b98a633a8959526701bdd9'
+            '37654581fe07d34934ee509f6fe032f7d09dd87aa33983887ae86cc0059ec4b1'
+            '454882a06a6452a3a8e72b2c6516a85e87330343f5500cfffca44da1c07fe4f1'
+            '6de4216e08521da41f7a22fe3ade8af8457a45ba89bfb596b25ee0845b38c904'
+            'da01ca4cd0a0859cbd674beea5a878d85deebe61d4402a92d7d64abe71e441f0'
+            '00112cf462760f9be2d721fd3dd486b5a37424c85a186c8fb12ebf1797d735af'
+            '42a346e0e648812ab94ef0291e9293186d316d46de0c13cf06547dd17f2dd793'
+            'e5853d7b628c98c65bf379d60888dece81a885cd89de1d761ca88ab35edadc2b'
+            'faa5219bef649faba4d920e022109851a5f99af878157582aebcd683699677b6'
+            'ba7b5d1c9d531fb9ac614bd008da29426ad5ae9082dcfb420a223997b39dd117'
+            '55278e34a226aefa270d3045bc7ea93c9cc5aebc1b688c882074465e1fabd88b'
+            '6fd7a14a5bbdf52154b6f6b492e29db3b33a151727ca2b5cd75353433d3589d5'
+            'fc8ea4bc8228c96ebf87acae952c8b39dba341768d5715297824dc0dfea4c5de'
+            'e7e0a984530711b4e7f97c2c9cc4dc2f26c6b495c42a6803686977db63b9c401'
+            '5fa8e5331002e32f7551854af9dd2e15626a9dc1d488a06ea9a3d53fab04f03a'
+            '5d8aca2e462d7dc63e319aececd47078185576560c5ff680149ee2fabeb6c999'
+            '3b42b32a35bbf37e2149a0efd6a18215a486519a2d7f2016cd8b8bf1a2151b10'
+            '2a7d2d461c8de644e1d84c51a0aaf011caa616bc598946d076936cd73b7bbdf2'
+            '94ca4e15891c60e5f66d89022788a9e236209356eb410e78cc531bde0479d525'
+            '1b85e206eb6ad60b7da466f32ce796c4598195c120739ed0c6de0d0d36045712'
+            'cd8ac52499abd28c02de0baaa182f8f18debaec5427eadfa55b13aaf25860029'
+            'b35c4260ec1686eea0421b3633e3ed708c064235c24d4d162067a1b5b6d9f485'
+            '2d62b1731501b6a4c587c37726ccbefdba0b2fb0bc5da5ff89a42c80bcf33fad'
+            '405c62a1198bc30c55661d2102f0e24577d3d8b92e326921c7832e588c25d424'
+            '09613a24aa163a3ae64d0dbe6355d7d6a605c610de58801fd0b687c0b84e1550'
+            'd169a5fc7640507a290612f030cd7a6874b46c7692d5b2ed284c40d081a6fb41'
+            'd42c86073e8f33fa7a7cbc413aebd7827c2ba8aab594ee3b7bd04bf95411d755'
+            'bbae39e68026c0597f10d445118b0dc198c96d5977243b3dbb26582855318012'
+            '392a5357c1afe6ff2c2433dea734ef7b6483e19e5bee80270b272a3abafabb71'
+            '4f29cba500d10cd797944d556bd1e68957844830859e5ae46b893806787d903e'
             '545446be6b8bdb6e46743f3ff3ba5a1a80f8f101649736939eb7e862061e4d61'
             '4e708c9ec43ac4a5d718474c9431ba6b6da3e64a9dda6afd2853a9e9e3079ffb'
             'bc9e707a86e55a93f423e7bcdae4a25fd470b868e53829b91bbe2ccfbc6da27b'
@@ -125,7 +127,8 @@ prepare() {
     0025-BACKPORT-random32-add-prandom_reseed_late-and-call-w.patch \
     0026-BACKPORT-random-introduce-getrandom-2-system-call.patch \
     0027-BACKPORT-ARM-wire-up-getrandom-syscall.patch \
-    0028-BACKPORT-net-inet-API-fix-for-net-ipv4-ip_vti.c.patch
+    0028-BACKPORT-net-inet-API-fix-for-net-ipv4-ip_vti.c.patch \
+    0029-BACKPORT-ip6_gre-Inlcude-missing-gre.h-header.patch
   do
     patch -p1 < ${p}
   done

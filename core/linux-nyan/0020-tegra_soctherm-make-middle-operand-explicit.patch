@@ -1,4 +1,4 @@
-From fb9cc3ce8b228047f266f8a7d62a23d174207f4b Mon Sep 17 00:00:00 2001
+From 2ba48c23fcacc650e61e5a3260c0389c88d15d3b Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Sun, 20 Aug 2017 00:46:21 +0200
 Subject: [PATCH 20/28] tegra_soctherm: make middle operand explicit
