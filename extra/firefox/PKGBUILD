@@ -5,21 +5,19 @@
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - mozconfig changes for ARM
-#  - patches to build on ARM
-#  - remove makedepend on cargo
 #  - use tarball source
 
 buildarch=12
 highmem=1
 
 pkgname=firefox
-pkgver=56.0.1
-pkgrel=1
+pkgver=57.0
+pkgrel=2
 pkgdesc="Standalone web browser from mozilla.org"
-arch=(i686 x86_64)
+arch=(x86_64)
 license=(MPL GPL LGPL)
 url="https://www.mozilla.org/firefox/"
-depends=(gtk3 gtk2 mozilla-common libxt startup-notification mime-types dbus-glib alsa-lib ffmpeg
+depends=(gtk3 gtk2 mozilla-common libxt startup-notification mime-types dbus-glib ffmpeg
          nss hunspell sqlite ttf-font libpulse)
 makedepends=(unzip zip diffutils python2 yasm mesa imake gconf inetutils xorg-server-xvfb
              autoconf2.13 rust mercurial clang llvm jack)
@@ -29,25 +27,18 @@ optdepends=('networkmanager: Location detection via available WiFi networks'
             'speech-dispatcher: Text-to-Speech')
 options=(!emptydirs !makeflags !strip)
 source=(https://ftp.mozilla.org/pub/mozilla.org/firefox/releases/$pkgver/source/firefox-$pkgver.source.tar.xz
+        $pkgname.desktop firefox-symbolic.svg
+        0001-Bug-1360278-Add-preference-to-trigger-context-menu-o.patch
         wifi-disentangle.patch wifi-fix-interface.patch
-        0001-Bug-1384062-Make-SystemResourceMonitor.stop-more-res.patch
-        no-plt.diff plugin-crash.diff glibc-2.26-fix.diff
-        $pkgname.desktop firefox-symbolic.svg firefox-install-dir.patch
-        rhbz-1354671.patch
-        https://src.fedoraproject.org/rpms/firefox/raw/master/f/build-cubeb-pulse-arm.patch)
-sha256sums=('891836df85f8798c49f7b25661820f64d1311d59703c716eda471819b93ccda2'
+        firefox-install-dir.patch no-plt.diff)
+sha256sums=('603af00155be87f2c9c58047dd0072971f1cdab1f632695aae6ad072efefbb8f'
+            '677e1bde4c6b3cff114345c211805c7c43085038ca0505718a11e96432e9811a'
+            'a2474b32b9b2d7e0fb53a4c89715507ad1c194bef77713d798fa39d507def9e9'
+            '1f71b379f2262d7319624c2aed31fa2dbed42828feccc27b1cd82153b76ad707'
             'f068b84ad31556095145d8fefc012dd3d1458948533ed3fff6cbc7250b6e73ed'
             'e98a3453d803cc7ddcb81a7dc83f883230dd8591bdf936fc5a868428979ed1f1'
-            'aba767995ffb1a55345e30aaba667f43d469e23bd9b1b68263cf71b8118acc96'
-            'ea8e1b871c0f1dd29cdea1b1a2e7f47bf4713e2ae7b947ec832dba7dfcc67daa'
-            'a7e5d2430bb562f6367deb07417dad4368317e8e8be5d1cfa842c3356de3cfc0'
-            'cd7ff441da66a287f8712e60cdc9e216c30355d521051e2eaae28a66d81915e8'
-            'ada313750e6fb14558b37c764409a17c1672a351a46c73b350aa1fe4ea9220ef'
-            'a2474b32b9b2d7e0fb53a4c89715507ad1c194bef77713d798fa39d507def9e9'
             'd86e41d87363656ee62e12543e2f5181aadcff448e406ef3218e91865ae775cd'
-            '22d5e5c07e759422027867121b24cdbcab8812670ca8e2e92825029f30eecbbd'
-            '434298ee0e91990967af03614c0d3232024e35dd38ca9f7dce52a8a7363e2382')
-validpgpkeys=('2B90598A745E992F315E22C58AB132963A06537A')
+            'ea8e1b871c0f1dd29cdea1b1a2e7f47bf4713e2ae7b947ec832dba7dfcc67daa')
 
 # Google API keys (see http://www.chromium.org/developers/how-tos/api-keys)
 # Note: These are for Arch Linux use ONLY. For your own distribution, please
@@ -69,22 +60,15 @@ prepare() {
   cd $pkgname-$pkgver
   patch -Np1 -i ../firefox-install-dir.patch
 
+  # https://bugzilla.mozilla.org/show_bug.cgi?id=1360278
+  patch -Np1 -i ../0001-Bug-1360278-Add-preference-to-trigger-context-menu-o.patch
+
   # https://bugzilla.mozilla.org/show_bug.cgi?id=1314968
   patch -Np1 -i ../wifi-disentangle.patch
   patch -Np1 -i ../wifi-fix-interface.patch
 
-  # https://bugzilla.mozilla.org/show_bug.cgi?id=1384062
-  patch -Np1 -i ../0001-Bug-1384062-Make-SystemResourceMonitor.stop-more-res.patch
-
   # https://bugzilla.mozilla.org/show_bug.cgi?id=1382942
   patch -Np1 -i ../no-plt.diff
-
-  # https://bugzilla.mozilla.org/show_bug.cgi?id=1400175
-  patch -Np1 -i ../plugin-crash.diff
-
-  # https://bugzilla.mozilla.org/show_bug.cgi?id=1385667
-  # https://bugzilla.mozilla.org/show_bug.cgi?id=1394149
-  patch -Np1 -i ../glibc-2.26-fix.diff
 
   echo -n "$_google_api_key" >google-api-key
   echo -n "$_mozilla_api_key" >mozilla-api-key
@@ -96,6 +80,7 @@ ac_add_options --prefix=/usr
 ac_add_options --enable-release
 #ac_add_options --enable-gold
 #ac_add_options --enable-pie
+ac_add_options --enable-rust-simd
 
 # Branding
 ac_add_options --enable-official-branding
@@ -131,11 +116,10 @@ END
   if [[ $CARCH == "armv7h" ]]; then
     echo "ac_add_options --disable-elf-hack" >> .mozconfig
     echo 'ac_add_options --enable-optimize="-g -O2 -fno-schedule-insns"' >> .mozconfig
+    echo "ac_add_options --disable-stylo" >> .mozconfig
   elif [[ $CARCH == "aarch64" ]]; then
     echo 'ac_add_options --enable-optimize="-O2"' >> .mozconfig
-    patch -p1 -i ../rhbz-1354671.patch
   fi
-  patch -p1 -i ../build-cubeb-pulse-arm.patch
 }
 
 build() {
