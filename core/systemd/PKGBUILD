@@ -11,12 +11,12 @@
 pkgbase=systemd
 pkgname=('systemd' 'libsystemd' 'systemd-sysvcompat')
 # latest commit on stable branch
-_commit='743b771c559c6101544f7358a42c8c519fe4b0db'
+_commit='242f14c5a807bb50bfda18568887deae1eb8a3ec'
 # Bump this to latest major release for signed tag verification,
 # the commit count is handled by pkgver() function.
-pkgver=235.38
-pkgrel=2.1
-arch=('i686' 'x86_64')
+pkgver=236.81
+pkgrel=1
+arch=('x86_64')
 url="https://www.github.com/systemd/systemd"
 makedepends=('acl' 'cryptsetup' 'docbook-xsl' 'gperf' 'lz4' 'xz' 'pam' 'libelf'
              'intltool' 'iptables' 'kmod' 'libcap' 'libidn' 'libgcrypt'
@@ -53,10 +53,6 @@ sha512sums=('SKIP'
             '10190fba9f39a8f4b620a0829e0ba8ed63bb4dbeca712966011ee7807880d01ab2abff1a80baafeb6674db70526a473fe585db8190e864f318fc4d6068552618')
 
 _backports=(
-	# Fix typo in statx macro (#7180) (FS#56289)
-	'8e6a7a8b2be409d356bcaface00f6d44390c07ff'
-	# seccomp: include ARM set_tls in @default
-	'ce5faeac1f79f3afefcc129025a1cec0211313fb'
 )
 
 _reverts=(
@@ -198,7 +194,10 @@ package_systemd() {
   install -Dm644 "$srcdir/initcpio-install-udev" "$pkgdir/usr/lib/initcpio/install/udev"
   install -Dm644 "$srcdir/initcpio-hook-udev" "$pkgdir/usr/lib/initcpio/hooks/udev"
 
-  # ensure proper permissions for /var/log/journal. This is only to placate
+  # ensure proper permissions for /var/log/journal
+  # The permissions are stored with named group by tar, so this works with
+  # users and groups populated by systemd-sysusers. This is only to prevent a
+  # warning from pacman as permissions are set by systemd-tmpfiles anyway.
   chown root:systemd-journal "$pkgdir/var/log/journal"
   chmod 2755 "$pkgdir/var/log/journal"
 

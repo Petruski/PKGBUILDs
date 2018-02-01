@@ -3,9 +3,9 @@
 buildarch=20
 
 pkgname=raspberrypi-firmware
-pkgver=20171119
+pkgver=20180131
 pkgrel=1
-_commit=27993e5acf86d1629428ed1a601e86ecd5e5a1df
+_commit=58395c1ea3f9ae129885aa7ff7d8b92c7be267db
 pkgdesc="Firmware tools, libraries, and headers for Raspberry Pi"
 arch=('any')
 url="https://github.com/raspberrypi/firmware"
@@ -15,7 +15,7 @@ provides=('raspberrypi-firmware-tools')
 options=(!strip)
 source=("https://github.com/raspberrypi/firmware/archive/${_commit}.tar.gz"
         '00-raspberrypi-firmware.conf')
-md5sums=('a0dbc80fbd02d6bc5e77f479b06269ef'
+md5sums=('a74799305c72b514f2881ae83eafb145'
          '72e0d5818fc513ece1b964f25f7e7882')
 
 package() {
