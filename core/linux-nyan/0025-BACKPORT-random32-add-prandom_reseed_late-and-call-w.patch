@@ -1,7 +1,7 @@
-From b1df57555024395ad3965c3e2c104577d4b55064 Mon Sep 17 00:00:00 2001
+From 1a196530b9bec94af38b8fb82f491a4171c66d7e Mon Sep 17 00:00:00 2001
 From: Hannes Frederic Sowa <hannes@stressinduktion.org>
 Date: Mon, 11 Nov 2013 12:20:34 +0100
-Subject: [PATCH 25/28] BACKPORT: random32: add prandom_reseed_late() and call
+Subject: [PATCH 25/29] BACKPORT: random32: add prandom_reseed_late() and call
  when nonblocking pool becomes initialized
 
 Clean cherry-pick of 4af712e8df998475736f3e2727701bd31e3751a9
@@ -105,5 +105,5 @@ index c2b6e62e7b7f..6fb48477901c 100644
  	return 0;
  }
 -- 
-2.14.1
+2.16.1
 

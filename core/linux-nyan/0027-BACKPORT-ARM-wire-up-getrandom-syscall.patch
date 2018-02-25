@@ -1,7 +1,7 @@
-From 12b629bfa97f138f3c4144382aff7cdc58c88229 Mon Sep 17 00:00:00 2001
+From b76ee84089dcdc50e683198a72dcede2e5a9a6a4 Mon Sep 17 00:00:00 2001
 From: Russell King <rmk+kernel@arm.linux.org.uk>
 Date: Fri, 8 Aug 2014 10:56:34 +0100
-Subject: [PATCH 27/28] BACKPORT: ARM: wire up getrandom syscall
+Subject: [PATCH 27/29] BACKPORT: ARM: wire up getrandom syscall
 
 Almost clean cherry-pick of eb6452537b280652eee66801ec97cc369e27e5d8
 
@@ -53,5 +53,5 @@ index 1a2e529a1340..46cc644e312d 100644
  .equ syscalls_padding, ((NR_syscalls + 3) & ~3) - NR_syscalls
  #define syscalls_counted
 -- 
-2.14.1
+2.16.1
 

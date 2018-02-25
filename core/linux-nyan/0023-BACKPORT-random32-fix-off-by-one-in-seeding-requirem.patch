@@ -1,7 +1,7 @@
-From 7cb569a85ea84f16ce185464fa21424db5877590 Mon Sep 17 00:00:00 2001
+From 4c3b3f48a3f273bc8ca95b801b586a623fdc2473 Mon Sep 17 00:00:00 2001
 From: Daniel Borkmann <dborkman@redhat.com>
 Date: Mon, 11 Nov 2013 12:20:32 +0100
-Subject: [PATCH 23/28] BACKPORT: random32: fix off-by-one in seeding
+Subject: [PATCH 23/29] BACKPORT: random32: fix off-by-one in seeding
  requirement
 
 Clean cherry pick of 51c37a70aaa3f95773af560e6db3073520513912
@@ -98,5 +98,5 @@ index 52280d5526be..01e8890d1089 100644
  		/* mix it in */
  		prandom_u32_state(state);
 -- 
-2.14.1
+2.16.1
 
