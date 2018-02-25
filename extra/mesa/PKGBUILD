@@ -7,8 +7,8 @@
 
 pkgbase=mesa
 pkgname=('mesa' 'libva-mesa-driver')
-pkgver=17.3.0
-pkgrel=2
+pkgver=17.3.5
+pkgrel=1
 arch=('x86_64')
 makedepends=('python2-mako' 'libxml2' 'libx11' 'glproto' 'libdrm' 'dri2proto' 'dri3proto' 'presentproto' 
              'libxshmfence' 'libxxf86vm' 'libxdamage' 'libvdpau' 'libva' 'wayland' 'wayland-protocols'
@@ -17,11 +17,11 @@ url="https://www.mesa3d.org/"
 license=('custom')
 source=(https://mesa.freedesktop.org/archive/mesa-${pkgver}.tar.xz{,.sig}
         LICENSE
-        0002-glvnd-fix-gl-dot-pc.patch)
-sha256sums=('29a0a3a6c39990d491a1a58ed5c692e596b3bfc6c01d0b45e0b787116c50c6d9'
+        0001-glvnd-fix-gl-dot-pc.patch)
+sha512sums=('39ada2480aa12c42bbff6a1b5c957f99934193d19eb5f44e102ef8302d26f777cee63af1140aa8623bbc1ebd6d69e172cecca798780b8eb594f2ebbb217afd29'
             'SKIP'
-            '7fdc119cf53c8ca65396ea73f6d10af641ba41ea1dd2bd44a824726e01c8b3f2'
-            '64a77944a28026b066c1682c7258d02289d257b24b6f173a9f7580c48beed966')
+            '25da77914dded10c1f432ebcbf29941124138824ceecaf1367b3deedafaecabc082d463abcfa3d15abff59f177491472b505bcb5ba0c4a51bb6b93b4721a23c2'
+            '75849eca72ca9d01c648d5ea4f6371f1b8737ca35b14be179e14c73cc51dca0739c333343cdc228a6d464135f4791bcdc21734e2debecd29d57023c8c088b028')
 validpgpkeys=('8703B6700E7EE06D7A39B8D6EDAE37B02CEB490D') # Emil Velikov <emil.l.velikov@gmail.com>
 validpgpkeys+=('946D09B5E4C9845E63075FF1D961C596A7203456') # Andres Gomez <tanty@igalia.com>
 validpgpkeys+=('E3E8F480C52ADD73B278EE78E1ECBE07D7D70895') # Juan Antonio Suárez Romero (Igalia, S.L.) <jasuarez@igalia.com>"
@@ -31,7 +31,7 @@ prepare() {
 
   # glvnd support patches - from Fedora
   # non-upstreamed ones
-  patch -Np1 -i ../0002-glvnd-fix-gl-dot-pc.patch
+  patch -Np1 -i ../0001-glvnd-fix-gl-dot-pc.patch
   
   autoreconf -fiv
 }
@@ -45,7 +45,6 @@ build() {
 
   LIBS=$LIBS ./configure --prefix=/usr \
     --sysconfdir=/etc \
-    --with-dri-driverdir=/usr/lib/xorg/modules/dri \
     --with-gallium-drivers=freedreno,nouveau,swrast,virgl${GALLIUM} \
     --with-dri-drivers=nouveau,swrast \
     --with-platforms=x11,drm,wayland \
@@ -81,7 +80,7 @@ package_libva-mesa-driver() {
   depends=('libdrm' 'libx11' 'llvm-libs' 'expat' 'libelf' 'libxshmfence' 'lm_sensors')
 
   install -m755 -d ${pkgdir}/usr/lib/dri
-  cp -av ${srcdir}/fakeinstall/usr/lib/dri/* ${pkgdir}/usr/lib/dri
+  cp -av ${srcdir}/fakeinstall/usr/lib/dri/*_drv_video.so ${pkgdir}/usr/lib/dri
    
   install -m755 -d "${pkgdir}/usr/share/licenses/libva-mesa-driver"
   install -m644 "${srcdir}/LICENSE" "${pkgdir}/usr/share/licenses/libva-mesa-driver/"
@@ -105,9 +104,9 @@ package_mesa() {
   install -m755 -d ${pkgdir}/usr/share/glvnd/egl_vendor.d
   cp -rv ${srcdir}/fakeinstall/usr/share/glvnd/egl_vendor.d/50_mesa.json ${pkgdir}/usr/share/glvnd/egl_vendor.d/
 
-  install -m755 -d ${pkgdir}/usr/lib/xorg/modules/dri
+  install -m755 -d ${pkgdir}/usr/lib/dri
   # ati-dri, nouveau-dri, intel-dri, svga-dri, swrast
-  cp -av ${srcdir}/fakeinstall/usr/lib/xorg/modules/dri/* ${pkgdir}/usr/lib/xorg/modules/dri
+  cp -av ${srcdir}/fakeinstall/usr/lib/dri/*_dri.so ${pkgdir}/usr/lib/dri
    
   cp -rv ${srcdir}/fakeinstall/usr/lib/bellagio  ${pkgdir}/usr/lib
   cp -rv ${srcdir}/fakeinstall/usr/lib/d3d  ${pkgdir}/usr/lib

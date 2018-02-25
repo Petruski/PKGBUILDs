@@ -8,21 +8,20 @@
 pkgbase=go
 pkgname=(go go-pie)
 epoch=2
-pkgver=1.9.2
-pkgrel=3
+pkgver=1.10
+pkgrel=2
 arch=(x86_64)
 url='http://golang.org/'
 license=(BSD)
 makedepends=(git go)
 source=(https://storage.googleapis.com/golang/go$pkgver.src.tar.gz
         default-buildmode-pie.patch)
-sha256sums=('665f184bf8ac89986cfd5a4460736976f60b57df6b320ad71ad4cef53bb143dc'
-            'fd0055504e4175c1f444816636dfb53fc0ddee991fa2696bb64b087130bba96d')
+sha256sums=('f3de49289405fda5fd1483a8fe6bd2fa5469e005fd567df64485c4fa000c7f24'
+            '9d2f0d201d4e002d74f548cc82bd131139bab5dd62191004c71dd430fdc1666d')
 
 export GOOS=linux
 case "$CARCH" in
   x86_64) export GOARCH=amd64 ;;
-  i686) export GOARCH=386 GO386=387 ;;
   arm) export GOARCH=arm GOARM=5 ;;
   armv6h) export GOARCH=arm GOARM=6 ;;
   armv7h) export GOARCH=arm GOARM=7 ;;
@@ -30,6 +29,7 @@ case "$CARCH" in
 esac
 export GOROOT_FINAL=/usr/lib/go
 export GOROOT_BOOTSTRAP=/usr/lib/go
+export GOCACHE=off
 
 prepare() {
   cp -r $pkgbase ${pkgbase}-pie
@@ -46,10 +46,10 @@ build() {
     export GOBIN="$GOROOT/bin"
 
     cd "$srcdir/$_pkgname/src"
-    ./make.bash --no-clean
+    ./make.bash --no-clean -v
 
-    PATH="$GOBIN:$PATH" go install -buildmode=shared std
-    #PATH="$GOBIN:$PATH" go install -race std
+    PATH="$GOBIN:$PATH" go install -v -buildmode=shared std
+    #PATH="$GOBIN:$PATH" go install -v -race std
   done
 }
 

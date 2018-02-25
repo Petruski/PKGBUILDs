@@ -4,12 +4,12 @@
 buildarch=4
 
 pkgbase=linux-armv7
-_srcname=linux-4.14
+_srcname=linux-4.15
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 multi-platform"
-pkgver=4.14.8
+pkgver=4.15.5
 pkgrel=1
-rcnrel=armv7-x3
+rcnrel=armv7-x1
 arch=('armv7h')
 url="http://www.kernel.org/"
 license=('GPL2')
@@ -27,25 +27,35 @@ source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
         '0007-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch'
         '0008-disable-USB3-port-on-ODROID-XU.patch'
         '0009-ARM-dove-enable-ethernet-on-D3Plug.patch'
+        '0010-power-add-power-sequence-library.patch'
+        '0011-usb-core-add-power-sequence-handling-for-USB-devices.patch'
+        '0012-ARM-dts-imx6qdl-Enable-usb-node-children-with-reg.patch'
+        '0013-ARM-dts-imx6qdl-udoo.dtsi-fix-onboard-USB-HUB-proper.patch'
+        '0014-ARM-dts-imx6q-evi-Fix-onboard-hub-reset-line.patch'
         'config'
         'kernel.its'
         'kernel.keyblock'
         'kernel_data_key.vbprivk'
         'linux.preset'
         '99-linux.hook')
-md5sums=('bacdb9ffdcd922aa069a5e1520160e24'
-         'e4a4d2abd61516d4eaf4789ca5e113ff'
-         'dc7e13b894ad2825c2fe38a8840e699a'
-         'a9a96c56f83a0190a55511bf340774e1'
-         '0783eff6ee3c3e69d860468ea350a091'
-         '98c229baab4561144eb37210a20283a1'
-         'a5a7083d247fd3827fe22b06b78f909c'
-         '33067cc37863c18b4bc1820020c83859'
-         '2dbc0a7f497085917711f3a0cc6aa66e'
-         '1073c8192dc512674ccbf923334c5b79'
-         'c1712dcecd00d08884cf2e078159b023'
-         '90d0639b90925ad2e79cc26a7ec51e58'
-         'f97cf25f2a0a38ff124659132fff05ec'
+md5sums=('0d701ac1e2a67d47ce7127432df2c32b'
+         '1e86f92db62560a3646f897c4b19a5f5'
+         '19c88e32c8b88fd4167ced431e32807f'
+         'c3200cd40614ba269d4ff0b95603b5a5'
+         '646af6c9458fd3d5f82a168eb4560baa'
+         '7b8b497519595efbec38d4999a99a0e1'
+         '40519a31babda439ff758431d4fc44c7'
+         'f5cf7ea99bbc307dd6aa42a0a982227e'
+         '311f0a28688aeee26509097d535dd2dc'
+         'b47e2affd2204c778b91646579692179'
+         '231d40f685b4722ee4a533da79b722ae'
+         'ceb55a958337bfdcd8592d522ea81ff3'
+         '3477fdec85334655bf35d0b4cbb31261'
+         '4615fa4cb652a95ffe843c032eae671a'
+         'daf19a2a5fa3701574c904a9d95524f2'
+         'ac46c2be358e43210c14c70f45236813'
+         '660cf4eb23a4f20cd901be1ac2d318ea'
+         '213f438be39db5ed2165ad3f11cdc7ae'
          '4f2379ed84258050edb858ee8d281678'
          '61c5ff73c136ed07a7aadbf58db3d96a'
          '584777ae88bce2c5659960151b64c7d8'
@@ -71,6 +81,11 @@ prepare() {
   git apply ../0007-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch
   git apply ../0008-disable-USB3-port-on-ODROID-XU.patch
   git apply ../0009-ARM-dove-enable-ethernet-on-D3Plug.patch
+  git apply ../0010-power-add-power-sequence-library.patch
+  git apply ../0011-usb-core-add-power-sequence-handling-for-USB-devices.patch
+  git apply ../0012-ARM-dts-imx6qdl-Enable-usb-node-children-with-reg.patch
+  git apply ../0013-ARM-dts-imx6qdl-udoo.dtsi-fix-onboard-USB-HUB-proper.patch
+  git apply ../0014-ARM-dts-imx6q-evi-Fix-onboard-hub-reset-line.patch
 
   cat "${srcdir}/config" > ./.config
 

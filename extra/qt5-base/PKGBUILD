@@ -5,12 +5,13 @@
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - -no-reduce-relocations -- not available on ARM
 #  - explicitly disable x86 optimizations
+#  - -no-feature-renameat2 -no-feature-getentropy for old kernel compatibility
 
 pkgbase=qt5-base
 pkgname=(qt5-base qt5-xcb-private-headers)
-_qtver=5.10.0
+_qtver=5.10.1
 pkgver=${_qtver/-/}
-pkgrel=1
+pkgrel=2
 arch=('x86_64')
 url='http://qt-project.org/'
 license=('GPL3' 'LGPL3' 'FDL' 'custom')
@@ -31,9 +32,9 @@ conflicts=('qtchooser')
 groups=('qt' 'qt5')
 _pkgfqn="${pkgbase/5-/}-everywhere-src-${_qtver}"
 source=("http://download.qt.io/official_releases/qt/${pkgver%.*}/${_qtver}/submodules/${_pkgfqn}.tar.xz"
-        qt-no-statx.patch)
-sha256sums=('fd5578cd320a13617c12cf2b19439386b203d6d45548e855f94e07be9829f762'
-            '5cd1d90622cc53609806a3ce0b2811b28f0e6e20eb835861de4492dddeef6e52')
+        revert-Set-sharedPainter-correctly-for-QGraphicsEffect.patch)
+sha256sums=('d8660e189caa5da5142d5894d328b61a4d3ee9750b76d61ad74e4eee8765a969'
+            '7161ea5747500dc9666f8d185f4b8e538799fc0aef574e577277747100ac4763')
 
 prepare() {
   cd ${_pkgfqn}
@@ -52,8 +53,9 @@ prepare() {
   # Fix missing private includes https://bugreports.qt.io/browse/QTBUG-37417
   sed -e '/CMAKE_NO_PRIVATE_INCLUDES\ \=\ true/d' -i mkspecs/features/create_cmake.prf
 
-  # Don't use the statx syscall https://bugs.archlinux.org/task/56289 https://bugreports.qt.io/browse/QTBUG-64490
-  patch -p1 -i ../qt-no-statx.patch
+  # Revert upstream commit which breaks some Deepin components (FS#57531)
+  # https://bugreports.qt.io/browse/QTBUG-66226
+  patch -Np1 -i ../revert-Set-sharedPainter-correctly-for-QGraphicsEffect.patch
 }
 
 build() {
@@ -84,7 +86,9 @@ build() {
     -no-sse4.1 \
     -no-sse4.2 \
     -no-avx \
-    -no-avx2
+    -no-avx2 \
+    -no-feature-renameat2 \
+    -no-feature-getentropy
 
   make
 }

@@ -7,37 +7,52 @@
 #  - remove dependency on fwupd, specify -Denable-fwupd=false
 #  - remove makedepend on valgrind, specify -Denable-valgrind=false
 
-pkgname=gnome-software
-pkgver=3.26.4
+pkgbase=gnome-software
+pkgname=(gnome-software gnome-software-packagekit-plugin)
+pkgver=3.26.6
 pkgrel=1
 pkgdesc="GNOME Software Tools"
 arch=(x86_64)
 license=(GPL2)
 url="https://wiki.gnome.org/Apps/Software/"
-depends=(gtk3 appstream-glib libsoup gsettings-desktop-schemas gnome-desktop flatpak
-         packagekit archlinux-appstream-data gtkspell3 libgudev liboauth)
-makedepends=(python docbook-xsl git meson gobject-introspection gtk-doc)
-_commit=2d0d2d7bc464a35a9d26f6a6485bf38c716ace86  # tags/3.26.4^0
-source=("git+https://git.gnome.org/browse/gnome-software#commit=$_commit")
+makedepends=(appstream-glib gnome-desktop gtkspell3 libpackagekit-glib flatpak ostree
+             docbook-xsl git gobject-introspection gtk-doc meson)
+_commit=16585115a93f20560d08bc5f53b3ca123174c650  # tags/3.26.6^0
+source=("git+https://gitlab.gnome.org/GNOME/gnome-software.git#commit=$_commit")
 sha256sums=('SKIP')
 
 pkgver() {
-  cd $pkgname
+  cd $pkgbase
   git describe --tags | sed 's/^GNOME_SOFTWARE_//;s/_/./g;s/-/+/g'
 }
 
 prepare() {
-  mkdir build
-  cd $pkgname
+  cd $pkgbase
 }
 
 build() {
-  cd build
-  arch-meson ../$pkgname -Denable-rpm=false -Denable-fwupd=false -Denable-valgrind=false
-  ninja
+  arch-meson $pkgbase build -Denable-rpm=false -Denable-ubuntuone=false -Denable-ubuntu-reviews=false -Denable-fwupd=false -Denable-valgrind=false
+  ninja -C build
 }
 
-package() {
-  cd build
-  DESTDIR="$pkgdir" ninja install
+package_gnome-software() {
+  groups=('gnome')
+  depends=(appstream-glib gnome-desktop gsettings-desktop-schemas gtkspell3 libpackagekit-glib)
+  optdepends=('flatpak: Flatpak support plugin'
+              'fwupd: fwupd support plugin'
+              'ostree: OSTree support plugin')
+
+  DESTDIR="$pkgdir" ninja -C build install
+
+  # Split out packagekit plugin
+  mkdir "$srcdir"/packagekit-plugin
+  mv "$pkgdir"/usr/lib/gs-plugins-11/libgs_plugin_{packagekit*,systemd-updates}.so "$srcdir"/packagekit-plugin
+}
+
+package_gnome-software-packagekit-plugin() {
+  pkgdesc="PackageKit support plugin for GNOME Software"
+  depends=(archlinux-appstream-data gnome-software packagekit)
+
+  mkdir -p "$pkgdir"/usr/lib/gs-plugins-11
+  mv "$srcdir"/packagekit-plugin/* "$pkgdir"/usr/lib/gs-plugins-11/
 }

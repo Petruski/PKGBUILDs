@@ -11,8 +11,8 @@ highmem=1
 
 pkgbase=gmic
 pkgname=(gmic zart gimp-plugin-gmic krita-plugin-gmic)
-pkgver=2.1.7
-_gmic_qt_ver=.215
+pkgver=2.2.0
+_gmic_qt_ver=220
 _commit=26c271d8a721447f24f118c9d0236a02118d0009
 pkgrel=1
 arch=(x86_64)
@@ -21,15 +21,15 @@ license=(custom:CeCILL)
 makedepends=(gimp qt5-base fftw openexr opencv git hdf5)
 source=("https://gmic.eu/files/source/gmic_$pkgver.tar.gz"
         git://github.com/dtschump/gmic-community.git#commit=$_commit
-	gmic-qt-v$gmic_qt_ver.tar.gz::"https://github.com/c-koi/gmic-qt/archive/v$_gmic_qt_ver.tar.gz")
-sha256sums=('5a927b6ab597d760c42efe2ee397757d1b4ba2b61684ec6ee10920cd59dfcfc2'
+	gmic-qt-v.$_gmic_qt_ver.tar.gz::"https://github.com/c-koi/gmic-qt/archive/v.$_gmic_qt_ver.tar.gz")
+sha256sums=('8799041b5c706a0e340665fa2cb600e5b7a6bec6d50f1bc564bbcbca794c6b7b'
             'SKIP'
-            'f2c6f7301e47e691f0ca578959bbbb1a5a29c4bdaa493f2720987cec6f32d3d4')
+            'a91e769dc68144e3e2a02d4bbca11e40811c8bfe54641c48b85b659ab46de54a')
 
 prepare() {
   mv gmic-$pkgver gmic
   mv gmic-community/zart zart
-  mv gmic-qt-v$_gmic_qt_ver gmic-qt
+  mv gmic-qt-v.$_gmic_qt_ver gmic-qt
 
   sed -e 's|/etc/bash_completion.d|/usr/share/bash-completion/completions|g' -i gmic/src/Makefile
   sed -e 's|-Ofast|-O2 -fno-fast-math|g' -i gmic-qt/gmic_qt.pro

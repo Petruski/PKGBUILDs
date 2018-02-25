@@ -1,5 +1,5 @@
-# Maintainer: Sébastien "Seblu" Luttringer <seblu@archlinux.org>
-# Contributor: Thore Bödecker <foxxx0@archlinux.org>
+# Maintainer: Thore Bödecker <foxxx0@archlinux.org>
+# Contributor: Sébastien "Seblu" Luttringer <seblu@archlinux.org>
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - patch to remove neon detection in cmake
@@ -9,7 +9,7 @@ highmem=1
 
 pkgbase='ceph'
 pkgname=('ceph' 'ceph-libs')
-pkgver=12.2.2
+pkgver=12.2.3
 pkgrel=1
 pkgdesc='Distributed, fault-tolerant storage platform delivering object, block, and file system'
 arch=('x86_64')
@@ -34,7 +34,7 @@ source=("https://download.ceph.com/tarballs/${pkgbase}-${pkgver}.tar.gz"
         'fix-or-disable-broken-tests.patch'
         'fix-python2-paths.patch'
         'remove-distro-version-detection.patch')
-sha512sums=('89b166dc4b58e0110ebe0147eef9f47e1090ccee01702b3f72cfbdca856d02bf03b2663de9e88c84b21a2a61f8f92211e217a05b8bdcf7d5de3158adbe49db88'
+sha512sums=('3cdc105a64a68b07f55e9ea5cb8880e3eac882937313a2a8e454e34325443cee1675413d3e2148f944ecaf32be35a1384bd0a662ca58bdb2d2ab3c9eff518cd2'
             '4354001c1abd9a0c385ba7bd529e3638fb6660b6a88d4e49706d4ac21c81b8e829303a20fb5445730bdac18c4865efb10bc809c1cd56d743c12aa9a52e160049'
             'e389a0034d1310d9a2d15c9f8b1d489fa65d2222668566747f1da2e83564f7b78507f3ad2d71887a2b6d56751eebd8d7b3ce43e435e404afb765e4b3ded6821e'
             '6c410d26a7e510d126dd361e389b470dd6448fcbbb255b1b31b2a1c9a437397e46cd18ba0e17405c47b91cc9c55dcc8d1fc1029527b6d90e6ac990a1b0ac2bc9'
@@ -67,6 +67,17 @@ prepare() {
   if mount | grep 'type btrfs' &>/dev/null; then
     sed -i '/run-tox-ceph-disk/d' src/test/CMakeLists.txt
   fi
+
+  # fix python interpreter -> python2
+  for file in \
+    src/ceph-create-keys \
+    src/ceph-rest-api \
+    src/mount.fuse.ceph \
+    src/brag/client/ceph-brag \
+    src/ceph-detect-init/ceph_detect_init/main.py
+  do
+    sed -i 's|#!/usr/bin/env python|#!/usr/bin/env python2|' "${file}"
+  done
 }
 
 build() {
@@ -74,6 +85,10 @@ build() {
 
   mkdir -p build
   cd build
+
+  # experimental in luminous: (and currently broken with boost 1.66)
+  # RADOSGW_BEAST_FRONTEND
+  # -> disabled
 
   cmake \
     -DCMAKE_INSTALL_PREFIX=/usr \
@@ -90,7 +105,7 @@ build() {
     -DWITH_NSS=ON \
     -DPYTHON_INCLUDE_DIR=/usr/include/python2.7 \
     -DWITH_RADOSGW=ON \
-    -DWITH_RADOSGW_BEAST_FRONTEND=ON \
+    -DWITH_RADOSGW_BEAST_FRONTEND=OFF \
     -DWITH_RDMA=OFF \
     -DWITH_SSL=ON \
     -DWITH_SYSTEM_BOOST=ON \
@@ -117,7 +132,7 @@ check() {
 
 package_ceph-libs() {
   depends=('boost-libs' 'curl' 'glibc' 'keyutils' 'leveldb' 'libaio'
-    'libutil-linux' 'nss' 'python2' 'xfsprogs')
+    'libutil-linux' 'lz4' 'nss' 'python2' 'xfsprogs')
 
   cd "${srcdir}/${pkgbase}-${pkgver}/build"
 
@@ -137,8 +152,9 @@ package_ceph() {
   depends=('ceph-libs' 'boost-libs' 'curl' 'fuse2' 'glibc' 'gperftools'
     'keyutils' 'leveldb' 'libaio' 'libsystemd' 'libutil-linux'
     'lsb-release' 'ncurses' 'nss' 'python2' 'python2-cherrypy'
-    'python2-jinja' 'python2-pecan' 'python2-prettytable' 'python2-pyopenssl'
-    'python2-setuptools' 'python2-werkzeug' 'snappy' 'xfsprogs')
+    'python2-jinja' 'python2-mako' 'python2-pecan' 'python2-prettytable'
+    'python2-pyopenssl' 'python2-setuptools' 'python2-singledispatch'
+    'python2-webob' 'python2-werkzeug' 'snappy' 'xfsprogs')
 
   cd "${srcdir}/${pkgbase}-${pkgver}/build"
 

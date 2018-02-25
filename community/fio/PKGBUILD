@@ -7,10 +7,10 @@
 #  - removed numactl dependency
 
 pkgname=fio
-pkgver=3.2
+pkgver=3.4
 pkgrel=1
 pkgdesc='Scriptable I/O tool for storage benchmarks and drive testing'
-arch=(i686 x86_64)
+arch=(x86_64)
 url='https://github.com/axboe/fio'
 license=(GPL2)
 # TODO: enable rdma, need to move the libraries from AUR
@@ -21,7 +21,7 @@ optdepends=(
   'gnuplot: generating plots using fio_generate_plots'
 )
 source=(https://github.com/axboe/fio/archive/fio-$pkgver.zip)
-sha256sums=('6a2b6d8a80cb89402e9e823a4502058d9af4cff7fc4d2130c35cc35aa9505d02')
+sha256sums=('9870ec712744f1c5d9507fe2e1789e38ca577e96e459f7401568a5501e7140d5')
 
 prepare() {
   cd fio-fio-$pkgver
