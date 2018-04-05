@@ -9,19 +9,17 @@
 
 pkgbase=gnome-software
 pkgname=(gnome-software gnome-software-packagekit-plugin)
-pkgver=3.26.5
-pkgrel=2
+pkgver=3.28.0
+pkgrel=1
 pkgdesc="GNOME Software Tools"
+url="https://wiki.gnome.org/Apps/Software/"
 arch=(x86_64)
 license=(GPL2)
-url="https://wiki.gnome.org/Apps/Software/"
 makedepends=(appstream-glib gnome-desktop gtkspell3 libpackagekit-glib flatpak ostree
-             docbook-xsl git gobject-introspection gtk-doc meson)
-_commit=7424bad60e8336079eb7db639e0cc96c99d98354  # tags/3.26.5^0
-source=("git+https://git.gnome.org/browse/gnome-software#commit=$_commit"
-        "0001-Fix-build-when-gtkspell-enabled.patch")
-sha256sums=('SKIP'
-            'c1c4e24d69625f444af32162319fd789f93ad761ea973c0035e5ca3ec761c10a')
+             docbook-xsl git gobject-introspection gtk-doc meson gspell)
+_commit=299554f4a23e39f5d0b0e4d8f59a4beb2954ffa0  # tags/3.28.0^0
+source=("git+https://gitlab.gnome.org/GNOME/gnome-software.git#commit=$_commit")
+sha256sums=('SKIP')
 
 pkgver() {
   cd $pkgbase
@@ -30,19 +28,21 @@ pkgver() {
 
 prepare() {
   cd $pkgbase
-  # Fix build when gtkspell enabled
-  # https://bugzilla.gnome.org/show_bug.cgi?id=792658
-  patch -Np1 -i ../0001-Fix-build-when-gtkspell-enabled.patch
 }
 
 build() {
-  arch-meson $pkgbase build -Denable-rpm=false -Denable-ubuntuone=false -Denable-ubuntu-reviews=false -Denable-fwupd=false -Denable-valgrind=false
+  arch-meson $pkgbase build \
+    -D enable-rpm=false \
+    -D enable-ubuntuone=false \
+    -D enable-ubuntu-reviews=false \
+    -D enable-fwupd=false \
+    -D enable-valgrind=false
   ninja -C build
 }
 
 package_gnome-software() {
   groups=('gnome')
-  depends=(appstream-glib gnome-desktop gsettings-desktop-schemas gtkspell3 libpackagekit-glib)
+  depends=(appstream-glib gnome-desktop gsettings-desktop-schemas gtkspell3 libpackagekit-glib gspell)
   optdepends=('flatpak: Flatpak support plugin'
               'fwupd: fwupd support plugin'
               'ostree: OSTree support plugin')

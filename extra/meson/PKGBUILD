@@ -7,8 +7,8 @@
 #  - remove checkdepend on dmd
 
 pkgname=meson
-pkgver=0.44.0
-pkgrel=2
+pkgver=0.45.1
+pkgrel=1
 pkgdesc='High productivity build system'
 url='http://mesonbuild.com/'
 arch=('any')
@@ -21,24 +21,14 @@ checkdepends=('gcc-objc' 'vala' 'rust' 'gcc-fortran' 'mono' 'boost' 'qt4' 'qt5-b
               'doxygen' 'vulkan-validation-layers' 'openmpi' 'openssh' 'mercurial' 'gtk-sharp-2'
               'qt5-tools' 'libwmf' 'valgrind')
 source=(https://github.com/mesonbuild/meson/releases/download/${pkgver}/meson-${pkgver}.tar.gz{,.asc}
-        0001-tests-skip-objc-nsstring-test-if-gnustep-is-not-inst.patch
-        0002-d-Detect-recent-DMD-compilers.patch
         arch-meson)
-sha512sums=('9aefa52d92d7750528e9a9236f19131c8e58bfc21212595c311f4e2787ad40bb53d6085f52283cad13923ddf12da1a59067d48424c72ace47fc127978d1af2ff'
+sha512sums=('50bcc299d69a3649a3aa3582322c548af44c2771d65e57c79eae9d67ccb256a17e534649ee5080f50f6f9d4e5d717a1b1a28b3ef4684468094b16bbed8864846'
             'SKIP'
-            '04a0f113ba5f1ae57591fad3f5ecf812ef88b8809b4ffe063e82f6548e728a1a7bd51c171a948873884c2631fc10a9cd141f56de22cd7cf766cdb74996840eec'
-            'b38af817966e60db19c1efcc5e8e4f1b822925bf823b0a68c33eb0bfd0aa4ccff1439e352d8df032d0a189cd0ff37fb7dcefe0ed7a272e45f963f7e3d0b63f0f'
             'b9f86ded46ad7fc4c4cbd997bd2210e363f02189377d9159cae4a52d0bd8bb9e02de1680bc76f63ecd923922f9cbdba40efbe09231dc24fc1d445ed97c2f5132')
 validpgpkeys=('95181F4EED14FDF4E41B518D3BF4693BFEEB9428') # Jussi Pakkanen <jpakkane@gmail.com>
 
 prepare() {
   cd ${pkgname}-${pkgver}
-
-  # Skip gnustep tests
-  patch -Np1 -i ../0001-tests-skip-objc-nsstring-test-if-gnustep-is-not-inst.patch
-
-  # Fix for recent DMD
-  patch -Np1 -i ../0002-d-Detect-recent-DMD-compilers.patch
 }
 
 build() {
@@ -63,9 +53,9 @@ package() {
   cd ${pkgname}-${pkgver}
   python setup.py install --root="${pkgdir}" --optimize=1 --skip-build
 
-  for _f in data/syntax-highlighting/vim/*/*; do
-    install -Dt "${pkgdir}/usr/share/vim/vimfiles/$(basename "$(dirname "$_f")")" -m644 "$_f"
-  done
+  install -d "${pkgdir}/usr/share/vim/vimfiles"
+  cp -rt "${pkgdir}/usr/share/vim/vimfiles" data/syntax-highlighting/vim/*
+
   install -Dt "${pkgdir}/usr/share/emacs/site-lisp" -m644 data/syntax-highlighting/emacs/*
   install -Dt "${pkgdir}/usr/share/zsh/site-functions" -m644 data/shell-completions/zsh/*
 
