@@ -1,7 +1,7 @@
-From 460c4e3fbd0af6740c7c098a15a122934b097697 Mon Sep 17 00:00:00 2001
+From 64bcbb8c64f780558f84f75f6f20fa449c490b58 Mon Sep 17 00:00:00 2001
 From: A Raghavendra Rao <raghav3276@gmail.com>
 Date: Thu, 7 Aug 2014 14:10:39 +0530
-Subject: [PATCH 02/28] Staging: wlan-ng: fix sparse warning in prism2fw.c
+Subject: [PATCH 02/29] Staging: wlan-ng: fix sparse warning in prism2fw.c
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -81,5 +81,5 @@ index 0dfd2a4933ef..54a3bf57a86e 100644
  }
  
 -- 
-2.14.1
+2.16.1
 

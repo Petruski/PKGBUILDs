@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm 3.10.18-21 Kernel Configuration
+# Linux/arm 3.10.18-25 Kernel Configuration
 #
 CONFIG_ARM=y
 CONFIG_ARM_HAS_SG_CHAIN=y
@@ -1012,6 +1012,7 @@ CONFIG_BT_LE=y
 # CONFIG_BT_LEDS is not set
 # CONFIG_BT_SELFTEST is not set
 CONFIG_BT_DEBUGFS=y
+# CONFIG_BT_EVE_HACKS is not set
 
 #
 # Bluetooth device drivers
@@ -4141,6 +4142,7 @@ CONFIG_SECURITY_PATH=y
 CONFIG_SECURITY_YAMA=y
 CONFIG_SECURITY_YAMA_STACKED=y
 # CONFIG_SECURITY_CHROMIUMOS is not set
+CONFIG_SECURITY_CHROMIUMOS_READONLY_PROC_SELF_MEM=y
 # CONFIG_IMA is not set
 # CONFIG_EVM is not set
 # CONFIG_DEFAULT_SECURITY_YAMA is not set

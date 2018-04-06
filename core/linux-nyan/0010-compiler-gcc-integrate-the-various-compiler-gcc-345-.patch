@@ -1,7 +1,7 @@
-From e68be630ef82adf278c4eb59a6ac79d9f9af7e71 Mon Sep 17 00:00:00 2001
+From c7da18659d98939a033dc3ede32542df5dc190cb Mon Sep 17 00:00:00 2001
 From: Joe Perches <joe@perches.com>
 Date: Thu, 25 Jun 2015 15:01:02 -0700
-Subject: [PATCH 10/28] compiler-gcc: integrate the various compiler-gcc[345].h
+Subject: [PATCH 10/29] compiler-gcc: integrate the various compiler-gcc[345].h
  files
 
 As gcc major version numbers are going to advance rather rapidly in the
@@ -363,5 +363,5 @@ index cdd1cc202d51..000000000000
 -#define __HAVE_BUILTIN_BSWAP16__
 -#endif /* CONFIG_ARCH_USE_BUILTIN_BSWAP */
 -- 
-2.14.1
+2.16.1
 

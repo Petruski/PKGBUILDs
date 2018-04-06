@@ -1,7 +1,7 @@
-From 5d66dafff3cc6d9defc323564638ebfb4eac8dd9 Mon Sep 17 00:00:00 2001
+From f05329b04ab2303157539fee3535fa70a4cad9fb Mon Sep 17 00:00:00 2001
 From: Theodore Ts'o <tytso@mit.edu>
 Date: Thu, 17 Jul 2014 04:13:05 -0400
-Subject: [PATCH 26/28] BACKPORT: random: introduce getrandom(2) system call
+Subject: [PATCH 26/29] BACKPORT: random: introduce getrandom(2) system call
 
 Almost clean cherry-pick of c6e9d6f38894798696f23c8084ca7edbf16ee895
 
@@ -323,5 +323,5 @@ index 7471b5b3b8ba..f9c5282f1374 100644
  
  
 -- 
-2.14.1
+2.16.1
 

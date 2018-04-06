@@ -1,7 +1,7 @@
-From 2b92023bbec85614aba54ee9951a628f7e3fa707 Mon Sep 17 00:00:00 2001
+From 220d41b178e77db459198d3fc27209f090c63805 Mon Sep 17 00:00:00 2001
 From: Bing Zhao <bzhao@marvell.com>
 Date: Mon, 19 Aug 2013 16:10:21 -0700
-Subject: [PATCH 04/28] mwifiex: do not create AP and P2P interfaces upon
+Subject: [PATCH 04/29] mwifiex: do not create AP and P2P interfaces upon
  driver loading
 
 Bug 60747 - 1286:2044 [Microsoft Surface Pro]
@@ -63,5 +63,5 @@ index 41ab3f6c5445..02dc799ffdd2 100644
  
  	mwifiex_drv_get_driver_version(adapter, fmt, sizeof(fmt) - 1);
 -- 
-2.14.1
+2.16.1
 
