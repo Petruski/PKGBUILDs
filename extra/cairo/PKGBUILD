@@ -6,57 +6,65 @@
 #  - drop valgrind makedepend
 
 pkgname=cairo
-pkgver=1.14.8
+pkgver=1.15.10+54+g1ed124ace
 pkgrel=1
-pkgdesc="Cairo vector graphics library"
-arch=(i686 x86_64)
-license=('LGPL' 'MPL')
+pkgdesc="2D graphics library with support for multiple output devices"
 url="https://cairographics.org/"
-# requires libGL + libEGL - all libgl variants (mesa, nvidia-xxx-libgl/nvidia-utils) provide libEGL
-depends=('libpng' 'libxrender' 'libxext' 'fontconfig' 'pixman' 'glib2' 'libgl' 'lzo')
-makedepends=('mesa-libgl' 'librsvg' 'gtk2' 'poppler-glib' 'libspectre' 'gtk-doc' 'git')
-             # for the test suite:
-             #'ttf-dejavu' 'gsfonts' 'xorg-server-xvfb' ) # 'libdrm')
-#optdepends=('xcb-util: for XCB backend') # really needed?
-provides=('cairo-xcb')
-replaces=('cairo-xcb')
-source=(https://cairographics.org/releases/cairo-$pkgver.tar.xz)
-sha1sums=('c6f7b99986f93c9df78653c3e6a3b5043f65145e')
+arch=(x86_64)
+license=(LGPL MPL)
+depends=(libpng libxrender libxext fontconfig pixman glib2 lzo)
+makedepends=(librsvg gtk2 poppler-glib libspectre gtk-doc git)
+_commit=1ed124ace201946177eab962d3b07bb2fedf9026  # master
+source=("git+https://anongit.freedesktop.org/git/cairo#commit=$_commit"
+        utf-8.diff)
+sha1sums=('SKIP'
+          '3f680dea8533bcce4ca2af5d25c546235ef7b339')
+
+pkgver() {
+  cd $pkgname
+  git describe --tags | sed 's/-/+/g'
+}
+
+prepare() {
+  cd $pkgname
+
+  # Fixup tag for pkgver()
+  git tag -f 1.15.10 5e6b9aeb5e3402ff17ae8ee8548ae2341c2f7d59
+
+  # Fix non-UTF-8 sources giving gtk-doc trouble
+  patch -Np1 -i ../utf-8.diff
+
+  # Update gtk-doc
+  cp /usr/share/aclocal/gtk-doc.m4 build/aclocal.gtk-doc.m4
+  cp /usr/share/gtk-doc/data/gtk-doc.make build/Makefile.am.gtk-doc
+
+  NOCONFIGURE=1 ./autogen.sh
+}
 
 build() {
-  cd $pkgname-$pkgver
+  cd $pkgname
   ./configure --prefix=/usr \
-	--sysconfdir=/etc \
-	--localstatedir=/var \
-	--disable-static \
-	--disable-lto \
-	--enable-tee \
-	--enable-gl \
-	--enable-egl \
-	--enable-svg \
-	--enable-ps \
-	--enable-pdf \
-	--enable-gobject \
-	--enable-gtk-doc
-	
-	#--disable-xlib-xcb \
-	#--enable-test-surfaces \ takes ages
-	#--enable-drm # breaks build
-	
+        --sysconfdir=/etc \
+        --localstatedir=/var \
+        --disable-static \
+        --disable-gl \
+        --enable-tee \
+        --enable-svg \
+        --enable-ps \
+        --enable-pdf \
+        --enable-gobject \
+        --enable-gtk-doc
+  sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0/g' libtool
   make
 }
 
 check() {
-  cd $pkgname-$pkgver
-  #make -j1 -k test || /bin/true
-  
-  # results:
-  # 1.12.8-1	# 162 Passed, 328 Failed [  8 crashed, 10 expected], 26 Skipped
-  # 1.12.12-2:	#  29 Passed, 464 Failed [460 crashed,  2 expected], 26 Skipped
-  # 1.12.16-1:	# 144 Passed, 364 Failed [  6 crashed, 12 expected], 27 Skipped
+  cd $pkgname
+  # https://people.gnome.org/~federico/blog/helping-cairo.html
+  #make check
 }
 
 package() {
-  cd $pkgname-$pkgver
+  cd $pkgname
   make DESTDIR="$pkgdir" install
 }

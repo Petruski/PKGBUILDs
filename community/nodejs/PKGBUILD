@@ -1,3 +1,4 @@
+# $Id$
 # Maintainer: Felix Yan <felixonmars@archlinux.org>
 # Contributor  Bartłomiej Piotrowski <bpiotrowski@archlinux.org>
 # Contributor: Thomas Dziedzic < gostrc at gmail >
@@ -6,52 +7,27 @@
 # Contributor: Dongsheng Cai <dongsheng at moodle dot com>
 # Contributor: Masutu Subric <masutu.arch at googlemail dot com>
 # Contributor: TIanyi Cui <tianyicui@gmail.com>
-# Contributor: Jason Plum <jplum@archlinuxarm.org>
+
+# ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
+#  - set config and gyp flags
+
+buildarch=28
 
 pkgname=nodejs
-pkgver=7.10.0
+pkgver=9.11.1
 pkgrel=1
 pkgdesc='Evented I/O for V8 javascript'
-arch=('i686' 'x86_64')
+arch=('x86_64')
 url='http://nodejs.org/'
 license=('MIT')
-provides=('nodejs-node-gyp')
-depends=('openssl-1.0' 'zlib' 'icu' 'libuv' 'http-parser' 'c-ares') # 'v8')
+depends=('openssl-1.0' 'zlib' 'icu' 'libuv' 'http-parser' 'c-ares' 'libnghttp2') # 'v8')
 makedepends=('python2' 'procps-ng')
 optdepends=('npm: nodejs package manager')
-source=("nodejs-$pkgver.tar.gz::https://github.com/nodejs/node/archive/v$pkgver.tar.gz"
-        'nodejs-v8-icu59.patch'
-        '0001-arm-fixes.patch')
-sha512sums=('b5a1c5167e9f22fccdf61e33a28b03f12c5bb51e4ceefa27b021c5c7e0f3c2ed021cb7ee0b34ea8c4fbf7cafc7a2658a64a7eaa73d75c4905c10683be32bbeb3'
-            'da8071f9b5d7c88c13b812cd422de412c7720a7644620be5e0af8fc79a4af8d8e764308b7607022953a0270c67a6cb2d98d5bad7c2c3974066ec348e4fe86c7b'
-            '4811e1d9bc0e03458072cad6af9284e3ceb6c74005ae00e3407c18d0e6eae0bce2edcbdbe547975ade916c1bcdb2bb53101edce2afeca0bcac84d8807934fc8c')
-
-set_flags_for_arm() {
-  if [ "$CARCH" == "arm" ]; then
-    # CXXFLAGS is here to bash it over the head. It has a bad habit.
-    CONFIG="--with-arm-float-abi=soft"
-    CXXFLAGS="$CXXFLAGS -march=armv5t -mno-unaligned-access" ;
-    GYPFLAGS="-Darm_thumb -Darm_float_abi=soft -Darm_version=5 -Darm_fpu= -Darm_test_noprobe=on"
-  fi
-  if [ "$CARCH" == "armv6h" ]; then
-    CONFIG="--with-arm-float-abi=hard"
-    GYPFLAGS="-Darm_thumb -Darm_float_abi=hard -Darm_version=6 -Darm_fpu=vfpv2"
-  fi
-  if [ "$CARCH" == "armv7h" ]; then
-    CONFIG="--with-arm-float-abi=hard --with-arm-fpu=vfpv3-d16"
-    GYPFLAGS="-Darm_thumb -Darm_float_abi=hard -Darm_version=7 -Darm_fpu=vfpv3-d16"
-  fi
-  export CXXFLAGS
-  export GYPFLAGS
-}
+source=("nodejs-$pkgver.tar.gz::https://github.com/nodejs/node/archive/v$pkgver.tar.gz")
+sha512sums=('62b5d4caa80f48e0459a80e899df6cfe315604efcfc720dd05e66b6cb26d2fcf2e0239812c0b8448528c7da1a57dd43b921825ae572eb86b87be49649764abb8')
 
 prepare() {
   cd node-$pkgver
-
-  # https://github.com/nodejs/node/pull/11754#issuecomment-285407461
-  patch -Np1 -d deps/v8 <../nodejs-v8-icu59.patch
-
-  patch -p1 -i ../0001-arm-fixes.patch
 
   msg 'Fixing for python2 name'
   find -type f -exec sed \
@@ -70,37 +46,21 @@ build() {
   export PKG_CONFIG_PATH=/usr/lib/openssl-1.0/pkgconfig
   export PYTHON=python2
 
-  set_flags_for_arm
-
-  # short-cutting python=python2 for GYP, as it will only be used here.
-  export PYTHON=python2
-  if [ ! -f "${srcdir}/python" ]; then
-    ln -s `which python2` ${srcdir}/python ;
-  fi
-  PATH="${srcdir}:$PATH";
-  export PATH ;
-
-# we're going to attept to make use of this example
-# https://github.com/joyent/node/issues/2131#issuecomment-3208846
-# https://gist.github.com/1574158   
+  [[ "$CARCH" == "armv6h" ]] && export CONFIG="--with-arm-float-abi=hard --with-arm-fpu=vfp" && export GYPFLAGS="-Darm_thumb -Darm_float_abi=hard -Darm_version=6 -Darm_fpu=vfpv2"
+  [[ "$CARCH" == "armv7h" ]] && export CONFIG="--with-arm-float-abi=hard --with-arm-fpu=vfpv3-d16" && export GYPFLAGS="-Darm_thumb -Darm_float_abi=hard -Darm_version=7 -Darm_fpu=vfpv3-d16"
 
   ./configure \
     --prefix=/usr \
     --with-intl=system-icu \
     --without-npm \
-    --without-snapshot \
     --shared-openssl \
     --shared-zlib \
     --shared-libuv \
     --shared-http-parser \
     --shared-cares \
+    --shared-nghttp2 \
     ${CONFIG}
-#    --shared-v8 \
-#    --shared-v8-libpath=/usr/lib \
-#    --shared-v8-includes=/usr/include 
-
-  [ "$CARCH" == "arm" ] && sed -i 's/vfpv3//' config.gypi
-  [ "$CARCH" == "armv6h" ] && sed -i 's/vfpv3/vfp/' config.gypi
+    # --shared-v8
 
   make
 }
@@ -114,13 +74,10 @@ check() {
 package() {
   cd node-$pkgver
 
-  # suppress re-compile(with out customized flags) by 'make install'.
-  set_flags_for_arm
-
-  make DESTDIR=${pkgdir} install
+  make DESTDIR="$pkgdir" install
 
   install -D -m644 LICENSE \
-    ${pkgdir}/usr/share/licenses/nodejs/LICENSE
+    "$pkgdir"/usr/share/licenses/nodejs/LICENSE
 }
 
 # vim:set ts=2 sw=2 et:

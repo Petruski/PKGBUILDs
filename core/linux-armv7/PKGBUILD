@@ -4,10 +4,10 @@
 buildarch=4
 
 pkgbase=linux-armv7
-_srcname=linux-4.11
+_srcname=linux-4.16
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 multi-platform"
-pkgver=4.11.1
+pkgver=4.16.0
 pkgrel=1
 rcnrel=armv7-x0
 arch=('armv7h')
@@ -16,38 +16,43 @@ license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-tools' 'vboot-utils' 'dtc')
 options=('!strip')
 source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
-        "http://www.kernel.org/pub/linux/kernel/v4.x/patch-${pkgver}.xz"
+        #"http://www.kernel.org/pub/linux/kernel/v4.x/patch-${pkgver}.xz"
         "http://rcn-ee.com/deb/sid-armhf/v${pkgver}-${rcnrel}/patch-${pkgver%.0}-${rcnrel}.diff.gz"
         '0001-ARM-atags-add-support-for-Marvell-s-u-boot.patch'
         '0002-ARM-atags-fdt-retrieve-MAC-addresses-from-Marvell-bo.patch'
         '0003-SMILE-Plug-device-tree-file.patch'
         '0004-fix-mvsdio-eMMC-timing.patch'
         '0005-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch'
-        '0006-ARM-TLV320AIC23-SoC-Audio-Codec-Fix-errors-reported-.patch'
-        '0007-set-default-cubietruck-led-triggers.patch'
-        '0008-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch'
-        '0009-disable-USB3-port-on-ODROID-XU.patch'
-        '0010-ARM-dove-enable-ethernet-on-D3Plug.patch'
+        '0006-set-default-cubietruck-led-triggers.patch'
+        '0007-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch'
+        '0008-ARM-dove-enable-ethernet-on-D3Plug.patch'
+        '0009-power-add-power-sequence-library.patch'
+        '0010-usb-core-add-power-sequence-handling-for-USB-devices.patch'
+        '0011-ARM-dts-imx6qdl-Enable-usb-node-children-with-reg.patch'
+        '0012-ARM-dts-imx6qdl-udoo.dtsi-fix-onboard-USB-HUB-proper.patch'
+        '0013-ARM-dts-imx6q-evi-Fix-onboard-hub-reset-line.patch'
         'config'
         'kernel.its'
         'kernel.keyblock'
         'kernel_data_key.vbprivk'
         'linux.preset'
         '99-linux.hook')
-md5sums=('251a5deee0fa6daf3f356b1bbda9eab8'
-         '947496600f57dfb4431e023816048870'
-         '101438d6930d97b4bba3bc5adbd90bf2'
-         'e3025634513b4e76f280768a20bc8e16'
-         'bc7ced14bd4dcc9e5ebfb39791a696d8'
-         '8e4187645e1abc78798e4b58960f7f8f'
-         '4f1909990d16def2693876d62e370c51'
-         'c27816e523f1bd6432ec1966c89d3f8e'
-         '4cb1abc196fcd4bcf20128f893978849'
-         '6f2a72c08edc24191001d3ce77e238a9'
-         '9a6ca27f3a4035a0e1c0cd0a93f63ce4'
-         '1d69d4bb563bbd9b12cf23371b1d1419'
-         'eef6e37ace0d9bb9dd8e23459f0eb3e9'
-         '87f000b1f2c75c21aee754f49927e4ad'
+md5sums=('1357fb4ee7c288fdeac5d4e0048f5c18'
+         '5a99ce429b2a0f7be9cf32d6ca147da3'
+         '38440ef4a8c52fae52c02e7b17698e9f'
+         '62016c2311ad894a145e2100074c5c65'
+         '7bb0eb2d0fb06666bedd4dc2cdbaa02c'
+         'ceb4743e81f96a78c7e6e9fdfae50ccb'
+         '3a9da57d484c6bcdcd620f0931827a24'
+         'd1ab6fc88aeb28013d496231b3c63682'
+         '6abeec83b3a5f5ea2676fe03ea97df73'
+         '10a0febbe2af946a12137cb574bd676b'
+         '966ddd9affd0237bf9fe7298eb26bfe5'
+         '32eed86641825eaed7e6f78c14cc19d8'
+         '21b75ae79dcb0994f7fd99f5062a8ef9'
+         '854888245f29013be06f762c6162a5b2'
+         '267d9dc5a1ec7232a2849cfad322209c'
+         '1c10364eb6c5c01c36a96fb36d801675'
          '4f2379ed84258050edb858ee8d281678'
          '61c5ff73c136ed07a7aadbf58db3d96a'
          '584777ae88bce2c5659960151b64c7d8'
@@ -58,7 +63,7 @@ prepare() {
   cd "${srcdir}/${_srcname}"
 
   # add upstream patch
-  git apply --whitespace=nowarn ../patch-${pkgver}
+  #git apply --whitespace=nowarn ../patch-${pkgver}
 
   # RCN patch
   git apply ../patch-${pkgver%.0}-${rcnrel}.diff
@@ -69,11 +74,14 @@ prepare() {
   git apply ../0003-SMILE-Plug-device-tree-file.patch
   git apply ../0004-fix-mvsdio-eMMC-timing.patch
   git apply ../0005-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch
-  git apply ../0006-ARM-TLV320AIC23-SoC-Audio-Codec-Fix-errors-reported-.patch
-  git apply ../0007-set-default-cubietruck-led-triggers.patch
-  git apply ../0008-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch
-  git apply ../0009-disable-USB3-port-on-ODROID-XU.patch
-  git apply ../0010-ARM-dove-enable-ethernet-on-D3Plug.patch
+  git apply ../0006-set-default-cubietruck-led-triggers.patch
+  git apply ../0007-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch
+  git apply ../0008-ARM-dove-enable-ethernet-on-D3Plug.patch
+  git apply ../0009-power-add-power-sequence-library.patch
+  git apply ../0010-usb-core-add-power-sequence-handling-for-USB-devices.patch
+  git apply ../0011-ARM-dts-imx6qdl-Enable-usb-node-children-with-reg.patch
+  git apply ../0012-ARM-dts-imx6qdl-udoo.dtsi-fix-onboard-USB-HUB-proper.patch
+  git apply ../0013-ARM-dts-imx6q-evi-Fix-onboard-hub-reset-line.patch
 
   cat "${srcdir}/config" > ./.config
 
@@ -121,7 +129,7 @@ _package() {
   backup=("etc/mkinitcpio.d/${pkgbase}.preset")
   provides=('kernel26' "linux=${pkgver}")
   conflicts=('linux')
-  replaces=('linux-mvebu' 'linux-udoo' 'linux-sun4i' 'linux-sun5i' 'linux-sun7i' 'linux-usbarmory' 'linux-wandboard')
+  replaces=('linux-mvebu' 'linux-udoo' 'linux-sun4i' 'linux-sun5i' 'linux-sun7i' 'linux-usbarmory' 'linux-wandboard' 'linux-clearfog')
   install=${pkgname}.install
 
   cd "${srcdir}/${_srcname}"
@@ -177,7 +185,7 @@ _package-headers() {
   pkgdesc="Header files and scripts for building modules for linux kernel - ${_desc}"
   provides=("linux-headers=${pkgver}")
   conflicts=('linux-headers')
-  replaces=('linux-mvebu-headers' 'linux-sun4i-headers' 'linux-sun5i-headers' 'linux-sun7i-headers' 'linux-usbarmory-headers' 'linux-wandboard-headers')
+  replaces=('linux-mvebu-headers' 'linux-sun4i-headers' 'linux-sun5i-headers' 'linux-sun7i-headers' 'linux-usbarmory-headers' 'linux-wandboard-headers' 'linux-clearfog-headers')
 
   install -dm755 "${pkgdir}/usr/lib/modules/${_kernver}"
 
@@ -222,10 +230,6 @@ _package-headers() {
 
   cp arch/${KARCH}/kernel/asm-offsets.s "${pkgdir}/usr/lib/modules/${_kernver}/build/arch/${KARCH}/kernel/"
 
-  # add docbook makefile
-  install -D -m644 Documentation/DocBook/Makefile \
-    "${pkgdir}/usr/lib/modules/${_kernver}/build/Documentation/DocBook/Makefile"
-
   # add dm headers
   mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/md"
   cp drivers/md/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/md"
@@ -240,10 +244,6 @@ _package-headers() {
 
   # add dvb headers for external modules
   # in reference to:
-  # http://bugs.archlinux.org/task/9912
-  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/dvb-core"
-  cp drivers/media/dvb-core/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/dvb-core/"
-  # and...
   # http://bugs.archlinux.org/task/11194
   mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/include/config/dvb/"
   cp include/config/dvb/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/include/config/dvb/"
@@ -299,7 +299,7 @@ _package-smileplug() {
   pkgdesc="The Linux Kernel - ${_desc} - Marvell SMILE Plug"
   depends=('linux-armv7')
   provides=('linux-armv7-uimage')
-  conflicts=('linux-armv7-uimage')
+  conflicts=('linux-armv7-uimage' 'linux-armv7-rc-uimage')
   replaces=('linux-mvebu-smileplug')
 
   cd "${srcdir}/${_srcname}"
@@ -313,7 +313,7 @@ _package-mirabox() {
   pkgdesc="The Linux Kernel - ${_desc} - Globalscale Mirabox"
   depends=('linux-armv7')
   provides=('linux-armv7-uimage')
-  conflicts=('linux-armv7-uimage')
+  conflicts=('linux-armv7-uimage' 'linux-armv7-rc-uimage')
   replaces=('linux-mvebu-mirabox')
 
   cd "${srcdir}/${_srcname}"
@@ -327,7 +327,7 @@ _package-ax3() {
   pkgdesc="The Linux Kernel - ${_desc} - OpenBlocks AX3-4"
   depends=('linux-armv7')
   provides=('linux-armv7-uimage')
-  conflicts=('linux-armv7-uimage')
+  conflicts=('linux-armv7-uimage' 'linux-armv7-rc-uimage')
   replaces=('linux-mvebu-ax3')
 
   cd "${srcdir}/${_srcname}"
@@ -341,7 +341,7 @@ _package-d3plug() {
   pkgdesc="The Linux Kernel - ${_desc} - Globalscale D3Plug"
   depends=('linux-armv7')
   provides=('linux-armv7-uimage')
-  conflicts=('linux-armv7-uimage')
+  conflicts=('linux-armv7-uimage' 'linux-armv7-rc-uimage')
   replaces=('linux-d3plug')
 
   cd "${srcdir}/${_srcname}"
@@ -355,7 +355,7 @@ _package-cubox() {
   pkgdesc="The Linux Kernel - ${_desc} - SolidRun Cubox (Marvell)"
   depends=('linux-armv7')
   provides=('linux-armv7-uimage')
-  conflicts=('linux-armv7-uimage')
+  conflicts=('linux-armv7-uimage' 'linux-armv7-rc-uimage')
   #replaces=('linux-cubox')
 
   cd "${srcdir}/${_srcname}"
@@ -368,6 +368,7 @@ _package-cubox() {
 _package-chromebook() {
   pkgdesc="The Linux Kernel - ${_desc} - Chromebooks"
   depends=('linux-armv7')
+  conflicts=('linux-armv7-rc-chromebook')
   install=${pkgname}.install
 
   cd "${srcdir}/${_srcname}"
@@ -390,7 +391,19 @@ _package-chromebook() {
   cp vmlinux.kpart "${pkgdir}/boot"
 }
 
-pkgname=("${pkgbase}" "${pkgbase}-headers" "${pkgbase}-smileplug" "${pkgbase}-mirabox" "${pkgbase}-ax3" "${pkgbase}-d3plug" "${pkgbase}-cubox" "${pkgbase}-chromebook")
+_package-odroidc1() {
+  pkgdesc="The Linux Kernel - ${_desc} - ODROID-C1"
+  depends=('linux-armv7')
+  provides=('linux-armv7-uimage')
+  conflicts=('linux-armv7-uimage' 'linux-armv7-rc-uimage')
+
+  cd "${srcdir}/${_srcname}"
+
+  mkdir -p "${pkgdir}/boot"
+  mkimage -A arm -O linux -T kernel -C none -a 0x00208000 -e 0x00208000 -n "${pkgname}" -d arch/$KARCH/boot/zImage "${pkgdir}/boot/uImage"
+}
+
+pkgname=("${pkgbase}" "${pkgbase}-headers" "${pkgbase}-smileplug" "${pkgbase}-mirabox" "${pkgbase}-ax3" "${pkgbase}-d3plug" "${pkgbase}-cubox" "${pkgbase}-chromebook" "${pkgbase}-odroidc1")
 for _p in ${pkgname[@]}; do
   eval "package_${_p}() {
     _package${_p#${pkgbase}}

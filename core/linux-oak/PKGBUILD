@@ -7,8 +7,8 @@ pkgbase=linux-oak
 _kernelname=${pkgbase#linux}
 _desc="Oak Chromebooks"
 pkgver=3.18.0
-pkgrel=7
-_commit=5dd2f9ce6c44dab605b3614b5ae4a27a3d0c565e
+pkgrel=12
+_commit=77d2e2c6c87c0d38b7849b210563d856c04e3daf
 arch=('aarch64')
 url="https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.18"
 license=('GPL2')
@@ -17,29 +17,37 @@ options=('!strip')
 source=("https://chromium.googlesource.com/chromiumos/third_party/kernel/+archive/${_commit}.tar.gz"
         '0001-kbuild-move-Wunused-const-variable-to-W-1-warning-le.patch'
         '0002-md-fix-a-build-warning.patch'
-        '0003-ath9k-fix-buffer-overrun-for-ar9287.patch'
-        '0004-netfilter-Fix-switch-statement-warnings-with-recent-.patch'
-        '0005-netfilter-nfnetlink_cthelper-Remove-const-and-to-avo.patch'
-        '0006-netfilter-Add-some-missing-default-cases-to-switch-s.patch'
-        '0007-usbtv-remove-unused-variable.patch'
-        '0008-add-extra-errata-843419-build-flags.patch'
-        '0009-Downgrade-mmc1-speed.patch'
+        '0003-netfilter-Fix-switch-statement-warnings-with-recent-.patch'
+        '0004-netfilter-nfnetlink_cthelper-Remove-const-and-to-avo.patch'
+        '0005-netfilter-Add-some-missing-default-cases-to-switch-s.patch'
+        '0006-usbtv-remove-unused-variable.patch'
+        '0007-add-extra-errata-843419-build-flags.patch'
+        '0008-Downgrade-mmc1-speed.patch'
+        '0009-disable-new-gcc-7.1.1-warnings-for-now.patch'
+        '0010-UPSTREAM-mwifiex-scan-Simplify-code.patch'
+        '0011-media-ir-core-fix-gcc-7-warning-on-bool-arithmetic.patch'
+        '0012-sched-fix-duplicate-const-error-on-gcc-7.patch'
+        '0013-staging-iio-light-isl29018-fix-duplicate-const-error.patch'
         'config'
         'kernel.its'
         'kernel.keyblock'
         'kernel_data_key.vbprivk'
         'cmdline')
-md5sums=('fe9dfbf734de4ba872c384830e405d8a'
-         '651be13e7d7f49db4bfe0ef5f21ffee3'
-         '843053a21da143004ae06ce7ef8f85e1'
-         'e4fd093922d688d35a0c6f1a045b75f5'
-         '234d57c4e23e091600dceb8831a42c62'
-         'f32a108e5bb0f8a1a0e8089cc7e6d445'
-         '3b08c86ebec9efcc6ed761a7aa3fb61a'
-         '92b754e3b482dfed1d3224d033cb2e6d'
-         '6426e55bd8d4a416bd3e937aef4ea4f4'
-         'cb5d65e711aa4410f5ab7646632b8a21'
-         '72d24931ad8506cab289ac4e28026dd7'
+md5sums=('4418c3dbc04b603215dea1e4d114269d'
+         'b0245f5b0ffd211ef356c3938bb9691d'
+         '1ff1d92e5506ea3b150e286a1791cae3'
+         '44325bb24aef330147e2fa2057a00a4a'
+         '661c6a6513c4303a7c9736083205a9a4'
+         'fa9119c1af1a445c59d64a44cf4262ce'
+         '395c77cb0a834befdba3df49d4d82eed'
+         '46c4454f5eddb64efecfb56073c6ef64'
+         'dde4fe4cf04ef35d21e35e0d5b50d1a8'
+         'f5a0fe61d4be9204a105f168fb892dfc'
+         '18ccf5cda146f5141a5104caafe6df18'
+         '3c24f23d6c47e9b13739dba603b2d9e0'
+         '9a5ed78ec0a28e646538dc17ca744b61'
+         '54c0375c456bc7ef03f5ad2a39915044'
+         '021b7e80b26e75e56aa17ebb1637ea3c'
          'aef13cb59516e9313cb8947350f717d6'
          '61c5ff73c136ed07a7aadbf58db3d96a'
          '584777ae88bce2c5659960151b64c7d8'
@@ -48,13 +56,17 @@ md5sums=('fe9dfbf734de4ba872c384830e405d8a'
 prepare() {
   git apply 0001-kbuild-move-Wunused-const-variable-to-W-1-warning-le.patch
   git apply 0002-md-fix-a-build-warning.patch
-  git apply 0003-ath9k-fix-buffer-overrun-for-ar9287.patch
-  git apply 0004-netfilter-Fix-switch-statement-warnings-with-recent-.patch
-  git apply 0005-netfilter-nfnetlink_cthelper-Remove-const-and-to-avo.patch
-  git apply 0006-netfilter-Add-some-missing-default-cases-to-switch-s.patch
-  git apply 0007-usbtv-remove-unused-variable.patch
-  git apply 0008-add-extra-errata-843419-build-flags.patch
-  git apply 0009-Downgrade-mmc1-speed.patch
+  git apply 0003-netfilter-Fix-switch-statement-warnings-with-recent-.patch
+  git apply 0004-netfilter-nfnetlink_cthelper-Remove-const-and-to-avo.patch
+  git apply 0005-netfilter-Add-some-missing-default-cases-to-switch-s.patch
+  git apply 0006-usbtv-remove-unused-variable.patch
+  git apply 0007-add-extra-errata-843419-build-flags.patch
+  git apply 0008-Downgrade-mmc1-speed.patch
+  git apply 0009-disable-new-gcc-7.1.1-warnings-for-now.patch
+  git apply 0010-UPSTREAM-mwifiex-scan-Simplify-code.patch
+  git apply 0011-media-ir-core-fix-gcc-7-warning-on-bool-arithmetic.patch
+  git apply 0012-sched-fix-duplicate-const-error-on-gcc-7.patch
+  git apply 0013-staging-iio-light-isl29018-fix-duplicate-const-error.patch
 
   cp config .config
 
@@ -66,6 +78,7 @@ prepare() {
 
   unset LDFLAGS
   cp include/linux/compiler-gcc5.h include/linux/compiler-gcc6.h
+  cp include/linux/compiler-gcc5.h include/linux/compiler-gcc7.h
 }
 
 build() {
@@ -274,7 +287,7 @@ _package-headers() {
   done
 
   # remove unneeded architectures
-  rm -rf "${pkgdir}"/usr/lib/modules/${_kernver}/build/arch/{alpha,arc,arm,arm26,avr32,blackfin,c6x,cris,frv,h8300,hexagon,ia64,m32r,m68k,m68knommu,metag,mips,microblaze,mn10300,openrisc,parisc,powerpc,ppc,s390,score,sh,sh64,sparc,sparc64,tile,unicore32,um,v850,x86,xtensa}
+  rm -rf "${pkgdir}"/usr/lib/modules/${_kernver}/build/arch/{alpha,arc,arm26,avr32,blackfin,c6x,cris,frv,h8300,hexagon,ia64,m32r,m68k,m68knommu,metag,mips,microblaze,mn10300,openrisc,parisc,powerpc,ppc,s390,score,sh,sh64,sparc,sparc64,tile,unicore32,um,v850,x86,xtensa}
 }
 
 pkgname=("${pkgbase}" "${pkgbase}-headers")

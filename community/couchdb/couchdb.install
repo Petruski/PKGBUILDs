@@ -1,16 +1,11 @@
-post_install() {
-    id couchdb &>/dev/null || \
-        useradd -r -c "CouchDB daemon" -g daemon -d /var/lib/couchdb -s /bin/false couchdb
-    chown couchdb.daemon /etc/couchdb/local.ini
-    chown -R couchdb.daemon /var/lib/couchdb
-}
-
-pre_upgrade() {
-    id couchdb &>/dev/null || \
-        useradd -r -c "CouchDB daemon" -g daemon -d /var/lib/couchdb -s /bin/false couchdb
-}
-
 post_upgrade() {
-    chown couchdb.daemon /etc/couchdb/local.ini
-    chown -R couchdb.daemon /var/lib/couchdb
+    if [ $(vercmp $2 2.1.1-1) -lt 0 ] ; then
+        cat << EOF
+
+Be sure to read http://docs.couchdb.org/en/2.1.1/whatsnew/2.1.html#upgrade-notes.
+Note that your /etc/couchdb/vm.args has been replaced by the new one if you
+never edited it, so you might actually have to change it as advised.
+
+EOF
+    fi
 }

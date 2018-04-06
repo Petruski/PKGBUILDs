@@ -6,9 +6,9 @@ buildarch=8
 pkgbase=linux-gru
 _kernelname=${pkgbase#linux}
 _desc="Gru Chromebooks"
-pkgver=4.4.52
-pkgrel=4
-_commit=fb0e5f6ed779a218ace2839ef7a34a23830bd30b
+pkgver=4.4.125
+pkgrel=1
+_commit=0c7b49dd59ec6a1ceec05643970a875fe5de23f2
 arch=('aarch64')
 url="https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-4.4"
 license=('GPL2')
@@ -18,18 +18,16 @@ source=("https://chromium.googlesource.com/chromiumos/third_party/kernel/+archiv
         '0001-Input-atmel_mxt_ts-Use-KERN_DEBUG-loglevel-for-statu.patch'
         '0002-Revert-CHROMIUM-drm-rockchip-Add-PSR-residency-debug.patch'
         '0003-temporary-hack-to-fix-console-output.patch'
-        '0004-skip-HDCP-setup.patch'
         'config'
         'kernel.its'
         'kernel.keyblock'
         'kernel_data_key.vbprivk')
-md5sums=('6d8a8aa615b78f5794b4028d0ad2c0be'
-         '84934e2f687a23f3f7160cdfe32bb211'
-         '39f5a13ccc90bd47e890e0e01a1343ec'
-         'f27e1cb28474d4882a9daec52d45becd'
-         'a2e62054e7b21c9055470db6a8c17ae8'
-         'ec598df9385f8c993e05238ec38e5b1f'
-         'ded019b1c1e32c53b98e602f46ea1ba0'
+md5sums=('a721dd1d088ba8241f58553d813598ed'
+         'd3b3d9d59f91cc6fad24c29873ad87bc'
+         '66cd7c64f8861025fa8e394675222aa1'
+         '8f416793377fc69914851a32fe6ca33e'
+         '24cb6d01da3a1951ba4a6543fb2ac07c'
+         '51896870709e97c4f131e99c33ff115d'
          '61c5ff73c136ed07a7aadbf58db3d96a'
          '584777ae88bce2c5659960151b64c7d8')
 
@@ -37,7 +35,6 @@ prepare() {
   git apply 0001-Input-atmel_mxt_ts-Use-KERN_DEBUG-loglevel-for-statu.patch
   git apply 0002-Revert-CHROMIUM-drm-rockchip-Add-PSR-residency-debug.patch
   git apply 0003-temporary-hack-to-fix-console-output.patch
-  git apply 0004-skip-HDCP-setup.patch
 
   cp config .config
 
@@ -99,7 +96,7 @@ _package() {
   
   mkimage -D "-I dts -O dtb -p 2048" -f kernel.its vmlinux.uimg
   dd if=/dev/zero of=bootloader.bin bs=512 count=1
-  echo "console=tty1 console=ttyS2,115200n8 earlyprintk=ttyS2,115200n8 init=/sbin/init root=PARTUUID=%U/PARTNROFF=1 rootwait rw noinitrd" > cmdline
+  echo "console=ttyS2,115200n8 earlyprintk=ttyS2,115200n8 console=tty1 init=/sbin/init root=PARTUUID=%U/PARTNROFF=1 rootwait rw noinitrd loglevel=4" > cmdline
   vbutil_kernel \
     --pack vmlinux.kpart \
     --version 1 \

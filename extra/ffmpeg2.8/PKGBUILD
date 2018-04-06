@@ -10,26 +10,28 @@
 #  - rename ld.so.conf.d config so nothing is loaded before it
 
 pkgname=ffmpeg2.8
-pkgver=2.8.11
-pkgrel=6
+pkgver=2.8.14
+pkgrel=1
 pkgdesc='Complete solution to record, convert and stream audio and video'
-arch=('i686' 'x86_64')
+arch=('x86_64')
 url='https://ffmpeg.org/'
 license=('GPL3')
-depends=('alsa-lib' 'bzip2' 'fontconfig' 'fribidi' 'gnutls' 'gsm' 'lame'
-         'libass' 'libbluray' 'libmodplug' 'libpulse' 'libsoxr' 'libssh'
-         'libtheora' 'libva' 'libvdpau' 'libwebp' 'opencore-amr' 'openjpeg'
-         'opus' 'schroedinger' 'sdl' 'speex' 'v4l-utils' 'xvidcore' 'zlib'
-         'libdcadec.so' 'libvidstab.so' 'libvorbis.so' 'libvorbisenc.so'
-         'libvpx.so' 'libx264.so' 'libx265.so')
-makedepends=('hardening-wrapper' 'ladspa' 'libvdpau' 'yasm')
+depends=('alsa-lib' 'bzip2' 'fontconfig' 'fribidi' 'glibc' 'gmp' 'gnutls' 'gsm'
+         'jack' 'lame' 'libmodplug' 'libpulse' 'libsoxr' 'libssh' 'libtheora'
+         'libvdpau' 'libwebp' 'libx11' 'libxcb' 'libxext' 'libxv'
+         'opencore-amr' 'openjpeg' 'opus' 'schroedinger' 'sdl' 'speex'
+         'v4l-utils' 'xz' 'zlib'
+         'libass.so' 'libbluray.so' 'libdcadec.so' 'libfreetype.so' 'libva.so'
+         'libvidstab.so' 'libvorbisenc.so' 'libvorbis.so' 'libvpx.so'
+         'libx264.so' 'libx265.so' 'libxvidcore.so')
+makedepends=('ladspa' 'yasm')
 optdepends=('ladspa: LADSPA filters')
 provides=('libavcodec.so' 'libavdevice.so' 'libavfilter.so' 'libavformat.so'
           'libavresample.so' 'libavutil.so' 'libpostproc.so' 'libswresample.so'
           'libswscale.so')
-source=("http://ffmpeg.org/releases/ffmpeg-${pkgver}.tar.xz"{,.asc})
+source=("https://ffmpeg.org/releases/ffmpeg-${pkgver}.tar.xz"{,.asc})
 validpgpkeys=('FCF986EA15E6E293A5644F10B4322F04D67658D8') # ffmpeg-devel
-sha256sums=('38aa3aec93c480b34d33f3648aff9278581d151488b521995c084258613e1fe6'
+sha256sums=('ef061d9a6cdde8628d00613d17b467fb5ad75e7404ef523dc842e192c511a116'
             'SKIP')
 
 build() {

@@ -4,10 +4,10 @@
 buildarch=2
 
 pkgbase=linux-armv5
-_srcname=linux-4.11
+_srcname=linux-4.16
 _kernelname=${pkgbase#linux}
 _desc="ARMv5 multi-platform"
-pkgver=4.11.1
+pkgver=4.16.0
 pkgrel=1
 arch=('arm')
 url="http://www.kernel.org/"
@@ -15,28 +15,45 @@ license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git')
 options=('!strip')
 source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
-        "http://www.kernel.org/pub/linux/kernel/v4.x/patch-${pkgver}.xz"
+        #"http://www.kernel.org/pub/linux/kernel/v4.x/patch-${pkgver}.xz"
         '0001-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch'
         '0002-at91-ariag25-updates.patch'
         '0003-at91-arietta-g25-support.patch'
+        '0004-leds-trigger-Introduce-a-SATA-trigger.patch'
+        '0005-ata-sata_mv-Add-SATA-activity-LED-trigger-support.patch'
+        '0006-ARM-dts-kirkwood-pogo_e02-Set-health-LED-to-default-.patch'
+        '0007-Fix-mvsdio-SD-card-detection.patch'
+        '0008-ARM-dts-kirkwood-Initial-support-for-GoFlex-Home.patch'
+        '0009-Revert-vfs-mm-fix-a-dead-loop-in-truncate_inode_page.patch'
         'config')
-md5sums=('251a5deee0fa6daf3f356b1bbda9eab8'
-         '947496600f57dfb4431e023816048870'
-         '8effa2a3ad3f2f4383dbc66a19f6f364'
-         'cb5aa24e94ee13ae9ac7d2f05431fae6'
-         'd735d353b37df63ae975bc262ec39ace'
-         '83a3920012854a8e2a4576f1f0cdf9bd')
+md5sums=('1357fb4ee7c288fdeac5d4e0048f5c18'
+         '79d6c8426b73e6fb85a26078232c757e'
+         '5c74b5ef2eae798e64a2b4bfeb4b00bd'
+         'daf9147c53a1389a85e673d02684922f'
+         'd16b66207022b40a6779c3c318a9a98b'
+         '19f6901829b222e2d9e8a041a83ddd9b'
+         '812a98acbdd6554285afc07a45859509'
+         '72ccc6d941bfab38b5c35717d20ce088'
+         '80de7816736a2d43b33c1f07babb1ec0'
+         '80b9c86e6aa74c09e1bdffe943ae07d6'
+         'dcb289936ada4794db3ffdc2b782a179')
 
 prepare() {
   cd "${srcdir}/${_srcname}"
 
   # add upstream patch
-  git apply --whitespace=nowarn "${srcdir}/patch-${pkgver}"
+  #git apply --whitespace=nowarn "${srcdir}/patch-${pkgver}"
 
   # ALARM patches
   git apply ../0001-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch
   git apply ../0002-at91-ariag25-updates.patch
   git apply ../0003-at91-arietta-g25-support.patch
+  git apply ../0004-leds-trigger-Introduce-a-SATA-trigger.patch
+  git apply ../0005-ata-sata_mv-Add-SATA-activity-LED-trigger-support.patch
+  git apply ../0006-ARM-dts-kirkwood-pogo_e02-Set-health-LED-to-default-.patch
+  git apply ../0007-Fix-mvsdio-SD-card-detection.patch
+  git apply ../0008-ARM-dts-kirkwood-Initial-support-for-GoFlex-Home.patch
+  git apply ../0009-Revert-vfs-mm-fix-a-dead-loop-in-truncate_inode_page.patch
 
   cat "${srcdir}/config" > ./.config
 
@@ -165,10 +182,6 @@ _package-headers() {
 
   cp arch/${KARCH}/kernel/asm-offsets.s "${pkgdir}/usr/lib/modules/${_kernver}/build/arch/${KARCH}/kernel/"
 
-  # add docbook makefile
-  install -D -m644 Documentation/DocBook/Makefile \
-    "${pkgdir}/usr/lib/modules/${_kernver}/build/Documentation/DocBook/Makefile"
-
   # add dm headers
   mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/md"
   cp drivers/md/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/md"
@@ -183,10 +196,6 @@ _package-headers() {
 
   # add dvb headers for external modules
   # in reference to:
-  # http://bugs.archlinux.org/task/9912
-  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/dvb-core"
-  cp drivers/media/dvb-core/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/dvb-core/"
-  # and...
   # http://bugs.archlinux.org/task/11194
   mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/include/config/dvb/"
   cp include/config/dvb/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/include/config/dvb/"

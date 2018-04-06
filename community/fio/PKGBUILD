@@ -7,10 +7,10 @@
 #  - removed numactl dependency
 
 pkgname=fio
-pkgver=2.19
+pkgver=3.5
 pkgrel=1
 pkgdesc='Scriptable I/O tool for storage benchmarks and drive testing'
-arch=(i686 x86_64)
+arch=(x86_64)
 url='https://github.com/axboe/fio'
 license=(GPL2)
 # TODO: enable rdma, need to move the libraries from AUR
@@ -21,7 +21,7 @@ optdepends=(
   'gnuplot: generating plots using fio_generate_plots'
 )
 source=(https://github.com/axboe/fio/archive/fio-$pkgver.zip)
-sha256sums=('1fa5c00ed25cdfa96b0740ee4898cf1e2aacc3df3513922364045379be794dcd')
+sha256sums=('f039ad922c7a51f0299ab3073b4890cab02aa1c27200952b2e49e4ff65bedd7f')
 
 prepare() {
   cd fio-fio-$pkgver
@@ -43,6 +43,7 @@ package() {
   install -dm755 "$pkgdir/usr/share/doc/$pkgname"
   install -m644 HOWTO README REPORTING-BUGS SERVER-TODO "$pkgdir/usr/share/doc/$pkgname"
   install -Dm644 COPYING "$pkgdir/usr/share/licenses/$pkgname/COPYING"
+  install -Dm644 MORAL-LICENSE "$pkgdir/usr/share/licenses/$pkgname/MORAL-LICENSE"
 
   # examples
   install -dm755 "$pkgdir/usr/share/doc/$pkgname/examples"

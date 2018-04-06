@@ -8,36 +8,36 @@
 
 pkgbase=percona-server
 pkgname=('libperconaserverclient' 'percona-server-clients' 'percona-server')
-pkgver=5.7.18_14
+pkgver=5.7.21_20
 _boost_ver=1.59.0
 _pkgver=${pkgver/_/-}
 _myver=${pkgver/_rel*}
 pkgrel=1
-arch=('i686' 'x86_64')
-makedepends=('cmake' 'zlib' 'libaio' 'systemd-tools' 'pam' 'jemalloc')
-license=('GPL' 'AGPL')
+arch=('x86_64')
+makedepends=('cmake' 'zlib' 'lz4' 'zstd' 'libaio' 'systemd-tools' 'pam' 'jemalloc' 'openssl')
+license=('GPL')
 url="https://www.percona.com/software/mysql-database/percona-server"
 source=("https://www.percona.com/downloads/Percona-Server-${pkgver%.*_*}/Percona-Server-$_pkgver/source/tarball/percona-server-$_pkgver.tar.gz"
-        "https://sourceforge.net/projects/boost/files/boost/${_boost_ver}/boost_${_boost_ver//./_}.tar.gz"
+        "http://jenkins.percona.com/downloads/boost/boost_${_boost_ver//./_}.tar.gz"
         'my.cnf'
-        'mysql-user.conf')
-sha256sums=('4c617e2f9a1c601caebb5ff470c675e3d03ba3b8071cd3261ae24fe11671e3bd'
+        'mysql-user.conf'
+        'rocksdb-systemlibs.patch')
+sha256sums=('842785e9b73c606be00ea74f568615d3427362fbeed5c136d8f509f03c9d43a6'
             '47f11c8844e579d02691a607fbd32540104a9ac7a2534a8ddaef50daf502baac'
             'ae451839c368f0db25a63bb0a6a890194897a8e74818bd4245140933c29e5f83'
-            'e638a2657085f15b6728f43c1fd6aa551b27608fbf6b435e33afd3606a0cfb0e')
-
-# This ships with bundled SSL library until proper support for openssl 1.1.0
-# is available.
-# TODO: Switch back to system openssl
-#   -> add 'openssl' to dependencies
-#   -> switch to '-DWITH_SSL=system' in cmake command
+            'e638a2657085f15b6728f43c1fd6aa551b27608fbf6b435e33afd3606a0cfb0e'
+            'fcc3bea0982cda6cc35637d448a46924eccdfeb4c4da0634a26c9d190cf50fe4')
 
 prepare() {
 	cd $pkgbase-$_pkgver
 	rm -v sql/sql_yacc.{cc,h}
 
-	sed 's|${fullhostname}|"archbuild"|' \
-		-i storage/tokudb/PerconaFT/cmake_modules/TokuSetupCTest.cmake
+	sed 's/${fullhostname}/"archbuild"/' -i storage/tokudb/PerconaFT/cmake_modules/TokuSetupCTest.cmake
+	sed 's/-Werror//g' -i \
+	    storage/tokudb/PerconaFT/cmake_modules/TokuSetupCompiler.cmake \
+	    plugin/tokudb-backup-plugin/Percona-TokuBackup/backup/CMakeLists.txt
+
+	patch -p1 -i "$srcdir"/rocksdb-systemlibs.patch
 }
 
 build() {
@@ -68,7 +68,8 @@ build() {
 		-DINSTALL_DOCDIR=share/mysql/docs \
 		-DINSTALL_SHAREDIR=share/mysql \
 		-DWITH_ZLIB=system \
-		-DWITH_SSL=bundled \
+    -DWITH_LZ4=system \
+		-DWITH_SSL=system \
 		-DWITH_LIBWRAP=OFF \
 		-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc' \
 		-DWITH_UNIT_TESTS=OFF \
@@ -84,27 +85,30 @@ build() {
 		-DWITH_BLACKHOLE_STORAGE_ENGINE=ON \
 		-DWITH_FEDERATED_STORAGE_ENGINE=OFF \
 		-DWITH_EXAMPLE_STORAGE_ENGINE=OFF \
+		-DWITH_ROCKSDB=1 \
 		-DWITH_SYSTEMD=1 \
 		-DCMAKE_C_FLAGS="-fPIC $CFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -fomit-frame-pointer -fno-delete-null-pointer-checks" \
 		-DCMAKE_CXX_FLAGS="-fPIC $CXXFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -felide-constructors -fno-delete-null-pointer-checks -Wno-error=nonnull-compare -Wno-deprecated-declarations -Wno-misleading-indentation -Wno-maybe-uninitialized" \
 		-DWITH_MYSQLD_LDFLAGS="-pie ${LDFLAGS},-z,now" \
 		-DWITH_BOOST="../boost_${_boost_ver//./_}" \
+		-DWITH_NUMA=OFF \
 		${CONFIG}
+
 
 	make
 }
 
 package_libperconaserverclient() {
 	pkgdesc='Percona Server client libraries'
-	depends=('zlib')
+	depends=('zlib' 'openssl')
 
 	cd build
 	for dir in include libmysql libmysqld libservices; do
 		make -C $dir DESTDIR="$pkgdir" install
 	done
 
-  # Conflicting files with libmariadbclient
-	rm "$pkgdir"/usr/lib/libmysql*
+	# Conflicting files with libmariadbclient
+	rm -rf "$pkgdir"/usr/lib/{libmysql*,mysql}
 
 	install -Dm755 scripts/mysql_config "$pkgdir"/usr/bin/perconaserver_config
 	install -d "$pkgdir"/usr/share/man/man1
@@ -113,7 +117,7 @@ package_libperconaserverclient() {
 
 package_percona-server-clients() {
 	pkgdesc='Percona Server client tools'
-	depends=('libperconaserverclient' 'zlib' 'jemalloc' 'readline')
+	depends=('libperconaserverclient' 'zlib' 'lz4' 'jemalloc' 'readline')
 	conflicts=('mysql-clients')
 	provides=("mysql-clients=$_myver" "mariadb-clients=$_myver")
 
@@ -133,7 +137,7 @@ package_percona-server-clients() {
 package_percona-server() {
 	pkgdesc='Drop-in replacement for MySQL that provides improved performance, diagnostics, instrumentation and TokuDB storage engine'
 	backup=('etc/mysql/my.cnf')
-	depends=('libaio' 'systemd-tools' 'pam' 'jemalloc')
+	depends=('libaio' 'systemd-tools' 'pam' 'jemalloc' 'lz4' 'zstd' 'openssl')
 	optdepends=('perl-dbd-mysql')
 	conflicts=('mysql')
 	provides=("mysql=$_myver" "mariadb=$_myver")
@@ -145,9 +149,9 @@ package_percona-server() {
 	install -Dm644 ../my.cnf "$pkgdir"/etc/mysql/my.cnf
 	install -Dm644 ../mysql-user.conf "$pkgdir"/usr/lib/sysusers.d/mysql.conf
 
-  cd "$pkgdir"
-  mv usr/usr/lib/* usr/lib
-  rm -rf usr/usr
+	cd "$pkgdir"
+	mv usr/usr/lib/* usr/lib
+	rm -rf usr/usr
 
 	# Move documentation
 	install -dm755 usr/share/doc

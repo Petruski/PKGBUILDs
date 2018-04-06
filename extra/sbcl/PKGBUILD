@@ -10,18 +10,18 @@
 buildarch=4
 
 pkgname=sbcl
-pkgver=1.3.17
+pkgver=1.4.6
 pkgrel=1
 pkgdesc="Steel Bank Common Lisp"
 url="http://www.sbcl.org/"
-arch=('i686' 'x86_64')
+arch=('x86_64')
 license=('custom')
 depends=('zlib')
 provides=('common-lisp' 'cl-asdf')
 makedepends=('sbcl')
 source=("https://downloads.sourceforge.net/project/sbcl/sbcl/$pkgver/$pkgname-$pkgver-source.tar.bz2"
   "arch-fixes.lisp")
-sha256sums=('94b9f576328de3a5d9ced452fdaa4d2f55437af8838fbbfb4f226c86591a0daf'
+sha256sums=('4411b01329d4dd531c8a0cb4036462fb4fd5f6e7abe2d521c6aa2a3adefb8678'
             'b5a6468dcbc1012cae2c3cda155762a37b6d96ef89bba4f723315063b0b5e7ce')
 
 

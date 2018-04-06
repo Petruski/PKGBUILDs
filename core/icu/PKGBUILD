@@ -6,21 +6,25 @@
 #  - patch to fix icudata library linking on ARM
 
 pkgname=icu
-pkgver=59.1
+pkgver=61.1
 pkgrel=1
 pkgdesc="International Components for Unicode library"
-arch=(i686 x86_64)
+arch=(x86_64)
 url="http://www.icu-project.org/"
 license=('custom:icu')
 depends=('gcc-libs' 'sh')
 #makedepends=('clang')
 # no https available
 source=(#http://download.icu-project.org/files/${pkgname}4c/${pkgver}/${pkgname}4c-${pkgver/./_}-src.tgz
-	http://download.icu-project.org/files/${pkgname}4c/${pkgver}/${pkgname}4c-${pkgver//./_}-src.tgz
-	icudata-stdlibs.patch)
+        https://ssl.icu-project.org/files/${pkgname}4c/${pkgver}/${pkgname}4c-${pkgver//./_}-src.tgz{,.asc}
+        icudata-stdlibs.patch)
 # upstream offers md5sum checks, only asc file for md5sum check
-sha256sums=('7132fdaf9379429d004005217f10e00b7d2319d0fea22bdfddef8991c45b75fe'
-            '13444e40ec8da75a3c4140448b25bdf51887a2691c9afdb0c63134ddd33d915b')
+md5sums=('68fe38999fef94d622bd6843d43c0615'
+         'SKIP'
+         '4e5202245fce364490334bd66b5edabc')
+validpgpkeys=('BA90283A60D67BA0DD910A893932080F4FB419E3') #  "Steven R. Loomis (filfla-signing) <srloomis@us.ibm.com>" 
+validpgpkeys+=('9731166CD8E23A83BEE7C6D3ACA5DBE1FD8FABF1') #  "Steven R. Loomis (ICU Project) <srl@icu-project.org>" 
+validpgpkeys+=('FFA9129A180D765B7A5BEA1C9B432B27D1BA20D7') # "Fredrik Roubert <fredrik@roubert.name>"
 
 prepare() {
   cd icu/source
@@ -38,7 +42,7 @@ build() {
 
 check() {
   cd icu/source
-  make -k check # passes all
+  make -k check
 }
 
 package() {
@@ -46,5 +50,5 @@ package() {
   make -j1 DESTDIR=${pkgdir} install
 
   # Install license
-  install -Dm644 ${srcdir}/icu/license.html ${pkgdir}/usr/share/licenses/icu/license.html
+  install -Dm644 ${srcdir}/icu/LICENSE ${pkgdir}/usr/share/licenses/icu/LICENSE
 }

@@ -9,30 +9,41 @@
 #  - use -fPIC in host cflags for armv7 to fix print_options.c compile
 
 pkgname=ffmpeg
-pkgver=3.3
-pkgrel=5
+pkgver=3.4.2
+pkgrel=2
 epoch=1
 pkgdesc='Complete solution to record, convert and stream audio and video'
-arch=('i686' 'x86_64')
+arch=('x86_64')
 url='http://ffmpeg.org/'
 license=('GPL3')
 depends=('alsa-lib' 'bzip2' 'fontconfig' 'fribidi' 'glibc' 'gmp' 'gnutls' 'gsm'
          'jack' 'lame' 'libavc1394' 'libiec61883' 'libmodplug' 'libpulse'
-         'libraw1394' 'libsoxr' 'libssh' 'libtheora' 'libva' 'libvdpau'
-         'libwebp' 'libx11' 'libxcb' 'opencore-amr' 'openjpeg2' 'opus'
-         'schroedinger' 'sdl2' 'speex' 'v4l-utils' 'xz' 'zlib'
-         'libass.so' 'libbluray.so' 'libfreetype.so' 'libnetcdf.so'
-         'libvidstab.so' 'libvorbisenc.so' 'libvorbis.so' 'libvpx.so'
-         'libx264.so' 'libx265.so' 'libxvidcore.so')
-makedepends=('hardening-wrapper' 'ladspa' 'libvdpau' 'yasm')
+         'libraw1394' 'libsoxr' 'libssh' 'libtheora' 'libvdpau' 'libwebp'
+         'libx11' 'libxcb' 'libxml2' 'opencore-amr' 'openjpeg2' 'opus' 'sdl2'
+         'speex' 'v4l-utils' 'xz' 'zlib'
+         'libomxil-bellagio'
+         'libass.so' 'libbluray.so' 'libfreetype.so' 'libva-drm.so' 'libva.so'
+         'libva-x11.so' 'libvidstab.so' 'libvorbisenc.so' 'libvorbis.so'
+         'libvpx.so' 'libx264.so' 'libx265.so' 'libxvidcore.so')
+makedepends=('ladspa' 'libvdpau' 'yasm')
 optdepends=('ladspa: LADSPA filters')
 provides=('libavcodec.so' 'libavdevice.so' 'libavfilter.so' 'libavformat.so'
           'libavresample.so' 'libavutil.so' 'libpostproc.so' 'libswresample.so'
           'libswscale.so')
-source=("https://ffmpeg.org/releases/ffmpeg-${pkgver}.tar.xz"{,.asc})
+source=("https://ffmpeg.org/releases/ffmpeg-${pkgver}.tar.xz"{,.asc}
+        'fs56089.patch')
 validpgpkeys=('FCF986EA15E6E293A5644F10B4322F04D67658D8')
-sha256sums=('599e7f7c017221c22011c4037b88bdcd1c47cd40c1e466838bc3c465f3e9569d'
-            'SKIP')
+sha256sums=('2b92e9578ef8b3e49eeab229e69305f5f4cbc1fdaa22e927fc7fca18acccd740'
+            'SKIP'
+            '0bfcd12d1992903f21c146ae56d9ad89b52818cfb2303197ee905347c25a5427')
+
+prepare() {
+  cd ffmpeg-${pkgver}
+
+  # https://bugs.archlinux.org/task/56089
+  # Backport of http://git.videolan.org/?p=ffmpeg.git;a=commitdiff;h=a606f27f4c610708fa96e35eed7b7537d3d8f712
+  patch -Np1 -i ../fs56089.patch
+}
 
 build() {
   cd ffmpeg-${pkgver}
@@ -64,7 +75,6 @@ build() {
     --enable-libopenjpeg \
     --enable-libopus \
     --enable-libpulse \
-    --enable-libschroedinger \
     --enable-libsoxr \
     --enable-libspeex \
     --enable-libssh \
@@ -77,10 +87,11 @@ build() {
     --enable-libx264 \
     --enable-libx265 \
     --enable-libxcb \
+    --enable-libxml2 \
     --enable-libxvid \
-    --enable-netcdf \
     --enable-shared \
     --enable-version3 \
+    --enable-omx \
     $CONFIG
 
   make

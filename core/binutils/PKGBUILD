@@ -1,9 +1,7 @@
-# $Id: PKGBUILD 145910 2012-01-04 01:24:50Z allan $
+# $Id$
 # Maintainer: Allan McRae <allan@archlinux.org>
 
 # toolchain build order: linux-api-headers->glibc->binutils->gcc->binutils->glibc
-
-# build from head of release branch as bug fix releases are rare
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 # - Added a CONFIGFLAG for ARM, defining our build hosts
@@ -13,28 +11,47 @@
 noautobuild=1
 
 pkgname=binutils
-pkgver=2.28.0
-pkgrel=2
-_commit=a7b47925683a22c9819c23cb18b99bd74014d066
-pkgdesc="A set of programs to assemble and manipulate binary and object files"
-arch=('i686' 'x86_64')
-url="http://www.gnu.org/software/binutils/"
-license=('GPL')
+pkgver=2.29.1
+pkgrel=3
+pkgdesc='A set of programs to assemble and manipulate binary and object files'
+arch=(x86_64)
+url='http://www.gnu.org/software/binutils/'
+license=(GPL)
 groups=('base-devel')
-depends=('glibc>=2.25' 'zlib')
-makedepends=('git')
-checkdepends=('dejagnu' 'bc')
-options=('staticlibs' '!distcc' '!ccache')
-source=(git://sourceware.org/git/binutils-gdb.git#commit=${_commit})
-md5sums=('SKIP')
+depends=('glibc>=2.26' zlib)
+makedepends=(git)
+checkdepends=(dejagnu bc)
+options=(staticlibs !distcc !ccache)
+#_commit=d1a6e7195b9bb0255fa77588985b969ad8aaacf5
+#source=(git+https://sourceware.org/git/binutils-gdb.git#commit=${_commit}
+source=(https://ftp.gnu.org/gnu/binutils/binutils-$pkgver.tar.xz{,.sig}
+        0001-x86-64_Dont_pass_output_bfd_to_info-callbacks-minfo.patch
+        0001-PR22741-objcopy-segfault-on-fuzzed-COFF-object.patch
+        0001-PR22829-objcopy-strip-removes-PT_GNU_RELRO-from-lld-.patch)
+validpgpkeys=(3A24BC1E8FB409FA9F14371813FCEF89DD9E3C4F)
+md5sums=('acc9cd826edb9954ac7cecb81c727793'
+         'SKIP'
+         'e4be936139ef46122cb3841881c432b2'
+         '469164f3c93a0e92a697537b60c9806c'
+         '0c679b37e90fb23de60a4d28329b956a')
 
 prepare() {
-  cd binutils-gdb
+  mkdir -p binutils-build
+
+  #cd binutils-gdb
+  cd binutils-$pkgver
 
   # hack! - libiberty configure tests for header files using "$CPP $CPPFLAGS"
   sed -i "/ac_cpp=/s/\$CPPFLAGS/\$CPPFLAGS -O2/" libiberty/configure
 
-  mkdir ${srcdir}/binutils-build
+  # https://bugs.archlinux.org/task/55741
+  git apply ../0001-x86-64_Dont_pass_output_bfd_to_info-callbacks-minfo.patch
+
+  # https://sourceware.org/bugzilla/show_bug.cgi?id=22741
+  git apply ../0001-PR22741-objcopy-segfault-on-fuzzed-COFF-object.patch
+
+  # https://sourceware.org/bugzilla/show_bug.cgi?id=22829
+  git apply ../0001-PR22829-objcopy-strip-removes-PT_GNU_RELRO-from-lld-.patch
 }
 
 build() {
@@ -46,7 +63,7 @@ build() {
   [[ $CARCH == "armv7h" ]] && CONFIGFLAG="--host=armv7l-unknown-linux-gnueabihf --build=armv7l-unknown-linux-gnueabihf"
   [[ $CARCH == "aarch64" ]] && CONFIGFLAG="--host=aarch64-unknown-linux-gnu --build=aarch64-unknown-linux-gnu"
 
-  ../binutils-gdb/configure \
+  "$srcdir/binutils-$pkgver/configure" \
     --prefix=/usr \
     --with-lib-path=/usr/lib:/usr/local/lib \
     --with-bugurl=https://github.com/archlinuxarm/PKGBUILDs/issues \
@@ -55,16 +72,16 @@ build() {
     --enable-ld=default \
     --enable-gold \
     --enable-plugins \
+    --enable-relro \
     --enable-deterministic-archives \
     --with-pic \
     --disable-werror \
     --disable-gdb \
+    --with-system-zlib \
     --disable-sim \
     $CONFIGFLAG
 
-  # check the host environment and makes sure all the necessary tools are available
   make configure-host
-
   make tooldir=/usr
 }
 
@@ -78,13 +95,13 @@ check() {
 
 package() {
   cd binutils-build
-  make prefix=${pkgdir}/usr tooldir=${pkgdir}/usr install
+  make prefix="$pkgdir/usr" tooldir="$pkgdir/usr" install
 
   # Remove unwanted files
-  rm -f ${pkgdir}/usr/share/man/man1/{dlltool,nlmconv,windres,windmc}*
+  rm -f "$pkgdir"/usr/share/man/man1/{dlltool,nlmconv,windres,windmc}*
 
   # No shared linking to these files outside binutils
-  rm -f ${pkgdir}/usr/lib/lib{bfd,opcodes}.so
-  echo "INPUT ( /usr/lib/libbfd.a -liberty -lz -ldl )" > "$pkgdir"/usr/lib/libbfd.so
-  echo "INPUT ( /usr/lib/libopcodes.a -lbfd )" > "$pkgdir"/usr/lib/libopcodes.so
+  rm -f "$pkgdir"/usr/lib/lib{bfd,opcodes}.so
+  echo "INPUT( /usr/lib/libbfd.a -liberty -lz -ldl )" > "$pkgdir/usr/lib/libbfd.so"
+  echo "INPUT( /usr/lib/libopcodes.a -lbfd )" > "$pkgdir/usr/lib/libopcodes.so"
 }

@@ -4,12 +4,12 @@
 buildarch=4
 
 pkgbase=linux-odroid-xu3
-_commit=23105dbcd2ec5d4e236d3f384bca4d3e88594899
+_commit=b8aafc415973f28ddfc4bd1cbd94446a9a219d72
 _srcname=linux-${_commit}
 _kernelname=${pkgbase#linux}
-_desc="ODROID-XU3/4"
-pkgver=4.9.28
-pkgrel=2
+_desc="ODROID-XU3/XU4/HC1"
+pkgver=4.14.32
+pkgrel=1
 arch=('armv7h')
 url="https://github.com/hardkernel/linux"
 license=('GPL2')
@@ -19,8 +19,8 @@ source=("https://github.com/hardkernel/linux/archive/${_commit}.tar.gz"
         'config'
         'linux.preset'
         '99-linux.hook')
-md5sums=('73da6c09c6fa5f7438edbf0261a69fff'
-         '633efa4b890efdd83afe6abdc09949ed'
+md5sums=('1ea986007ea8b463265d1a420ca23aae'
+         'fa0cfee73b9ec7055481a06f2edebda5'
          'a84976d500db50cee07177eccfe2f455'
          '79fa396e3f9a09a85156d6d7c2d34b58')
 
@@ -167,10 +167,6 @@ _package-headers() {
   cp arch/${KARCH}/Makefile "${pkgdir}/usr/lib/modules/${_kernver}/build/arch/${KARCH}/"
 
   cp arch/${KARCH}/kernel/asm-offsets.s "${pkgdir}/usr/lib/modules/${_kernver}/build/arch/${KARCH}/kernel/"
-
-  # add docbook makefile
-  install -D -m644 Documentation/DocBook/Makefile \
-    "${pkgdir}/usr/lib/modules/${_kernver}/build/Documentation/DocBook/Makefile"
 
   # add dm headers
   mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/md"

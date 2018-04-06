@@ -1,5 +1,6 @@
 # $Id$
-# Maintainer : speps <speps at aur dot archlinux dot org>
+# Maintainer: David Runge <dave@sleepmap.de>
+# Contributor: speps <speps at aur dot archlinux dot org>
 # Contributor: osc <farid at archlinux-br.org>
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
@@ -7,42 +8,54 @@
 
 _name=SuperCollider
 pkgname=supercollider
-pkgver=3.8.0
-pkgrel=2
+pkgver=3.9.2
+pkgrel=1
 pkgdesc="An environment and programming language for real time audio synthesis and algorithmic composition"
-arch=('i686' 'x86_64')
-url="http://supercollider.sourceforge.net/"
+arch=('x86_64')
+url="https://supercollider.github.io"
 license=('GPL3')
-depends=('jack' 'fftw' 'cwiid' 'qt5-webkit')
-makedepends=('cmake' 'ruby' 'vim' 'emacs' 'qt5-tools' 'boost')
+depends=('boost-libs' 'fftw' 'jack' 'qt5-webkit' 'yaml-cpp')
+makedepends=('boost' 'cmake' 'emacs' 'qt5-tools')
 optdepends=('emacs: emacs interface'
             'gedit: gedit interface'
-            'vim: vim interface'
-            'ruby: vim support')
-source=("https://github.com/supercollider/supercollider/releases/download/Version-$pkgver/SuperCollider-$pkgver-Source-linux.tar.bz2"
-        supercollider-cxxflags.patch)
-md5sums=('f9c077e92707ae187c5f10cfddccf291'
-         '4f62489286fe8008d6013fc59047c20b')
+            'sc3-plugins: additional extension plugins for scsynth')
+source=("https://github.com/${pkgname}/${pkgname}/releases/download/Version-${pkgver}/${_name}-${pkgver}-Source-linux.tar.bz2"
+        '0001-cmake-correctly-include-yaml-cpp.patch'
+        '0002-set-YAMLCPP_LIBRARY-and-YAMLCPP_INCLUDE_DIR-if-not-u.patch')
+install="${pkgname}.install"
+sha512sums=('363a36242a4e3a82477719c018765450ce79d1ba601d7ab625f557cd9c1e9402dff43f7adb468453f1ecc4106116c4270f9f929abcf80fdd59855aa5d48b9db2'
+            'd4204b8c8ce12b383b39f96e9a9f36ee71a36ddfba019cdf0454ffa8170681bd38b688e41c6e5910f087ad13b3021f59dc2c0c825a500c57364b04fb5d90af30'
+            'be587ee652c652f2a19a68d06ca62cae5c5f6c5d4d3a5777723e1aba319e859ede418010345b7a4b0fe8d02dc70528fec7f4479dce259914f2d57d46d9ad659f')
 
 prepare() {
-  cd $_name-Source
-# Fix CXXFLAGS
-  patch -p1 -i ../supercollider-cxxflags.patch
+  mv -v "${_name}-Source" "${pkgname}-${pkgver}"
+  cd "${pkgname}-${pkgver}"
+  # fixing yaml-cpp include:
+  # https://github.com/supercollider/supercollider/issues/3557
+  patch -Np1 -i ../0001-cmake-correctly-include-yaml-cpp.patch
+  patch -Np1 -i \
+    ../0002-set-YAMLCPP_LIBRARY-and-YAMLCPP_INCLUDE_DIR-if-not-u.patch
+  # requires out-of-tree build
+  mkdir -v bld
 }
 
 build() {
-  cd "$srcdir/$_name-Source"
-  [ -d b ] || mkdir b && cd b
+  cd "${pkgname}-${pkgver}/bld"
   cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
            -DCMAKE_BUILD_TYPE=Release \
            -DLIBSCSYNTH=ON \
-           -DCMAKE_CXX_FLAGS="$CXXFLAGS -DBOOST_MATH_DISABLE_FLOAT128" \
+           -DFORTIFY=ON \
+           -DSYSTEM_BOOST=ON \
+           -DSYSTEM_YAMLCPP=ON \
+           -DSC_VIM=OFF \
            -DSSE=OFF -DSSE2=OFF -DSUPERNOVA=OFF -DNOVA_SIMD=ON -DNATIVE=OFF \
            -DCMAKE_C_FLAGS="${CFLAGS}"
   make
 }
 
 package() {
-  cd "$srcdir/$_name-Source/b"
-  make DESTDIR="$pkgdir/" install
+  cd "${pkgname}-${pkgver}/bld"
+  make DESTDIR="${pkgdir}" install
+  install -t "${pkgdir}/usr/share/doc/${pkgname}/" \
+    -vDm 644 ../{AUTHORS,{CHANGELOG,README,README_LINUX}.md}
 }

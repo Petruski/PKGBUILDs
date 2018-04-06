@@ -6,26 +6,24 @@
 #  - set -DUSE_LLVM_BITCODE=OFF for v5 and v6
 
 pkgname=openshadinglanguage
-pkgver=1.7.5
+pkgver=1.9.8
 pkgrel=1
 pkgdesc="Advanced shading language for production GI renderers"
-arch=(i686 x86_64)
+arch=(x86_64)
 url="https://github.com/imageworks/OpenShadingLanguage"
 license=('custom')
 depends=('boost-libs' 'openimageio' 'openexr' 'freetype2' 'libpng'
          'libtiff' 'zlib' 'ncurses')
-makedepends=('boost' 'cmake' 'llvm35' 'clang35')
-source=(https://github.com/imageworks/OpenShadingLanguage/archive/Release-${pkgver}.tar.gz
-        llvm-static-system-libs.patch)
-md5sums=('8b15d13c3fa510b421834d32338304c8'
-         'b7c212b2549981ced03c091375f48122')
+makedepends=('boost' 'cmake' 'llvm' 'clang')
+source=(https://github.com/imageworks/OpenShadingLanguage/archive/Release-${pkgver}.tar.gz)
+sha512sums=('99a8f4af955058ad94326795caba12599f7ba81e5304389fc48cc23cb12357954609bd27785c0b36d81626da24ad91c1ebeb39303fe5fec08fd7b48c3fa0bd42')
 
 prepare() {
   cd OpenShadingLanguage-Release-$pkgver
 
   # Add system libraries needed to link against LLVM components (zlib, ncurses)
   # This is required in order to statically link against LLVM
-  patch -Np1 < $srcdir/llvm-static-system-libs.patch
+  #patch -Np1 < $srcdir/llvm-static-system-libs.patch
 }
 
 build() {
@@ -38,8 +36,11 @@ build() {
 
   cmake ../.. \
     -DCMAKE_INSTALL_PREFIX=/usr \
-    -DLLVM_STATIC=1 \
+    -DENABLERTTI=ON \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DLLVM_STATIC=0 \
     -DOSL_BUILD_CPP11=1 \
+    -DSTOP_ON_WARNING=OFF \
     $BITCODE
   make
 }
@@ -49,12 +50,7 @@ package() {
 
   make DESTDIR="$pkgdir/" install
 
-  mkdir -p "$pkgdir"/usr/share/OSL/
-  mkdir -p "$pkgdir"/usr/share/licenses/$pkgname
-  mv "$pkgdir"/usr/LICENSE "$pkgdir"/usr/share/licenses/$pkgname # TODO: Tell upstream about this shit
-  mv "$pkgdir"/usr/{CHANGES,README.md,INSTALL} "$pkgdir"/usr/share/OSL/
-  mv "$pkgdir"/usr/doc "$pkgdir"/usr/share/OSL/doc
-  mv "$pkgdir"/usr/shaders "$pkgdir"/usr/share/OSL/shaders
+  install -Dm644 "$pkgdir"/usr/share/doc/OSL/LICENSE "$pkgdir"/usr/share/licenses/$pkgname/LICENSE
 }
 
 # vim:set ts=2 sw=2 et:

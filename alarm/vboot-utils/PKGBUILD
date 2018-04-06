@@ -4,7 +4,7 @@
 buildarch=12
 
 pkgname=vboot-utils
-pkgver=r1739.1919b169b
+pkgver=r1908.4c84e0778
 pkgrel=1
 arch=('armv7h' 'aarch64')
 pkgdesc="Chromium OS vboot utilities"
@@ -13,8 +13,10 @@ license=('custom:chromiumos')
 makedepends=('libyaml' 'git')
 provides=('cgpt')
 replaces=('cgpt')
-source=("git+https://chromium.googlesource.com/chromiumos/platform/vboot_reference")
-md5sums=('SKIP')
+source=("git+https://chromium.googlesource.com/chromiumos/platform/vboot_reference"
+        '0001-Remove-static-futility.patch')
+md5sums=('SKIP'
+         '4623286d277f73b0a5ae04c30174e520')
 
 pkgver() {
   cd vboot_reference
@@ -23,8 +25,7 @@ pkgver() {
 
 prepare() {
   cd vboot_reference
-  # OpenSSL 1.1 fix: https://chromium-review.googlesource.com/c/461901/
-  git cherry-pick -n ad9ba0ea32f92cc37a21b8c3c45e08408af1a4b7
+  git apply ../0001-Remove-static-futility.patch
   # remove -Werror to prevent build failure
   sed -i 's/-Werror//g' Makefile
 }

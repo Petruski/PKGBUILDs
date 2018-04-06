@@ -6,18 +6,18 @@
 #  - don't build with musl-gcc
 
 pkgname=busybox
-pkgver=1.26.2
-pkgrel=2
+pkgver=1.28.2
+pkgrel=1
 pkgdesc="Utilities for rescue and embedded systems"
-arch=("i686" "x86_64")
+arch=("x86_64")
 url="https://www.busybox.net"
 license=('GPL')
 makedepends=("make" "gcc" "sed" "ncurses")
 install=busybox.install
 source=("$url/downloads/$pkgname-$pkgver.tar.bz2"
 	"config")
-sha256sums=('da3e44913fc1a9c9b7c5337ea5292da518683cbff32be630777f565d6036af16'
-            '42e3d2756774c038e86c9fc6b228f6db4f6b75217ff403ac64d71a8bd0543286')
+sha256sums=('b64a94a60877c96838ee60e75765576ecc8756bf3636485117637604acb84b0d'
+            '5ac1b35aa9fee3be15a4ce10e533de35ea9e51f888186a45222e102f35c36bc6')
 
 build() {
   cd "$srcdir/$pkgname-$pkgver"

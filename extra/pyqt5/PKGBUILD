@@ -7,31 +7,30 @@
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - remove qt5-webengine makedepend, not built for ARM
-#  - hack for OpenGLES
 
 pkgbase=pyqt5
 pkgname=('pyqt5-common' 'python-pyqt5' 'python2-pyqt5')
-pkgver=5.8.2
+pkgver=5.10.1
 pkgrel=2
-arch=('i686' 'x86_64')
+arch=('x86_64')
 url="http://riverbankcomputing.co.uk/software/pyqt/intro"
 license=('GPL')
 makedepends=('python-sip' 'python2-sip' 'python-opengl' 'python2-opengl'
              'python2-dbus' 'python-dbus' 'qt5-connectivity'
              'qt5-multimedia' 'qt5-tools' 'qt5-serialport' 'qt5-svg'
-             'qt5-webkit' 'qt5-websockets' 'qt5-x11extras')
-source=("http://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-$pkgver/PyQt5_gpl-$pkgver.tar.gz"
-         'opengles-hack.patch')
-sha512sums=('8b765b9ae6210b7312a2dc6ed94d2664ae569625fe8a27443bae4230d9d9c00e0cf3b4be6904c66ebceff5cd5bbd19a5a9794a0b3222c8098a55f0b94fc8d89b'
-            '6be0458a53dc96919d2dfe7a3e932ac663e6e9ebcc2516809f8c53ad923566bf3f96f622ee52ee8a97bf1bea2fc72f78e60333daa6bb3555ff3ca8371141f2b7')
+             'qt5-webkit' 'qt5-websockets' 'qt5-x11extras' 'qt5-networkauth')
+source=("http://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-$pkgver/PyQt5_gpl-$pkgver.tar.gz" pyqt-support-new-qt.patch
+        pyqt5-cura-crash.patch)
+sha512sums=('04cd0292f7a088f9c0d088d7c73ec96cfc40253f771dfdf194eb92be7635e6fcaf04863fa24215e9c34a096658549bb2feeb8d8fdca1e39ed87f0256ef0f790b'
+            '9e4184291c0ece0bf375da3e0cf6e3f22df33eea1ee2b981fe9e2a0ba7d625583dd513c029c49562189986c0145262ac2aa8e5aa85701a981b3ed4061f4acf36'
+            '3f6e1c0dcd95d3ff39c03f59d7c09cbf2e42431bf9cb6dc7a63da10b7a387e5977992e57ef0ff1dea495f29dfbf4db2568b4588e801cca966a0136fe98d1ed45')
 
 prepare() {
-  pushd PyQt5_gpl-$pkgver
-  patch -p1 -i ../opengles-hack.patch
-  popd
-
   # Support new versions of Qt - don't remove, needs to be reapplied after every new Qt release
+  pushd PyQt5_gpl-$pkgver
   # patch -p1 -i ../pyqt-support-new-qt.patch
+  patch -p1 -i ../pyqt5-cura-crash.patch # Fix crash in Cura
+  popd
 
   # The additional include path was removed due to this line, I don't really know why they are doing this...
   sed -i '/target_config.dbus_inc_dirs = \[\]/d' PyQt5_gpl-$pkgver/configure.py
@@ -91,19 +90,20 @@ package_python-pyqt5(){
               'qt5-websockets: QtWebSockets'
               'qt5-connectivity: QtNfc, QtBluetooth'
               'qt5-webengine: QtWebEngine, QtWebEngineCore, QtWebEngineWidgets'
-              'qt5-x11extras: QtX11Extras')
+              'qt5-x11extras: QtX11Extras'
+              'qt5-networkauth: QtNetworkAuth')
 
   cd PyQt5_gpl-$pkgver
   # INSTALL_ROOT is needed for the QtDesigner module, the other Makefiles use DESTDIR
   make DESTDIR="$pkgdir" INSTALL_ROOT="$pkgdir" install
 
   # Provided by pyqt-common
-  rm -f "$pkgdir"/usr/share/qt/qsci/api/python/PyQt5.api
+  rm "$pkgdir"/usr/share/qt/qsci/api/python/PyQt5.api
 }
 
 package_python2-pyqt5(){
   pkgdesc="A set of Python 2.x bindings for the Qt5 toolkit"
-  depends=('python2-sip' 'pyqt5-common')
+  depends=('python2-sip' 'pyqt5-common' 'python2-enum34')
   optdepends=('python2-opengl: enable OpenGL 3D graphics in PyQt applications'
               'python-dbus: for python-dbus mainloop support'
               'qt5-multimedia: QtMultimedia, QtMultimediaWidgets'
@@ -116,7 +116,8 @@ package_python2-pyqt5(){
               'qt5-websockets: QtWebSockets'
               'qt5-connectivity: QtNfc, QtBluetooth'
               'qt5-webengine: QtWebEngine, QtWebEngineCore, QtWebEngineWidgets'
-              'qt5-x11extras: QtX11Extras')
+              'qt5-x11extras: QtX11Extras'
+              'qt5-networkauth: QtNetworkAuth')
 
   cd PyQt5_gpl-$pkgver-py2
   # INSTALL_ROOT is needed for the QtDesigner module, the other Makefiles use DESTDIR
@@ -127,7 +128,7 @@ package_python2-pyqt5(){
   mv "$pkgdir"/usr/bin/{,python2-}pylupdate5
   mv "$pkgdir"/usr/bin/{,python2-}pyrcc5
 
-  rm -f "$pkgdir"/usr/lib/qt/plugins/designer/libpyqt5.so
-  rm -f "$pkgdir"/usr/lib/qt/plugins/PyQt5/libpyqt5qmlplugin.so
-  rm -f "$pkgdir"/usr/share/qt/qsci/api/python/PyQt5.api
+  rm "$pkgdir"/usr/lib/qt/plugins/designer/libpyqt5.so
+  rm "$pkgdir"/usr/lib/qt/plugins/PyQt5/libpyqt5qmlplugin.so
+  rm "$pkgdir"/usr/share/qt/qsci/api/python/PyQt5.api
 }

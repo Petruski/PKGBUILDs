@@ -3,8 +3,8 @@
 
 buildarch=4
 
-_rcver=4.12
-_rcrel=1
+_rcver=4.16
+_rcrel=7
 _rcnrel=armv7-x0
 
 pkgbase=linux-armv7-rc
@@ -27,26 +27,34 @@ source=("https://git.kernel.org/torvalds/t/${_srcname}.tar.gz"
         '0005-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch'
         '0006-set-default-cubietruck-led-triggers.patch'
         '0007-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch'
-        '0008-disable-USB3-port-on-ODROID-XU.patch'
-        '0009-ARM-dove-enable-ethernet-on-D3Plug.patch'
+        '0008-ARM-dove-enable-ethernet-on-D3Plug.patch'
+        '0009-power-add-power-sequence-library.patch'
+        '0010-usb-core-add-power-sequence-handling-for-USB-devices.patch'
+        '0011-ARM-dts-imx6qdl-Enable-usb-node-children-with-reg.patch'
+        '0012-ARM-dts-imx6qdl-udoo.dtsi-fix-onboard-USB-HUB-proper.patch'
+        '0013-ARM-dts-imx6q-evi-Fix-onboard-hub-reset-line.patch'
         'config'
         'kernel.its'
         'kernel.keyblock'
         'kernel_data_key.vbprivk'
         'linux.preset'
         '99-linux.hook')
-md5sums=('08606cfcf5792a0b20456e3ae51ed7ac'
-         '9dbee363eb3d89dfe330d1240104ef53'
-         '722bc867ef5285e2719ce3e526425a65'
-         'c2e8438c4e7a93bb8fbf1576f23773f7'
-         'def3e95ff11cffe49d4624f4e00b59a2'
-         'bfe387475c4c42551dadd6d4aeb724ee'
-         'bd455ff6f763350f2f7c723141d90803'
-         '125c70a670250e1db8771a828daaef61'
-         'ff5f4ca7f97b8ebfbb09ec76363e71ec'
-         'f9282ee13ad2c393c462ef20b143ae22'
-         '9fb6cef04dd98e38094803c56e9c453b'
-         '72bf494e6ce5cbc9f2673605f4cfe6c1'
+md5sums=('e23d5ce36687afa5dbf7469ad8dbaa1c'
+         '62245248337d69eb74af40a98c67a80d'
+         '38440ef4a8c52fae52c02e7b17698e9f'
+         '62016c2311ad894a145e2100074c5c65'
+         '7bb0eb2d0fb06666bedd4dc2cdbaa02c'
+         'ceb4743e81f96a78c7e6e9fdfae50ccb'
+         '3a9da57d484c6bcdcd620f0931827a24'
+         'd1ab6fc88aeb28013d496231b3c63682'
+         '6abeec83b3a5f5ea2676fe03ea97df73'
+         '10a0febbe2af946a12137cb574bd676b'
+         '966ddd9affd0237bf9fe7298eb26bfe5'
+         '32eed86641825eaed7e6f78c14cc19d8'
+         '21b75ae79dcb0994f7fd99f5062a8ef9'
+         '854888245f29013be06f762c6162a5b2'
+         '267d9dc5a1ec7232a2849cfad322209c'
+         '20ee31e45f12dca4c119af82b73baf87'
          '4f2379ed84258050edb858ee8d281678'
          '61c5ff73c136ed07a7aadbf58db3d96a'
          '584777ae88bce2c5659960151b64c7d8'
@@ -68,8 +76,12 @@ prepare() {
   git apply ../0005-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch
   git apply ../0006-set-default-cubietruck-led-triggers.patch
   git apply ../0007-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch
-  git apply ../0008-disable-USB3-port-on-ODROID-XU.patch
-  git apply ../0009-ARM-dove-enable-ethernet-on-D3Plug.patch
+  git apply ../0008-ARM-dove-enable-ethernet-on-D3Plug.patch
+  git apply ../0009-power-add-power-sequence-library.patch
+  git apply ../0010-usb-core-add-power-sequence-handling-for-USB-devices.patch
+  git apply ../0011-ARM-dts-imx6qdl-Enable-usb-node-children-with-reg.patch
+  git apply ../0012-ARM-dts-imx6qdl-udoo.dtsi-fix-onboard-USB-HUB-proper.patch
+  git apply ../0013-ARM-dts-imx6q-evi-Fix-onboard-hub-reset-line.patch
 
   cat "${srcdir}/config" > ./.config
 
@@ -218,10 +230,6 @@ _package-headers() {
 
   cp arch/${KARCH}/kernel/asm-offsets.s "${pkgdir}/usr/lib/modules/${_kernver}/build/arch/${KARCH}/kernel/"
 
-  # add docbook makefile
-  install -D -m644 Documentation/DocBook/Makefile \
-    "${pkgdir}/usr/lib/modules/${_kernver}/build/Documentation/DocBook/Makefile"
-
   # add dm headers
   mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/md"
   cp drivers/md/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/md"
@@ -236,10 +244,6 @@ _package-headers() {
 
   # add dvb headers for external modules
   # in reference to:
-  # http://bugs.archlinux.org/task/9912
-  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/dvb-core"
-  cp drivers/media/dvb-core/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/dvb-core/"
-  # and...
   # http://bugs.archlinux.org/task/11194
   mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/include/config/dvb/"
   cp include/config/dvb/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/include/config/dvb/"

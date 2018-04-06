@@ -3,25 +3,25 @@
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - added switches for our architectures
+#  - don't build stdlib with race detector (x86 only)
 
-pkgname=go
+pkgbase=go
+pkgname=(go go-pie)
 epoch=2
-pkgver=1.8.1
-pkgrel=2
-pkgdesc='Core compiler tools for the Go programming language'
-arch=(i686 x86_64)
+pkgver=1.10.1
+pkgrel=1
+arch=(x86_64)
 url='http://golang.org/'
 license=(BSD)
 makedepends=(git go)
-options=(!strip staticlibs)
-_commit=a4c18f063b6659079ca2848ca217a0587dabc001
-source=(git+https://go.googlesource.com/go#commit=$_commit)
-md5sums=('SKIP')
+source=(https://storage.googleapis.com/golang/go$pkgver.src.tar.gz
+        default-buildmode-pie.patch)
+sha256sums=('589449ff6c3ccbff1d391d4e7ab5bb5d5643a5a41a04c99315e55c16bbf73ddc'
+            '9d2f0d201d4e002d74f548cc82bd131139bab5dd62191004c71dd430fdc1666d')
 
 export GOOS=linux
 case "$CARCH" in
   x86_64) export GOARCH=amd64 ;;
-  i686) export GOARCH=386 GO386=387 ;;
   arm) export GOARCH=arm GOARM=5 ;;
   armv6h) export GOARCH=arm GOARM=6 ;;
   armv7h) export GOARCH=arm GOARM=7 ;;
@@ -29,36 +29,44 @@ case "$CARCH" in
 esac
 export GOROOT_FINAL=/usr/lib/go
 export GOROOT_BOOTSTRAP=/usr/lib/go
+export GOCACHE=off
+
+prepare() {
+  cp -r $pkgbase ${pkgbase}-pie
+
+  cd ${pkgbase}-pie
+  patch -p1 -i "$srcdir"/default-buildmode-pie.patch
+}
 
 build() {
-  export GOROOT="$srcdir/$pkgname"
-  export GOBIN="$GOROOT/bin"
   export GOPATH="$srcdir/"
 
-  cd $pkgname/src
-  ./make.bash --no-clean
+  for _pkgname in ${pkgname[@]}; do
+    export GOROOT="$srcdir/$_pkgname"
+    export GOBIN="$GOROOT/bin"
+
+    cd "$srcdir/$_pkgname/src"
+    ./make.bash --no-clean -v
+
+    PATH="$GOBIN:$PATH" go install -v -buildmode=shared std
+    #PATH="$GOBIN:$PATH" go install -v -race std
+  done
 }
 
 check() {
-  export GOROOT="$srcdir/$pkgname"
+  # Run test suite only for unpatched Go as it expects non-PIE ldBuildmode
+  export GOROOT="$srcdir/$pkgbase"
   export GOBIN="$GOROOT/bin"
-  export PATH="$srcdir/$pkgname-$pkgver/bin:$PATH"
+  export PATH="$srcdir/$pkgbase/bin:$PATH"
   export GO_TEST_TIMEOUT_SCALE=2
 
-  # The cgo_test and race tests fail via run.bash but not if run manually.
-  # Assume that five "failed" messages are okay and just re-run failed tests.
-  cd $pkgname/src
-  ./run.bash --no-rebuild -v -v -v -k |& tee run.log
-  if (( $(grep -c Failed: run.log) > 5 )) && grep -q FAILED run.log; then
-    return 1
-  fi
-
-  go tool dist test -v -v -v -run=^cgo_test$
-  go tool dist test -v -v -v -run=^race$
+  cd $pkgbase/src
+  ./run.bash --no-rebuild -v -v -v -k 
 }
 
-package() {
-  cd $pkgbase
+_package() {
+  options=(!strip staticlibs)
+  cd "$srcdir/$1"
 
   install -d "$pkgdir/usr/bin" "$pkgdir/usr/lib/go" "$pkgdir/usr/share/doc/go"
   cp -a bin pkg src lib misc "$pkgdir/usr/lib/go"
@@ -73,4 +81,20 @@ package() {
 
   rm -rf "$pkgdir/usr/lib/go/pkg/bootstrap"
   rm -rf "$pkgdir/usr/lib/go/pkg/tool/*/api"
+}
+
+package_go() {
+  pkgdesc='Core compiler tools for the Go programming language'
+  provides=(go-pie)
+  conflicts=(go-pie)
+
+  _package $pkgname
+}
+
+package_go-pie() {
+  pkgdesc='Core compiler tools for the Go programming language (with PIE enabled by default)'
+  provides=(go)
+  conflicts=(go)
+
+  _package $pkgname
 }

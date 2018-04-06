@@ -10,12 +10,12 @@
 
 pkgbase=bind
 pkgname=(bind bind-tools)
-_pkgver=9.11.1
+_pkgver=9.12.1
 pkgver=${_pkgver//-/.}
 pkgrel=1
 url='https://www.isc.org/software/bind/'
-license=('custom:ISC')
-arch=('i686' 'x86_64')
+license=('MPL2')
+arch=('x86_64')
 options=('!emptydirs' '!makeflags')
 makedepends=('libcap' 'libxml2' 'zlib' 'krb5' 'e2fsprogs' 'openssl' 'readline'
  'idnkit' 'geoip' 'dnssec-anchors' 'python' 'json-c' 'python-ply' 'libseccomp')
@@ -32,7 +32,7 @@ source=("https://ftp.isc.org/isc/bind9/${_pkgver}/bind-${_pkgver}.tar.gz"{,.asc}
         'localhost.ip6.zone'
         '127.0.0.zone'
         'empty.zone')
-sha1sums=('9ed24ef251c724fef7fb0dd5484947ddb351195e'
+sha1sums=('40538dcf8e4be7f02fefeafc3fa05eda0949bb57'
           'SKIP'
           'c5a2bcd9b0f009ae71f3a03fbdbe012196962a11'
           '9537f4835a1f736788d0733c7996a10db2d4eee4'
@@ -96,7 +96,8 @@ package_bind() {
           'var/named/empty.zone')
 
   cd "bind-$_pkgver"
-  install -Dm644 COPYRIGHT "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -dm755 "$pkgdir/usr/share/licenses/$pkgname/"
+  install -Dm644 LICENSE COPYRIGHT "$pkgdir/usr/share/licenses/$pkgname/"
   for _d in bin/{check,confgen,named,rndc}; do
     (cd "$_d" && make DESTDIR="$pkgdir" install)
   done

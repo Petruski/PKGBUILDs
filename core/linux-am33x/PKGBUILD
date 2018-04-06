@@ -4,12 +4,12 @@
 buildarch=4
 
 pkgbase=linux-am33x
-_srcname=linux-4.11
+_srcname=linux-4.15
 _kernelname=${pkgbase#linux}
 _desc="TI AM335x Beaglebone (Black)"
-pkgver=4.11.1
+pkgver=4.15.14
 pkgrel=1
-rcnrel=bone2
+rcnrel=bone4
 arch=('armv7h')
 url="http://www.kernel.org/"
 license=('GPL2')
@@ -20,13 +20,19 @@ source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
         "http://rcn-ee.com/deb/sid-armhf/v${pkgver}-${rcnrel}/patch-${pkgver%.0}-${rcnrel}.diff.gz"
         "git+https://github.com/RobertCNelson/bb.org-overlays.git"
         '0001-add-lcd-cape-for-chiliboard.patch'
-        'config')
-md5sums=('251a5deee0fa6daf3f356b1bbda9eab8'
-         '947496600f57dfb4431e023816048870'
-         '19d62067637451796bc218c30927161f'
+        '0001-enable-dtc-1.4.5-flags.patch'
+        'config'
+        'linux.preset'
+        '99-linux.hook')
+md5sums=('0d701ac1e2a67d47ce7127432df2c32b'
+         '4d6a3492eccac9d609a8f080ea0ea8d6'
+         'f345f9b08dc58f32adb9b84570d9bb3c'
          'SKIP'
-         'dc780fbf3d4d1175a94232d7ba1e3cb3'
-         '38a10ca0b7029da25c6500fa71edd740')
+         'ee16bcdbbf978e714455933ecd6dd8fe'
+         '5698870a716fed205215d258cc71e296'
+         'be6381afc6feed12caac32045194b110'
+         '78ccc998f27eec49a9d5490218b1b1ab'
+         '79fa396e3f9a09a85156d6d7c2d34b58')
 
 prepare() {
   cd "${srcdir}/${_srcname}"
@@ -47,6 +53,9 @@ prepare() {
 
   # don't run depmod on 'make install'. We'll do this ourselves in packaging
   sed -i '2iexit 0' scripts/depmod.sh
+
+  cd ../bb.org-overlays
+  git apply ../0001-enable-dtc-1.4.5-flags.patch
 }
 
 build() {
@@ -87,6 +96,7 @@ _package() {
   pkgdesc="The Linux Kernel and modules - ${_desc}"
   depends=('coreutils' 'linux-firmware' 'kmod' 'mkinitcpio>=0.7')
   optdepends=('crda: to set the correct wireless channels of your country')
+  backup=("etc/mkinitcpio.d/${pkgbase}.preset")
   provides=('kernel26' "linux=${pkgver}")
   conflicts=('linux')
   replaces=('linux-ti')
@@ -111,6 +121,17 @@ _package() {
     -e  "s/KERNEL_NAME=.*/KERNEL_NAME=${_kernelname}/g" \
     -e  "s/KERNEL_VERSION=.*/KERNEL_VERSION=${_kernver}/g" \
     -i "${startdir}/${pkgname}.install"
+
+  # install mkinitcpio preset file for kernel
+  install -D -m644 "${srcdir}/linux.preset" "${pkgdir}/etc/mkinitcpio.d/${pkgbase}.preset"
+  sed \
+    -e "1s|'linux.*'|'${pkgbase}'|" \
+    -e "s|ALL_kver=.*|ALL_kver=\"${_kernver}\"|" \
+    -i "${pkgdir}/etc/mkinitcpio.d/${pkgbase}.preset"
+
+  # install pacman hook for initramfs regeneration
+  sed "s|%PKGBASE%|${pkgbase}|g" "${srcdir}/99-linux.hook" |
+    install -D -m644 /dev/stdin "${pkgdir}/usr/share/libalpm/hooks/99-${pkgbase}.hook"
 
   # remove build and source links
   rm -f "${pkgdir}"/lib/modules/${_kernver}/{source,build}
@@ -178,10 +199,6 @@ _package-headers() {
   cp arch/${KARCH}/Makefile "${pkgdir}/usr/lib/modules/${_kernver}/build/arch/${KARCH}/"
 
   cp arch/${KARCH}/kernel/asm-offsets.s "${pkgdir}/usr/lib/modules/${_kernver}/build/arch/${KARCH}/kernel/"
-
-  # add docbook makefile
-  install -D -m644 Documentation/DocBook/Makefile \
-    "${pkgdir}/usr/lib/modules/${_kernver}/build/Documentation/DocBook/Makefile"
 
   # add dm headers
   mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/md"

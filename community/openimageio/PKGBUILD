@@ -3,21 +3,32 @@
 # Maintainer: Sven-Hendrik Haase <sh@lutzhaase.com>
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
-#  - removed intel-tbb from deps, set -DUSE_TBB=0
+#  - removed intel-tbb from deps
+#  - patch to explicitly link against libatomic for v5/v6
 
 pkgname=openimageio
-pkgver=1.7.13
+pkgver=1.8.9
 pkgrel=2
 pkgdesc="A library for reading and writing images, including classes, utilities, and applications"
-arch=(i686 x86_64)
+arch=(x86_64)
 url="http://www.openimageio.org/"
 license=('custom')
 depends=('openexr' 'boost-libs' 'jasper' 'glew' 'libtiff' 'opencolorio' 'openssl' 'libpng')
 makedepends=('cmake' 'qt4' 'python2' 'boost' 'mesa' 'git' 'freetype2' 'fontconfig' 'libxrender')
 optdepends=('qt4: iv image viewer'
             'python2: bindings support')
-source=(git+git://github.com/OpenImageIO/oiio.git#tag=Release-${pkgver})
-md5sums=('SKIP')
+source=(git+git://github.com/OpenImageIO/oiio.git#tag=Release-${pkgver}
+        atomic.patch)
+md5sums=('SKIP'
+         'a495ba4917d4a100dab54738c092e029')
+
+prepare() {
+  cd oiio
+
+  if [[ $CARCH == arm || $CARCH == armv6h ]]; then
+    patch -p1 -i ../atomic.patch
+  fi
+}
 
 build() {
   cd oiio
@@ -31,11 +42,12 @@ build() {
       -DUSE_PYTHON3=ON \
       -DUSE_OPENSSL=ON \
       -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_INSTALL_LIBDIR=lib \
       -DPYLIB_INSTALL_DIR=lib/python2.7/site-packages \
       -DPYLIB3_INSTALL_DIR=lib/python3.6/site-packages \
       -DOIIO_BUILD_TESTS=ON \
       -DOIIO_BUILD_TOOLS=ON \
-      -DUSE_TBB=0
+      -DSTOP_ON_WARNING=OFF
   make
 }
 

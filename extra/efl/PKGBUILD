@@ -4,13 +4,14 @@
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - configure with --disable-neon for !aarch64
+#  - aarch64: depend on lua52, configure with --enable-lua-old
 
 pkgbase=efl
 pkgname=('efl' 'efl-docs')
-pkgver=1.18.4
-pkgrel=3
+pkgver=1.20.7
+pkgrel=1
 pkgdesc="Enlightenment Foundation Libraries"
-arch=('i686' 'x86_64')
+arch=('x86_64')
 url="https://www.enlightenment.org"
 license=('BSD' 'LGPL2.1' 'GPL2' 'custom')
 depends=('bullet' 'libjpeg-turbo' 'gst-plugins-base'
@@ -18,25 +19,18 @@ depends=('bullet' 'libjpeg-turbo' 'gst-plugins-base'
          'libxinerama' 'libxrandr' 'libxss' 'libinput'
          'libxcursor' 'libxp' 'libwebp' 'shared-mime-info'
          'libxkbcommon' 'wayland' 'lz4' 'openjpeg' 'avahi'
-         'libspectre' 'libraw' 'librsvg')
+         'libspectre' 'libraw' 'librsvg' 'wayland-protocols'
+	 'mesa')
+depends_aarch64=('lua52')
 optdepends=('python2: einabench-cmp' 'libreoffice: thumbnailing for DOC/PPT/XLS files')
 makedepends=('doxygen' 'python' 'texlive-core' 'ghostscript' 'imagemagick')
 options=('!emptydirs')
-source=(https://download.enlightenment.org/rel/libs/${pkgname}/$pkgname-$pkgver.tar.xz
-        eina_doxygen.patch
-        efl-1.18.2-openssl-1.1.patch)
-sha256sums=('39ebc07e37437d6ecdeb0f645783484e28a882b38f7e619ad12c2bf9b5548025'
-            '2a83b636a4e897ea9445b42de98dbf8514a920c3765648b0c27f7366ad95cb87'
-            'fa8e9d0b4f8ec36a40354f2c7c3e2bef055ab7301317437e3a6c5fd01152e9c3')
+source=(https://download.enlightenment.org/rel/libs/${pkgname}/$pkgname-$pkgver.tar.xz)
+sha512sums=('c1bf18b74316cf9bd0bc16635c216ca0d8005b2ded1c014b22590388e37368343e5e5318f526dcb042cfce8ab2c7a82655e4718cbcac5dd1ed0d2522a7a2d7de')
 
 prepare() {
   cd "${srcdir}/${pkgname}-${pkgver}"
   sed -i 's/env python$/&2/' src/scripts/eina/eina-bench-cmp
-
-  # fix docs building
-  patch -Np0 -i ${srcdir}/eina_doxygen.patch
-
-  patch -Np1 -i ../efl-1.18.2-openssl-1.1.patch
 }
 
 build() {
@@ -45,6 +39,7 @@ build() {
   export CFLAGS="$CFLAGS -fvisibility=hidden"
 
   [[ $CARCH != "aarch64" ]] && CONFIG="--disable-neon"
+  [[ $CARCH == "aarch64" ]] && CONFIG="--enable-lua-old"
 
   ./configure --prefix=/usr \
   --disable-static --disable-tslib --enable-fb \
