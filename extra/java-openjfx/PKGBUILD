@@ -14,8 +14,8 @@ buildarch=4
 pkgbase=java-openjfx
 pkgname=('java-openjfx' 'java-openjfx-doc' 'java-openjfx-src')
 _java_ver=8
-_jdk_update=131
-_jdk_build=11
+_jdk_update=162
+_jdk_build=12
 _hgtag=${_java_ver}u${_jdk_update}-b${_jdk_build}
 pkgver=${_java_ver}.u${_jdk_update}
 pkgrel=1
@@ -38,34 +38,44 @@ source=(http://hg.openjdk.java.net/openjfx/8u-dev/rt/archive/${_hgtag}.tar.bz2
         09-fix-conflicting-uchar32-typedef.patch
         10-javadoc-locale.patch
         11-icu-dynamic-linking.patch
+        fix-arm64-build.patch
+        fix-arm32-build.patch
         15-fix-javadoc-refererences.diff
         16-reproducible-build-timestamp.patch
         17-gcc-compatibility.patch
         19-disable-webkit-sampling-profiler.patch
-        fix-arm32-build.patch
-        fix-arm64-build.patch
-        openjfx-icu59.patch)
+        21-gcc7-compatibility.patch
+        22-JDK-8185792-accented-characters-support.patch
+        23-webcore-linker-flags.patch
+        24-disable-buildSrc-tests.patch
+        25-webkit-debug-level.patch
+        26-disable-webkit-jit-for-armv4.patch)
 
-sha256sums=('035e35c90557ea0d82cebf87a7d54164b4b75c3064b98f990f18a14db303bddb'
+sha256sums=('81e32986bb4df1b5924520bd26b107041800c452aa3b054d82f982439cc9609f'
             '1d09385ac23d755aec079954247365de3875507641f5ecd7bd3511ebf3fa9e3c'
             'a342bbfa15fd18e2482287da4959588f45a41b60910970a16e6d97959aea5703'
-            'd2c8f9802b7395acb08dca1da107a15187d01a3e9e3a5ad04d57d824ae8829c0'
-            '73f5e92341eade6c7a9b9122a298382f684db52c70bfe630ea727fdda28c3d9b'
+            'd58fd16ec1f682998fee4dcaf182e286896ec9d9d30328c7cec5acea61698f28'
+            'be26d05cd315ce7c9cff395bad16a78f6391808384f1a59756079395f24a2670'
             '6080df3e4a091d07d9ee60cffa3df6e0334ddbf3751b4defb3a88bad65295429'
             '1132cac7835074395b467e49f15e10ac8e9c5ac2512c18f58cf6089b33b766ea'
-            '0fec42ecc34372a192b1f2bd7f3ab7d2c39da39367c11d1a242c3756e8c77aae'
-            'cca93c5ef794aa0c23aa509b6e7403dab0f4e2b316ccfd40fb7aebd966b98616'
-            '4c8ac9ec7d86e6dea90f661bbba86151dd195f83ab4b08592fd91a49c3f64828'
+            'b6122749f208772c05bf282f371e86f4b6c474998b37cdbcdd466944b52d8aff'
+            '0dee35ef6bf51237e34a504336e30e592acae740261d90147a8bed76249b08e0'
+            '8b6dd939292178743a3e99bfcb5b3a66557de86bf744455fd15fca4be26621b7'
             'fba880e7b68092bc3f16c793966f4319d62622bcc036e64292b6885507663252'
-            '6250b1893c971383eb5cf28174353c3df8bff551bad42be576a7a89ded576cef'
+            '5c327b2e5554948b3db3764fc130943f8ad4c56cd8a2013f7df222456811214a'
             '1341edceae68a020ba1c6f96c063164c6230e23386d846c0631d4eb56ede4cd0'
+            'fc8ed01b14be88269a6a637b4f134045129289c3cfced8b2e18b9989b6ca40a5'
+            '02fd5050ee5ee70b84ad804a1321ece2468bc136aff0f1dbe3a8308c22371ff8'
             '661aeec15b9fdcb9eeab6d1d901ee98572ee76db8df301b986cbbabd7dda6420'
-            '0e839031eb9ad2e151808974a645d27c42867570f42f4d80f4afc775a0e12872'
+            '58585786e43ff376ea0aa132419f3cfc4e9620410852a74d8e38d7dad23172ea'
             '864967467efeaffdabe1e60b7cfd0a27ce93be55ef45ef9993790219ad164554'
-            'd03c618fe39d9cb1c878188392ec0298684cba9329641b794663bf0f672f5d22'
-            '0a998215d340fbcf3f77ed888048760ea52d4160cfb716e4bb211decec249860'
-            'e5eb80e9d1487519aaf3d53cc64f62be5d2e29fe8a5d108b6df97c5cb2828d0b'
-            '145b2c985547b082faeb4f310b97b7e4bd48223e33203f0dda03081f9973c8d4')
+            'd742273b4f426b2d1c5c590b4fdd8065609e7b90aa351924fe19c9780b70c8ec'
+            'e0fd92d8e5d634f3cb1f3f83ad097077285832cea91894c2de6d449458852c18'
+            '629c388ecac64730257a66f671f8973e1c8a627fc2046130207668dc746b1a46'
+            'b3be297160d212c8851c90f7009712412e75d59966bdf9d0ad662d401aa5b354'
+            '144c1e47c3fb06edf736f4e41f2269351ce0a2ea7d99fcdcc3a54be1305bc610'
+            '412282d7c2eebc09124c0d745d9b769403248832d408f57fe9588eacc72c8410'
+            '1fba2f17eeb53dfd294999ce5fab878b207aeefa266a4787d09c12bf7962a95f')
 
 _openjdk8dir="/usr/lib/jvm/java-8-openjdk"
 
@@ -77,22 +87,28 @@ esac
 
 prepare() {
   cd "rt-${_hgtag}"
-  for p in 01-skip-verify-java.patch \
-      02-use-system-libraries.patch \
-      03-buildflags.patch \
-      05-set-antlr-timeout.patch \
-      06-disable-architecture-verification.patch \
-      07-disable-assembler-on-unsupported-archs.patch \
-      08-disable-sse2.patch \
-      09-fix-conflicting-uchar32-typedef.patch \
-      10-javadoc-locale.patch \
-      11-icu-dynamic-linking.patch \
-      fix-arm64-build.patch \
-      fix-arm32-build.patch \
-      15-fix-javadoc-refererences.diff \
-      17-gcc-compatibility.patch \
-      19-disable-webkit-sampling-profiler.patch \
-      openjfx-icu59.patch ; do
+  for p in \
+    01-skip-verify-java.patch \
+    02-use-system-libraries.patch \
+    03-buildflags.patch\
+    05-set-antlr-timeout.patch\
+    06-disable-architecture-verification.patch\
+    07-disable-assembler-on-unsupported-archs.patch\
+    08-disable-sse2.patch\
+    09-fix-conflicting-uchar32-typedef.patch\
+    10-javadoc-locale.patch\
+    11-icu-dynamic-linking.patch\
+    fix-arm64-build.patch\
+    fix-arm32-build.patch\
+    15-fix-javadoc-refererences.diff\
+    17-gcc-compatibility.patch\
+    19-disable-webkit-sampling-profiler.patch\
+    21-gcc7-compatibility.patch\
+    22-JDK-8185792-accented-characters-support.patch\
+    23-webcore-linker-flags.patch\
+    24-disable-buildSrc-tests.patch\
+    25-webkit-debug-level.patch\
+    26-disable-webkit-jit-for-armv4.patch; do
     patch -p1 < "${srcdir}/${p}"
   done
 }
