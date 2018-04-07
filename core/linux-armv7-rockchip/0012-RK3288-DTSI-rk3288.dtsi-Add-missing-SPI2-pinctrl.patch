@@ -1,0 +1,31 @@
+From 3a3875889dabf2edb28346bad62df2b58b1324cb Mon Sep 17 00:00:00 2001
+From: Myy Miouyouyou <myy@miouyouyou.fr>
+Date: Thu, 19 Oct 2017 21:24:47 +0200
+Subject: [PATCH 12/33] RK3288: DTSI: rk3288.dtsi: Add missing SPI2 pinctrl
+
+The spi2_cs1 pin reference is missing in the spi2 first pin control
+definition.
+
+This patch is taken from the patches provided by the ARMbian team.
+
+Signed-off-by: Myy Miouyouyou <myy@miouyouyou.fr>
+---
+ arch/arm/boot/dts/rk3288.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index ba7d561f06d2..33b067afd13c 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -334,7 +334,7 @@
+ 		dma-names = "tx", "rx";
+ 		interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
+ 		pinctrl-names = "default";
+-		pinctrl-0 = <&spi2_clk &spi2_tx &spi2_rx &spi2_cs0>;
++		pinctrl-0 = <&spi2_clk &spi2_tx &spi2_rx &spi2_cs0 &spi2_cs1>;
+ 		reg = <0x0 0xff130000 0x0 0x1000>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-- 
+2.16.2
+

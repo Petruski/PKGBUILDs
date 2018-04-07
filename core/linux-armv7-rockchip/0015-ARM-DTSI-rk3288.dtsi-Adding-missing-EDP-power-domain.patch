@@ -1,0 +1,27 @@
+From 314606ab2a947377f41ae0d8878a25b47068c8e1 Mon Sep 17 00:00:00 2001
+From: Myy Miouyouyou <myy@miouyouyou.fr>
+Date: Thu, 19 Oct 2017 21:43:51 +0200
+Subject: [PATCH 15/33] ARM: DTSI: rk3288.dtsi: Adding missing EDP power domain
+
+Imported from Rockchip 4.4 kernel patches.
+
+Signed-off-by: Myy Miouyouyou <myy@miouyouyou.fr>
+---
+ arch/arm/boot/dts/rk3288.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index 06ea279fd3ae..eb34aed3a7b7 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -1160,6 +1160,7 @@
+ 		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cru SCLK_EDP>, <&cru PCLK_EDP_CTRL>;
+ 		clock-names = "dp", "pclk";
++		power-domains = <&power RK3288_PD_VIO>;
+ 		phys = <&edp_phy>;
+ 		phy-names = "dp";
+ 		resets = <&cru SRST_EDP>;
+-- 
+2.16.2
+

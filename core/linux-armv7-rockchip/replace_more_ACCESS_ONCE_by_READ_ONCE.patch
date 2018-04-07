@@ -1,0 +1,77 @@
+diff -ruN a/drivers/gpu/arm/midgard/ipa/mali_kbase_ipa_simple.c b/drivers/gpu/arm/midgard/ipa/mali_kbase_ipa_simple.c
+--- a/drivers/gpu/arm/midgard/ipa/mali_kbase_ipa_simple.c	2018-01-13 23:26:00.000000000 +0100
++++ b/drivers/gpu/arm/midgard/ipa/mali_kbase_ipa_simple.c	2018-02-02 09:20:27.904897390 +0100
+@@ -43,7 +43,7 @@
+ 	struct thermal_zone_device *tz,
+ 	unsigned long *temp)
+ {
+-	*temp = ACCESS_ONCE(dummy_temp);
++	*temp = READ_ONCE(dummy_temp);
+ 	return 0;
+ }
+ 
+@@ -54,7 +54,7 @@
+ 	struct thermal_zone_device *tz,
+ 	int *temp)
+ {
+-	*temp = ACCESS_ONCE(dummy_temp);
++	*temp = READ_ONCE(dummy_temp);
+ 	return 0;
+ }
+ #endif
+@@ -68,7 +68,7 @@
+ 
+ void kbase_simple_power_model_set_dummy_temp(int temp)
+ {
+-	ACCESS_ONCE(dummy_temp) = temp;
++	WRITE_ONCE(dummy_temp, temp);
+ }
+ KBASE_EXPORT_TEST_API(kbase_simple_power_model_set_dummy_temp);
+ 
+@@ -155,7 +155,7 @@
+ #endif
+ 
+ 	while (!kthread_should_stop()) {
+-		struct thermal_zone_device *tz = ACCESS_ONCE(model_data->gpu_tz);
++		struct thermal_zone_device *tz = READ_ONCE(model_data->gpu_tz);
+ 
+ 		if (tz) {
+ 			int ret;
+@@ -170,9 +170,9 @@
+ 			temp = FALLBACK_STATIC_TEMPERATURE;
+ 		}
+ 
+-		ACCESS_ONCE(model_data->current_temperature) = temp;
++		WRITE_ONCE(model_data->current_temperature, temp);
+ 
+-		msleep_interruptible(ACCESS_ONCE(model_data->temperature_poll_interval_ms));
++		msleep_interruptible(READ_ONCE(model_data->temperature_poll_interval_ms));
+ 	}
+ 
+ 	return 0;
+@@ -186,7 +186,7 @@
+ 	u64 coeff_big;
+ 	int temp;
+ 
+-	temp = ACCESS_ONCE(model_data->current_temperature);
++	temp = READ_ONCE(model_data->current_temperature);
+ 
+ 	/* Range: 0 <= temp_scaling_factor < 2^24 */
+ 	temp_scaling_factor = calculate_temp_scaling_factor(model_data->ts,
+diff -ruN a/drivers/gpu/arm/midgard/ipa/mali_kbase_ipa_vinstr_common.c b/drivers/gpu/arm/midgard/ipa/mali_kbase_ipa_vinstr_common.c
+--- a/drivers/gpu/arm/midgard/ipa/mali_kbase_ipa_vinstr_common.c	2018-01-13 23:26:00.000000000 +0100
++++ b/drivers/gpu/arm/midgard/ipa/mali_kbase_ipa_vinstr_common.c	2018-02-02 09:20:12.638389310 +0100
+@@ -31,11 +31,11 @@
+ #endif
+ 
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 3, 0)
+-#define ktime_get() (ACCESS_ONCE(dummy_time))
++#define ktime_get() (READ_ONCE(dummy_time))
+ 
+ void kbase_ipa_set_dummy_time(ktime_t t)
+ {
+-	ACCESS_ONCE(dummy_time) = t;
++	WRITE_ONCE(dummy_time, t);
+ }
+ KBASE_EXPORT_TEST_API(kbase_ipa_set_dummy_time);
+ #else

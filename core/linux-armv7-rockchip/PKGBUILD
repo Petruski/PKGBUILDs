@@ -1,0 +1,546 @@
+# ARMv7 multi-platform
+# Maintainer: Kevin Mihelich <kevin@archlinuxarm.org>
+
+buildarch=4
+
+_mali_version=r22p0-01rel0
+pkgbase=linux-armv7-rockchip
+_srcname=linux-4.16
+_kernelname=${pkgbase#linux}
+_desc="ARMv7 multi-platform with (Rockchip) Mali support"
+pkgver=4.16.0
+pkgrel=1.1
+rcnrel=armv7-x0
+arch=('armv7h')
+url="http://www.kernel.org/"
+license=('GPL2')
+makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-tools' 'vboot-utils' 'dtc')
+options=('!strip')
+source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
+        #"http://www.kernel.org/pub/linux/kernel/v4.x/patch-${pkgver}.xz"
+        "http://rcn-ee.com/deb/sid-armhf/v${pkgver}-${rcnrel}/patch-${pkgver%.0}-${rcnrel}.diff.gz"
+        "https://developer.arm.com/-/media/Files/downloads/mali-drivers/kernel/mali-midgard-gpu/TX011-SW-99002-${_mali_version}.tgz"
+        '0001-ARM-atags-add-support-for-Marvell-s-u-boot.patch'
+        '0002-ARM-atags-fdt-retrieve-MAC-addresses-from-Marvell-bo.patch'
+        '0003-SMILE-Plug-device-tree-file.patch'
+        '0004-fix-mvsdio-eMMC-timing.patch'
+        '0005-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch'
+        '0006-set-default-cubietruck-led-triggers.patch'
+        '0007-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch'
+        '0008-ARM-dove-enable-ethernet-on-D3Plug.patch'
+        '0009-power-add-power-sequence-library.patch'
+        '0010-usb-core-add-power-sequence-handling-for-USB-devices.patch'
+        '0011-ARM-dts-imx6qdl-Enable-usb-node-children-with-reg.patch'
+        '0012-ARM-dts-imx6qdl-udoo.dtsi-fix-onboard-USB-HUB-proper.patch'
+        '0013-ARM-dts-imx6q-evi-Fix-onboard-hub-reset-line.patch'
+        '0001-drivers-Integrating-Mali-Midgard-video-and-gpu-drive.patch'
+        '0002-clk-rockchip-add-all-known-operating-points-to-the-a.patch'
+        '0003-clk-rockchip-rk3288-prefer-vdpu-for-vcodec-clock-sou.patch'
+        '0004-dw_mmc-The-stupid-ASUS-Reboot-patch.patch'
+        '0005-soc-rockchip-power-domain-export-idle-request.patch'
+        '0006-dts-rk3288-miqi-Enabling-the-Mali-GPU-node.patch'
+        '0007-ARM-dts-rockchip-fix-the-regulator-s-voltage-range-o.patch'
+        '0008-ARM-dts-rockchip-add-the-MiQi-board-s-fan-definition.patch'
+        '0009-ARM-dts-rockchip-add-support-for-1800-MHz-operation-.patch'
+        '0010-Readapt-ARM-dts-rockchip-miqi-add-turbo-mode-operati.patch'
+        '0011-ARM-DTSI-rk3288.dtsi-Missing-GRF-handles.patch'
+        '0012-RK3288-DTSI-rk3288.dtsi-Add-missing-SPI2-pinctrl.patch'
+        '0013-Added-support-for-Tinkerboard-s-SPI-interface.patch'
+        '0014-ARM-DTSI-rk3288.dtsi-Adding-cells-addresses-and-size.patch'
+        '0015-ARM-DTSI-rk3288.dtsi-Adding-missing-EDP-power-domain.patch'
+        '0016-ARM-DTSI-rk3288.dtsi-Adding-missing-VOPB-registers.patch'
+        '0017-ARM-DTSI-rk3288.dtsi-Fixed-the-SPDIF-node-address.patch'
+        '0018-ARM-DTS-rk3288-tinker.dts-Enabling-SDIO-Wireless-and.patch'
+        '0019-ARM-DTS-rk3288-tinker.dts-Improving-the-CPU-max-volt.patch'
+        '0020-ARM-DTS-rk3288-tinker.dts-Setting-up-the-SD-regulato.patch'
+        '0021-ARM-DTS-rk3288-tinker.dts-Defined-the-I2C-interfaces.patch'
+        '0022-ARM-DTS-rk3288-tinker.dts-Defining-the-SPI-interface.patch'
+        '0023-ARM-DTS-rk3288-tinker.dts-Defining-SDMMC-properties.patch'
+        '0024-ARM-DTSI-rk3288.dtsi-Define-the-VPU-services.patch'
+        '0025-ARM-DTS-rk3288-miqi.dts-Enable-the-Video-encoding-MM.patch'
+        '0026-ARM-DTS-rk3288-tinker-Enable-the-Video-encoding-MMU-.patch'
+        '0027-ARM-DTSI-rk3288-firefly-Enable-the-Video-encoding-MM.patch'
+        '0028-ARM-DTSI-rk3288-veyron-Enable-the-Video-encoding-MMU.patch'
+        '0029-midgard-mali_kbase-include-linux-sched-task_stack.h.patch'
+        '0030-Don-t-be-TOO-severe-when-looking-for-the-IRQ-names.patch'
+        '0031-Added-the-new-compatible-list-mainly-used-by-Rockchi.patch'
+        '0032-gpu-arm-Midgard-setup_timer-timer_setup.patch'
+        '0033-drivers-gpu-Arm-Midgard-Replace-ACCESS_ONCE-by-READ_.patch'
+        'replace_more_ACCESS_ONCE_by_READ_ONCE.patch'
+        'config'
+        'kernel.its'
+        'kernel.keyblock'
+        'kernel_data_key.vbprivk'
+        'linux.preset'
+        '99-linux.hook')
+md5sums=('1357fb4ee7c288fdeac5d4e0048f5c18'
+         '5a99ce429b2a0f7be9cf32d6ca147da3'
+         '0da938661ce03a9584775317f42c8e79'
+         '38440ef4a8c52fae52c02e7b17698e9f'
+         '62016c2311ad894a145e2100074c5c65'
+         '7bb0eb2d0fb06666bedd4dc2cdbaa02c'
+         'ceb4743e81f96a78c7e6e9fdfae50ccb'
+         '3a9da57d484c6bcdcd620f0931827a24'
+         'd1ab6fc88aeb28013d496231b3c63682'
+         '6abeec83b3a5f5ea2676fe03ea97df73'
+         '10a0febbe2af946a12137cb574bd676b'
+         '966ddd9affd0237bf9fe7298eb26bfe5'
+         '32eed86641825eaed7e6f78c14cc19d8'
+         '21b75ae79dcb0994f7fd99f5062a8ef9'
+         '854888245f29013be06f762c6162a5b2'
+         '267d9dc5a1ec7232a2849cfad322209c'
+         'c4b38cae58beb908e51cf589e255c0bf'
+         '8e4a7bae35b4bc1425162a821ede4904'
+         '7876e69ed6e5c043bd484ccd50d5ebdd'
+         'f49bec07b4e2f700fcd285ddce240f99'
+         '97b44989ec566bc07bd79abad39c738b'
+         '8fa029ad2cd66f5cb18203c09ca16d50'
+         '959be77c7327bc2fb5b3590058816a4f'
+         '7c4eb5bcf3b42f8d757b75a57be6b7fe'
+         'abf431036102e51bb2a0af59b6f8fbe8'
+         '4ab1fee338eae4beb88a8bfb87ba61c1'
+         '1223652dfbd3ff2642cc5c0a5b7f614f'
+         'a36d73fac776f54609995723d464ecff'
+         '60738e61608076ee0089fe203abf2371'
+         '15623496784877522d465800847ba2d4'
+         'cb3504d78b342901c5ec44c7f6d8fbdb'
+         '04d67788b9116b74c2a7b1fbdf1b9f7f'
+         'd86d04fb7e8d338726eb16e2f2694004'
+         'b4a895363657e05838c7e0d7c5d58ae1'
+         'b12c21b0a97bbea7283753589e3b39aa'
+         'ba685e1849f5812a4a7f001efbb129ab'
+         'a4a9f43f8a9bc5c8b1a041d69bb54593'
+         'bd2b7028b9e67bd17c81a09020f397d1'
+         'a38b44ec3ef640f072a5614afe341d81'
+         '8672636e1dcacecf3da4a8b75c6237ad'
+         'e823d2739f0f1b49c5dbbf3aafb90c6a'
+         '81af5e19af3ed6059a35c30d72a9ab9c'
+         '89e056f59f8bcd6c1703f72131de50e8'
+         'aed0e700d5454d95e0370194a7198538'
+         '23aa234914d1b2e1d3dad956fcb8d199'
+         'f6e85f670a0907176e198fef490abfc2'
+         '44e1cf3aa6f30de2344185a70267b51a'
+         '51ffc02902a10f2c4b0337b83ecbf657'
+         '94ee58c89e499de8caead2903a77bead'
+         '54f13dd65ce55aaad0546e0d0bfdd2dc'
+         'ea24f23a94dd14a80de9dd7d43b95288'
+         '4f2379ed84258050edb858ee8d281678'
+         '61c5ff73c136ed07a7aadbf58db3d96a'
+         '584777ae88bce2c5659960151b64c7d8'
+         'c0468fc94988cfc5d189375bc69c4555'
+         '79fa396e3f9a09a85156d6d7c2d34b58')
+
+prepare() {
+  cd "${srcdir}/${_srcname}"
+
+  # add upstream patch
+  #git apply --whitespace=nowarn ../patch-${pkgver}
+
+  # RCN patch
+  git apply ../patch-${pkgver%.0}-${rcnrel}.diff
+
+  # Mali Kernel-Space drivers
+  cd "../TX011-SW-99002-${_mali_version}"
+  find . -type 'f' -exec chmod 0644 {} ';' && # Every file   should have -rw-r--r-- rights
+  find . -type 'd' -exec chmod 0755 {} ';' && # Every folder should have drwxr-xr-x rights
+  find . -name 'sconscript' -exec rm {} ';' && # Remove sconscript files. Useless.
+  cp -r driver/product/kernel/drivers/gpu/arm  "../${_srcname}/drivers/gpu/" && # Copy the Midgard code
+  cp -r driver/product/kernel/drivers/base/ump "../${_srcname}/drivers/base/" # Copy the Unified Memory Provider code
+  cp driver/product/kernel/include/linux/ump*  "../${_srcname}/include/linux/" # Copy the Unified Memory Provider headers.
+  cd "../${_srcname}"
+
+  # Mali Kernel patches
+  for p in \
+      0001-drivers-Integrating-Mali-Midgard-video-and-gpu-drive.patch \
+      0002-clk-rockchip-add-all-known-operating-points-to-the-a.patch \
+      0003-clk-rockchip-rk3288-prefer-vdpu-for-vcodec-clock-sou.patch \
+      0004-dw_mmc-The-stupid-ASUS-Reboot-patch.patch \
+      0005-soc-rockchip-power-domain-export-idle-request.patch
+  do
+      git apply ../${p}
+  done
+
+  # Mali Kernel DTS patches
+  for p in \
+      0006-dts-rk3288-miqi-Enabling-the-Mali-GPU-node.patch \
+      0007-ARM-dts-rockchip-fix-the-regulator-s-voltage-range-o.patch \
+      0008-ARM-dts-rockchip-add-the-MiQi-board-s-fan-definition.patch \
+      0009-ARM-dts-rockchip-add-support-for-1800-MHz-operation-.patch \
+      0010-Readapt-ARM-dts-rockchip-miqi-add-turbo-mode-operati.patch \
+      0011-ARM-DTSI-rk3288.dtsi-Missing-GRF-handles.patch \
+      0012-RK3288-DTSI-rk3288.dtsi-Add-missing-SPI2-pinctrl.patch \
+      0013-Added-support-for-Tinkerboard-s-SPI-interface.patch \
+      0014-ARM-DTSI-rk3288.dtsi-Adding-cells-addresses-and-size.patch \
+      0015-ARM-DTSI-rk3288.dtsi-Adding-missing-EDP-power-domain.patch \
+      0016-ARM-DTSI-rk3288.dtsi-Adding-missing-VOPB-registers.patch \
+      0017-ARM-DTSI-rk3288.dtsi-Fixed-the-SPDIF-node-address.patch \
+      0018-ARM-DTS-rk3288-tinker.dts-Enabling-SDIO-Wireless-and.patch \
+      0019-ARM-DTS-rk3288-tinker.dts-Improving-the-CPU-max-volt.patch \
+      0020-ARM-DTS-rk3288-tinker.dts-Setting-up-the-SD-regulato.patch \
+      0021-ARM-DTS-rk3288-tinker.dts-Defined-the-I2C-interfaces.patch \
+      0022-ARM-DTS-rk3288-tinker.dts-Defining-the-SPI-interface.patch \
+      0023-ARM-DTS-rk3288-tinker.dts-Defining-SDMMC-properties.patch \
+      0024-ARM-DTSI-rk3288.dtsi-Define-the-VPU-services.patch \
+      0025-ARM-DTS-rk3288-miqi.dts-Enable-the-Video-encoding-MM.patch \
+      0026-ARM-DTS-rk3288-tinker-Enable-the-Video-encoding-MMU-.patch \
+      0027-ARM-DTSI-rk3288-firefly-Enable-the-Video-encoding-MM.patch \
+      0028-ARM-DTSI-rk3288-veyron-Enable-the-Video-encoding-MMU.patch
+  do
+      git apply ../${p}
+  done
+
+  # Mali Patches
+  patch -p1 < ../replace_more_ACCESS_ONCE_by_READ_ONCE.patch
+  
+  for p in \
+      0029-midgard-mali_kbase-include-linux-sched-task_stack.h.patch \
+      0030-Don-t-be-TOO-severe-when-looking-for-the-IRQ-names.patch \
+      0031-Added-the-new-compatible-list-mainly-used-by-Rockchi.patch \
+      0032-gpu-arm-Midgard-setup_timer-timer_setup.patch \
+      0033-drivers-gpu-Arm-Midgard-Replace-ACCESS_ONCE-by-READ_.patch
+  do
+      git apply ../${p}
+  done
+
+
+  # ALARM patches
+  git apply ../0001-ARM-atags-add-support-for-Marvell-s-u-boot.patch
+  git apply ../0002-ARM-atags-fdt-retrieve-MAC-addresses-from-Marvell-bo.patch
+  git apply ../0003-SMILE-Plug-device-tree-file.patch
+  git apply ../0004-fix-mvsdio-eMMC-timing.patch
+  git apply ../0005-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch
+  git apply ../0006-set-default-cubietruck-led-triggers.patch
+  git apply ../0007-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch
+  git apply ../0008-ARM-dove-enable-ethernet-on-D3Plug.patch
+  git apply ../0009-power-add-power-sequence-library.patch
+  git apply ../0010-usb-core-add-power-sequence-handling-for-USB-devices.patch
+  git apply ../0011-ARM-dts-imx6qdl-Enable-usb-node-children-with-reg.patch
+  git apply ../0012-ARM-dts-imx6qdl-udoo.dtsi-fix-onboard-USB-HUB-proper.patch
+  git apply ../0013-ARM-dts-imx6q-evi-Fix-onboard-hub-reset-line.patch
+
+  cat "${srcdir}/config" > ./.config
+
+  # add pkgrel to extraversion
+  sed -ri "s|^(EXTRAVERSION =)(.*)|\1 \2-${pkgrel}|" Makefile
+
+  # don't run depmod on 'make install'. We'll do this ourselves in packaging
+  sed -i '2iexit 0' scripts/depmod.sh
+}
+
+build() {
+  cd "${srcdir}/${_srcname}"
+
+  # get kernel version
+  make prepare
+
+  # load configuration
+  # Configure the kernel. Replace the line below with one of your choice.
+  #make menuconfig # CLI menu for configuration
+  #make nconfig # new CLI menu for configuration
+  #make xconfig # X-based configuration
+  #make oldconfig # using old config from previous kernel version
+  # ... or manually edit .config
+
+  # Copy back our configuration (use with new kernel version)
+  #cp ./.config ../${pkgbase}.config
+
+  ####################
+  # stop here
+  # this is useful to configure the kernel
+  #msg "Stopping build"
+  #return 1
+  ####################
+
+  #yes "" | make config
+
+  # build!
+  make ${MAKEFLAGS} zImage modules dtbs
+}
+
+_package() {
+  pkgdesc="The Linux Kernel and modules - ${_desc}"
+  depends=('coreutils' 'linux-firmware' 'kmod' 'mkinitcpio>=0.7')
+  optdepends=('crda: to set the correct wireless channels of your country')
+  backup=("etc/mkinitcpio.d/${pkgbase}.preset")
+  provides=('kernel26' "linux=${pkgver}" "mali=${_mali_version}")
+  conflicts=('linux')
+  replaces=('linux-mvebu' 'linux-udoo' 'linux-sun4i' 'linux-sun5i' 'linux-sun7i' 'linux-usbarmory' 'linux-wandboard' 'linux-clearfog')
+  install=${pkgname}.install
+
+  cd "${srcdir}/${_srcname}"
+
+  KARCH=arm
+
+  # get kernel version
+  _kernver="$(make kernelrelease)"
+  _basekernel=${_kernver%%-*}
+  _basekernel=${_basekernel%.*}
+
+  mkdir -p "${pkgdir}"/{lib/modules,lib/firmware}
+  make INSTALL_MOD_PATH="${pkgdir}" modules_install
+  make INSTALL_DTBS_PATH="${pkgdir}/boot/dtbs" dtbs_install
+  cp arch/$KARCH/boot/zImage "${pkgdir}/boot/zImage"
+
+  # set correct depmod command for install
+  sed \
+    -e  "s/KERNEL_NAME=.*/KERNEL_NAME=${_kernelname}/g" \
+    -e  "s/KERNEL_VERSION=.*/KERNEL_VERSION=${_kernver}/g" \
+    -i "${startdir}/${pkgname}.install"
+
+  # install mkinitcpio preset file for kernel
+  install -D -m644 "${srcdir}/linux.preset" "${pkgdir}/etc/mkinitcpio.d/${pkgbase}.preset"
+  sed \
+    -e "1s|'linux.*'|'${pkgbase}'|" \
+    -e "s|ALL_kver=.*|ALL_kver=\"${_kernver}\"|" \
+    -i "${pkgdir}/etc/mkinitcpio.d/${pkgbase}.preset"
+
+  # install pacman hook for initramfs regeneration
+  sed "s|%PKGBASE%|${pkgbase}|g" "${srcdir}/99-linux.hook" |
+    install -D -m644 /dev/stdin "${pkgdir}/usr/share/libalpm/hooks/99-${pkgbase}.hook"
+
+  # remove build and source links
+  rm -f "${pkgdir}"/lib/modules/${_kernver}/{source,build}
+  # remove the firmware
+  rm -rf "${pkgdir}/lib/firmware"
+  # make room for external modules
+  ln -s "../extramodules-${_basekernel}${_kernelname:--ARCH}" "${pkgdir}/lib/modules/${_kernver}/extramodules"
+  # add real version for building modules and running depmod from post_install/upgrade
+  mkdir -p "${pkgdir}/lib/modules/extramodules-${_basekernel}${_kernelname:--ARCH}"
+  echo "${_kernver}" > "${pkgdir}/lib/modules/extramodules-${_basekernel}${_kernelname:--ARCH}/version"
+
+  # Now we call depmod...
+  depmod -b "$pkgdir" -F System.map "$_kernver"
+
+  # move module tree /lib -> /usr/lib
+  mkdir -p "${pkgdir}/usr"
+  mv "$pkgdir/lib" "$pkgdir/usr"
+}
+
+_package-headers() {
+  pkgdesc="Header files and scripts for building modules for linux kernel - ${_desc}"
+  provides=("linux-headers=${pkgver}")
+  conflicts=('linux-headers')
+  replaces=('linux-mvebu-headers' 'linux-sun4i-headers' 'linux-sun5i-headers' 'linux-sun7i-headers' 'linux-usbarmory-headers' 'linux-wandboard-headers' 'linux-clearfog-headers')
+
+  install -dm755 "${pkgdir}/usr/lib/modules/${_kernver}"
+
+  cd "${srcdir}/${_srcname}"
+  install -D -m644 Makefile \
+    "${pkgdir}/usr/lib/modules/${_kernver}/build/Makefile"
+  install -D -m644 kernel/Makefile \
+    "${pkgdir}/usr/lib/modules/${_kernver}/build/kernel/Makefile"
+  install -D -m644 .config \
+    "${pkgdir}/usr/lib/modules/${_kernver}/build/.config"
+
+  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/include"
+
+  for i in acpi asm-generic config crypto drm generated keys linux math-emu \
+    media net pcmcia scsi soc sound trace uapi video xen; do
+    cp -a include/${i} "${pkgdir}/usr/lib/modules/${_kernver}/build/include/"
+  done
+
+  # copy arch includes for external modules
+  mkdir -p ${pkgdir}/usr/lib/modules/${_kernver}/build/arch/$KARCH
+  cp -a arch/$KARCH/include ${pkgdir}/usr/lib/modules/${_kernver}/build/arch/$KARCH/
+  for i in dove exynos omap2; do
+    mkdir -p ${pkgdir}/usr/lib/modules/${_kernver}/build/arch/$KARCH/mach-${i}
+    cp -a arch/$KARCH/mach-${i}/include ${pkgdir}/usr/lib/modules/${_kernver}/build/arch/$KARCH/mach-${i}/
+  done
+  for i in omap orion samsung versatile; do
+    mkdir -p ${pkgdir}/usr/lib/modules/${_kernver}/build/arch/$KARCH/plat-${i}
+    cp -a arch/$KARCH/plat-${i}/include ${pkgdir}/usr/lib/modules/${_kernver}/build/arch/$KARCH/plat-${i}/
+  done
+
+  # copy files necessary for later builds, like nvidia and vmware
+  cp Module.symvers "${pkgdir}/usr/lib/modules/${_kernver}/build"
+  cp -a scripts "${pkgdir}/usr/lib/modules/${_kernver}/build"
+
+  # fix permissions on scripts dir
+  chmod og-w -R "${pkgdir}/usr/lib/modules/${_kernver}/build/scripts"
+  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/.tmp_versions"
+
+  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/arch/${KARCH}/kernel"
+
+  cp arch/${KARCH}/Makefile "${pkgdir}/usr/lib/modules/${_kernver}/build/arch/${KARCH}/"
+
+  cp arch/${KARCH}/kernel/asm-offsets.s "${pkgdir}/usr/lib/modules/${_kernver}/build/arch/${KARCH}/kernel/"
+
+  # add dm headers
+  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/md"
+  cp drivers/md/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/md"
+
+  # add inotify.h
+  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/include/linux"
+  cp include/linux/inotify.h "${pkgdir}/usr/lib/modules/${_kernver}/build/include/linux/"
+
+  # add wireless headers
+  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/net/mac80211/"
+  cp net/mac80211/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/net/mac80211/"
+
+  # add dvb headers for external modules
+  # in reference to:
+  # http://bugs.archlinux.org/task/11194
+  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/include/config/dvb/"
+  cp include/config/dvb/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/include/config/dvb/"
+
+  # add dvb headers for http://mcentral.de/hg/~mrec/em28xx-new
+  # in reference to:
+  # http://bugs.archlinux.org/task/13146
+  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/dvb-frontends/"
+  cp drivers/media/dvb-frontends/lgdt330x.h "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/dvb-frontends/"
+  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/i2c/"
+  cp drivers/media/i2c/msp3400-driver.h "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/i2c/"
+
+  # add dvb headers
+  # in reference to:
+  # http://bugs.archlinux.org/task/20402
+  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/usb/dvb-usb"
+  cp drivers/media/usb/dvb-usb/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/usb/dvb-usb/"
+  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/dvb-frontends"
+  cp drivers/media/dvb-frontends/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/dvb-frontends/"
+  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/tuners"
+  cp drivers/media/tuners/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/tuners/"
+
+  # add xfs and shmem for aufs building
+  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/fs/xfs"
+  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/mm"
+
+  # copy in Kconfig files
+  for i in $(find . -name "Kconfig*"); do
+    mkdir -p "${pkgdir}"/usr/lib/modules/${_kernver}/build/`echo ${i} | sed 's|/Kconfig.*||'`
+    cp ${i} "${pkgdir}/usr/lib/modules/${_kernver}/build/${i}"
+  done
+
+  chown -R root.root "${pkgdir}/usr/lib/modules/${_kernver}/build"
+  find "${pkgdir}/usr/lib/modules/${_kernver}/build" -type d -exec chmod 755 {} \;
+
+  # strip scripts directory
+  find "${pkgdir}/usr/lib/modules/${_kernver}/build/scripts" -type f -perm -u+w 2>/dev/null | while read binary ; do
+    case "$(file -bi "${binary}")" in
+      *application/x-sharedlib*) # Libraries (.so)
+        /usr/bin/strip ${STRIP_SHARED} "${binary}";;
+      *application/x-archive*) # Libraries (.a)
+        /usr/bin/strip ${STRIP_STATIC} "${binary}";;
+      *application/x-executable*) # Binaries
+        /usr/bin/strip ${STRIP_BINARIES} "${binary}";;
+    esac
+  done
+
+  # remove unneeded architectures
+  rm -rf "${pkgdir}"/usr/lib/modules/${_kernver}/build/arch/{alpha,arc,arm26,arm64,avr32,blackfin,c6x,cris,frv,h8300,hexagon,ia64,m32r,m68k,m68knommu,metag,mips,microblaze,mn10300,openrisc,parisc,powerpc,ppc,s390,score,sh,sh64,sparc,sparc64,tile,unicore32,um,v850,x86,xtensa}
+}
+
+_package-smileplug() {
+  pkgdesc="The Linux Kernel - ${_desc} - Marvell SMILE Plug"
+  depends=('linux-armv7')
+  provides=('linux-armv7-uimage')
+  conflicts=('linux-armv7-uimage' 'linux-armv7-rc-uimage')
+  replaces=('linux-mvebu-smileplug')
+
+  cd "${srcdir}/${_srcname}"
+
+  mkdir -p "${pkgdir}/boot"
+  cat arch/$KARCH/boot/zImage arch/$KARCH/boot/dts/armada-370-smileplug.dtb > myimage
+  mkimage -A arm -O linux -T kernel -C none -a 0x00008000 -e 0x00008000 -n "${pkgname}" -d myimage "${pkgdir}/boot/uImage"
+}
+
+_package-mirabox() {
+  pkgdesc="The Linux Kernel - ${_desc} - Globalscale Mirabox"
+  depends=('linux-armv7')
+  provides=('linux-armv7-uimage')
+  conflicts=('linux-armv7-uimage' 'linux-armv7-rc-uimage')
+  replaces=('linux-mvebu-mirabox')
+
+  cd "${srcdir}/${_srcname}"
+
+  mkdir -p "${pkgdir}/boot"
+  cat arch/$KARCH/boot/zImage arch/$KARCH/boot/dts/armada-370-mirabox.dtb > myimage
+  mkimage -A arm -O linux -T kernel -C none -a 0x00008000 -e 0x00008000 -n "${pkgname}" -d myimage "${pkgdir}/boot/uImage"
+}
+
+_package-ax3() {
+  pkgdesc="The Linux Kernel - ${_desc} - OpenBlocks AX3-4"
+  depends=('linux-armv7')
+  provides=('linux-armv7-uimage')
+  conflicts=('linux-armv7-uimage' 'linux-armv7-rc-uimage')
+  replaces=('linux-mvebu-ax3')
+
+  cd "${srcdir}/${_srcname}"
+
+  mkdir -p "${pkgdir}/boot"
+  cat arch/$KARCH/boot/zImage arch/$KARCH/boot/dts/armada-xp-openblocks-ax3-4.dtb > myimage
+  mkimage -A arm -O linux -T kernel -C none -a 0x00008000 -e 0x00008000 -n "${pkgname}" -d myimage "${pkgdir}/boot/uImage"
+}
+
+_package-d3plug() {
+  pkgdesc="The Linux Kernel - ${_desc} - Globalscale D3Plug"
+  depends=('linux-armv7')
+  provides=('linux-armv7-uimage')
+  conflicts=('linux-armv7-uimage' 'linux-armv7-rc-uimage')
+  replaces=('linux-d3plug')
+
+  cd "${srcdir}/${_srcname}"
+
+  mkdir -p "${pkgdir}/boot"
+  cat arch/$KARCH/boot/zImage arch/$KARCH/boot/dts/dove-d3plug.dtb > myimage
+  mkimage -A arm -O linux -T kernel -C none -a 0x00008000 -e 0x00008000 -n "${pkgname}" -d myimage "${pkgdir}/boot/uImage"
+}
+
+_package-cubox() {
+  pkgdesc="The Linux Kernel - ${_desc} - SolidRun Cubox (Marvell)"
+  depends=('linux-armv7')
+  provides=('linux-armv7-uimage')
+  conflicts=('linux-armv7-uimage' 'linux-armv7-rc-uimage')
+  #replaces=('linux-cubox')
+
+  cd "${srcdir}/${_srcname}"
+
+  mkdir -p "${pkgdir}/boot"
+  cat arch/$KARCH/boot/zImage arch/$KARCH/boot/dts/dove-cubox.dtb > myimage
+  mkimage -A arm -O linux -T kernel -C none -a 0x00008000 -e 0x00008000 -n "${pkgname}" -d myimage "${pkgdir}/boot/uImage"
+}
+
+_package-chromebook() {
+  pkgdesc="The Linux Kernel - ${_desc} - Chromebooks"
+  depends=('linux-armv7-rockchip')
+  conflicts=('linux-armv7-rc-chromebook')
+  install=${pkgname}.install
+
+  cd "${srcdir}/${_srcname}"
+
+  cp ../kernel.its .
+  mkimage -D "-I dts -O dtb -p 2048" -f kernel.its vmlinux.uimg
+  dd if=/dev/zero of=bootloader.bin bs=512 count=1
+  echo 'console=tty0 init=/sbin/init root=PARTUUID=%U/PARTNROFF=1 rootwait rw noinitrd' > cmdline
+  vbutil_kernel \
+    --pack vmlinux.kpart \
+    --version 1 \
+    --vmlinuz vmlinux.uimg \
+    --arch arm \
+    --keyblock ../kernel.keyblock \
+    --signprivate ../kernel_data_key.vbprivk \
+    --config cmdline \
+    --bootloader bootloader.bin
+
+  mkdir -p "${pkgdir}/boot"
+  cp vmlinux.kpart "${pkgdir}/boot"
+}
+
+_package-odroidc1() {
+  pkgdesc="The Linux Kernel - ${_desc} - ODROID-C1"
+  depends=('linux-armv7')
+  provides=('linux-armv7-uimage')
+  conflicts=('linux-armv7-uimage' 'linux-armv7-rc-uimage')
+
+  cd "${srcdir}/${_srcname}"
+
+  mkdir -p "${pkgdir}/boot"
+  mkimage -A arm -O linux -T kernel -C none -a 0x00208000 -e 0x00208000 -n "${pkgname}" -d arch/$KARCH/boot/zImage "${pkgdir}/boot/uImage"
+}
+
+pkgname=("${pkgbase}" "${pkgbase}-headers" "${pkgbase}-smileplug" "${pkgbase}-mirabox" "${pkgbase}-ax3" "${pkgbase}-d3plug" "${pkgbase}-cubox" "${pkgbase}-chromebook" "${pkgbase}-odroidc1")
+for _p in ${pkgname[@]}; do
+  eval "package_${_p}() {
+    _package${_p#${pkgbase}}
+  }"
+done

@@ -1,0 +1,48 @@
+From a966f6149ead886118aab45f37e47a26ca9b384f Mon Sep 17 00:00:00 2001
+From: Myy Miouyouyou <myy@miouyouyou.fr>
+Date: Tue, 21 Nov 2017 21:54:22 +0100
+Subject: [PATCH 26/33] ARM: DTS: rk3288-tinker: Enable the Video encoding MMU
+ and services
+
+Enable the :
+* VPU MMU;
+* VPU Service;
+* HEVC MMU;
+* HEVC Service;
+for ASUS Tinkerboard devices.
+
+Signed-off-by: Myy Miouyouyou <myy@miouyouyou.fr>
+---
+ arch/arm/boot/dts/rk3288-tinker.dts | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rk3288-tinker.dts b/arch/arm/boot/dts/rk3288-tinker.dts
+index c0bad6038f49..477a29010d13 100644
+--- a/arch/arm/boot/dts/rk3288-tinker.dts
++++ b/arch/arm/boot/dts/rk3288-tinker.dts
+@@ -662,6 +662,22 @@
+ 	status = "okay";
+ };
+ 
++&vpu_mmu {
++	status = "okay";
++};
++
++&vpu_service {
++	status = "okay";
++};
++
++&hevc_mmu {
++	status = "okay";
++};
++
++&hevc_service {
++	status = "okay";
++};
++
+ &wdt {
+ 	status = "okay";
+ };
+-- 
+2.16.2
+
