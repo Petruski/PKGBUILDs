@@ -8,12 +8,13 @@
 #  - build with pulseaudio as sound server, not jack (x86 asm)
 
 pkgname=snd
-pkgver=18.2
+pkgver=18.7
 pkgrel=1
 pkgdesc="An advanced sound editor"
 arch=('x86_64')
 url="https://ccrma.stanford.edu/software/snd/"
 license=('custom:free')
+groups=('pro-audio')
 depends=('pulseaudio' 'fftw' 'gsl' 'gtk3' 'libmpc' 'ruby')
 makedepends=('flac' 'gmp' 'glu' 'ladspa' 'libpulse' 'libxpm' 'mpg123'
 'openmotif' 'speex' 'timidity++' 'vorbis-tools' 'wavpack')
@@ -24,7 +25,7 @@ optdepends=('wavpack: For wav support'
             'timidity++: For MIDI to WAVE support'
             'vorbis-tools: For OGG support')
 source=("https://sourceforge.net/projects/${pkgname}/files/${pkgname}/${pkgver}/${pkgname}-${pkgver}.tar.gz")
-sha512sums=('67a89c80afbb5531541cce88716fd15070dd28e0c531bdeda1a8071069d74b2950cde39b75c29beff4c2c31f2e59adba4f5aa9c13133f4cb9018049b1d6e8707')
+sha512sums=('18d17fa1049c142657989fcc8b2d1aef9e45a1e373b66ac6878de3056835728f41cfd0de4f33fff461044238d9b7e5c8be0bf4702d339702bb1df2157f80bcd1')
 
 build() {
   cd "${pkgname}-${pkgver}"
