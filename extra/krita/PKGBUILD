@@ -1,25 +1,23 @@
-# $Id: PKGBUILD 262594 2016-03-26 20:49:29Z arojas $
 # Maintainer: Antonio Rojas <arojas@archlinux,org>
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - remove makedepend on vc
 
 pkgname=krita
-pkgver=4.0.0
-pkgrel=3
+pkgver=4.1.3
+pkgrel=1
 pkgdesc="Edit and paint images"
 arch=(x86_64)
 url="https://krita.org"
 license=(GPL3)
-depends=(kio kitemmodels gsl libraw exiv2 openexr fftw curl boost-libs giflib hicolor-icon-theme)
-makedepends=(extra-cmake-modules kdoctools python boost eigen poppler-qt5 opencolorio python-pyqt5)
+depends=(kio kitemmodels gsl libraw exiv2 openexr fftw curl boost-libs giflib qt5-declarative hicolor-icon-theme)
+makedepends=(extra-cmake-modules kdoctools boost eigen poppler-qt5 opencolorio python-pyqt5 libheif sip python-sip)
 optdepends=('poppler-qt5: PDF filter' 'ffmpeg: to save animations' 'opencolorio: for the LUT docker'
-            "krita-plugin-gmic: G'MIC plugin" 'python-pyqt5: for the Python plugins')
+            "krita-plugin-gmic: G'MIC plugin" 'python-pyqt5: for the Python plugins' 'libheif: HEIF filter')
 conflicts=(calligra-krita krita-l10n)
 replaces=(calligra-krita krita-l10n)
-source=("https://download.kde.org/stable/krita/$pkgver/$pkgname-$pkgver.tar.gz"{,.sig})
-sha256sums=('5ff1925361c65e5a8ca6949035ef3d1291488b63f0f473dbf62bf70a525d0336'
-            'SKIP')
+source=("https://download.kde.org/stable/krita/$pkgver/$pkgname-$pkgver.tar.gz") # ,.sig} No public key
+sha256sums=('bdbd867423f4823f5271fc9ce34ee05b653d4f95414d65fb055f94a27b33a434')
 validpgpkeys=('05D00A8B73A686789E0A156858B9596C722EA3BD') # Boudewijn Rempt <foundation@krita.org>
 
 prepare() {

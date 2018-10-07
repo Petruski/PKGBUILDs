@@ -4,12 +4,12 @@
 buildarch=4
 
 pkgbase=linux-am33x
-_srcname=linux-4.15
+_srcname=linux-4.18
 _kernelname=${pkgbase#linux}
 _desc="TI AM335x Beaglebone (Black)"
-pkgver=4.15.14
+pkgver=4.18.11
 pkgrel=1
-rcnrel=bone4
+rcnrel=bone11
 arch=('armv7h')
 url="http://www.kernel.org/"
 license=('GPL2')
@@ -24,13 +24,13 @@ source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
         'config'
         'linux.preset'
         '99-linux.hook')
-md5sums=('0d701ac1e2a67d47ce7127432df2c32b'
-         '4d6a3492eccac9d609a8f080ea0ea8d6'
-         'f345f9b08dc58f32adb9b84570d9bb3c'
+md5sums=('bee5fe53ee1c3142b8f0c12c0d3348f9'
+         '35f0d753cd3e1fb905299d8b4af5e7d7'
+         '2a5b2b48204e2b68f3c1f7d20573fcf5'
          'SKIP'
          'ee16bcdbbf978e714455933ecd6dd8fe'
          '5698870a716fed205215d258cc71e296'
-         'be6381afc6feed12caac32045194b110'
+         '07b1349717cbee18cfc6815487be5d8b'
          '78ccc998f27eec49a9d5490218b1b1ab'
          '79fa396e3f9a09a85156d6d7c2d34b58')
 
@@ -214,10 +214,6 @@ _package-headers() {
 
   # add dvb headers for external modules
   # in reference to:
-  # http://bugs.archlinux.org/task/9912
-  mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/dvb-core"
-  cp drivers/media/dvb-core/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/drivers/media/dvb-core/"
-  # and...
   # http://bugs.archlinux.org/task/11194
   mkdir -p "${pkgdir}/usr/lib/modules/${_kernver}/build/include/config/dvb/"
   cp include/config/dvb/*.h "${pkgdir}/usr/lib/modules/${_kernver}/build/include/config/dvb/"

@@ -10,11 +10,10 @@ buildarch=6
 
 pkgname=openssl-cryptodev
 _pkgname=openssl
-_ver=1.1.0f
+_ver=1.1.1
 # use a pacman compatible version scheme
 pkgver=${_ver/[a-z]/.${_ver//[0-9.]/}}
-#pkgver=$_ver
-pkgrel=2
+pkgrel=1
 pkgdesc='The Open Source toolkit for Secure Sockets Layer and Transport Layer Security'
 arch=('arm' 'armv7h')
 url='https://www.openssl.org'
@@ -28,11 +27,9 @@ _cryptodevver=1.9
 
 source=("https://www.openssl.org/source/${_pkgname}-${_ver}.tar.gz"
         'ca-dir.patch'
-        'fs54205.patch'
         "https://github.com/cryptodev-linux/cryptodev-linux/archive/cryptodev-linux-${_cryptodevver}.tar.gz")
-md5sums=('7b521dea79ab159e8ec879d2333369fa'
-         '02b53865fb70faef763e262b4971aa4b'
-         '2f1b34d666894f447241c60191e9cfda'
+md5sums=('7079eb017429e0ffb9efb42bf80ccb21'
+         '182ad163458781ed9bd4b342c5724ece'
          'e5aacd2293cea9c94f71ca2e0b4dea57')
 
 prepare() {
@@ -41,7 +38,6 @@ prepare() {
 	# set ca dir to /etc/ssl by default
 	patch -p0 -i "$srcdir/ca-dir.patch"
 
-	patch -Np1 -i "$srcdir/fs54205.patch"
 	# Copy the header file
 	cp -u ${srcdir}/cryptodev-linux-cryptodev-linux-${_cryptodevver}/crypto/cryptodev.h ${srcdir}/openssl-${_ver}/crypto/
 }

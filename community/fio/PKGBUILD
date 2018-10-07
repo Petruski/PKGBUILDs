@@ -7,21 +7,21 @@
 #  - removed numactl dependency
 
 pkgname=fio
-pkgver=3.5
+pkgver=3.11
 pkgrel=1
 pkgdesc='Scriptable I/O tool for storage benchmarks and drive testing'
 arch=(x86_64)
 url='https://github.com/axboe/fio'
 license=(GPL2)
 # TODO: enable rdma, need to move the libraries from AUR
-depends=(bash libaio python2 glusterfs ceph)
+depends=(bash libaio python2 glusterfs)
 makedepends=(gtk2)
 optdepends=(
   'gtk2: for gfio - fio GUI frontend' 
   'gnuplot: generating plots using fio_generate_plots'
 )
 source=(https://github.com/axboe/fio/archive/fio-$pkgver.zip)
-sha256sums=('f039ad922c7a51f0299ab3073b4890cab02aa1c27200952b2e49e4ff65bedd7f')
+sha256sums=('f8271adb66ad36e5aa282093b337fadf3380fff63ffa6a653dec701fdf99ff0c')
 
 prepare() {
   cd fio-fio-$pkgver
@@ -31,7 +31,7 @@ prepare() {
 
 build() {
   cd fio-fio-$pkgver
-  ./configure --enable-gfio --extra-cflags="$CFLAGS"
+  ./configure --disable-native --enable-gfio --extra-cflags="$CFLAGS"
   make
 }
 
