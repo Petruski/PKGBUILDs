@@ -2,8 +2,8 @@
 
 buildarch=4
 pkgbase=gpu-nvidia-tegra-k1
-_nv_full_release=r21_Release_v6.0
-_nv_version=21.6
+_nv_full_release=r21_Release_v7.0
+_nv_version=21.7
 _nv_release=0
 pkgver="${_nv_version}.${_nv_release}"
 pkgrel=1
@@ -20,7 +20,7 @@ license=('proprietary')
 source=("http://developer.download.nvidia.com/embedded/L4T/${_nv_full_release}/Tegra124_Linux_R${pkgver}_armhf.tbz2"
         51-nvrm.rules
         tegra.conf)
-sha256sums=('7550dc6fd9b9b293cde8b0ca38f91890adcc3d804492264fde813d076180cdc8'
+sha256sums=('676add1e8e6b2fcf76d97f22f38c9d0cbbe8a92342039a85c8a4c87e8c1ce824'
             'bdff89e517cd8cbba5f9e9d960bc79d7c2740bf563ff6aaab789a13a547f08fe'
             '05cf40f5722a33a2bf13631eadb6c49be81f8f70e0bf85db896c71d1a6f519e1')
 
@@ -50,11 +50,11 @@ package_gpu-nvidia-tegra-k1-nvrm() {
               libnvdc.so \
               libnvddk_2d_v2.so \
               libnvddk_vic.so \
-              libnvidia-eglcore.so.21.6 \
-              libnvidia-glcore.so.21.6 \
-              libnvidia-glsi.so.21.6 \
-              libnvidia-rmapi-tegra.so.21.6 \
-              libnvidia-tls.so.21.6 \
+              libnvidia-eglcore.so.${_nv_version} \
+              libnvidia-glcore.so.${_nv_version} \
+              libnvidia-glsi.so.${_nv_version} \
+              libnvidia-rmapi-tegra.so.${_nv_version} \
+              libnvidia-tls.so.${_nv_version} \
               libnvjpeg.so \
               libnvmedia.so \
               libnvmm_camera_v3.so \
