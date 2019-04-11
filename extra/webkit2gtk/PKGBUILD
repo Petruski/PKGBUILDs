@@ -7,48 +7,44 @@
 highmem=1
 
 pkgname=webkit2gtk
-pkgver=2.22.3
+pkgver=2.24.1
 pkgrel=1
 pkgdesc="GTK+ Web content engine library"
 arch=(x86_64)
 url="https://webkitgtk.org/"
 license=(custom)
-depends=(libxt libxslt enchant geoclue2 gst-plugins-base-libs
-         libsecret libwebp harfbuzz-icu gtk3 libnotify hyphen woff2)
-makedepends=(gtk2 gperf gobject-introspection ruby gtk-doc cmake python python2 ninja)
-optdepends=('gtk2: Netscape plugin support'
-            'gst-plugins-base: free media decoding'
+depends=(libxt libxslt enchant gst-plugins-base-libs libsecret libwebp openjpeg2
+         harfbuzz-icu gtk3 libnotify hyphen woff2)
+makedepends=(gperf gobject-introspection ruby gtk-doc cmake python geoclue)
+optdepends=('geoclue: Geolocation support'
             'gst-plugins-good: media decoding'
+            'gst-plugins-bad: media decoding'
             'gst-libav: nonfree media decoding')
 source=(https://webkitgtk.org/releases/webkitgtk-${pkgver}.tar.xz{,.asc})
-sha256sums=('9dfd542902953be9af8ff32bd37fe662ca3d75f7348514ebac15c6252a6ccd72'
+sha256sums=('53cb8eaad2ca4caaae663d68331b83fd27d5bd5f6c5388d6ea3c455e338f396d'
             'SKIP')
 validpgpkeys=('D7FCF61CF9A2DEAB31D81BD3F3D322D0EC4582C3'
               '5AA3BC334FD7E3369E7C77B291C559DBE4C9123B')
 
 prepare() {
-  mkdir build
   cd webkitgtk-$pkgver
-  sed -i '1s/python$/&2/' Tools/gtk/generate-gtkdoc
 }
 
 build() {
-  cd build
-
   # do not use LLINT assembly for v5/v6
   [[ $CARCH == "arm" || $CARCH == "armv6h" ]] && CONFIG="-DENABLE_JIT=OFF"
 
-  cmake ../webkitgtk-$pkgver -G Ninja \
+  cmake -Hwebkitgtk-$pkgver -Bbuild \
     -DPORT=GTK \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr \
     -DCMAKE_SKIP_RPATH=ON \
     -DENABLE_GTKDOC=ON \
+    -DENABLE_PLUGIN_PROCESS_GTK2=OFF \
     -DLIBEXEC_INSTALL_DIR=/usr/lib \
     -DLIB_INSTALL_DIR=/usr/lib \
-    -DPYTHON_EXECUTABLE=/usr/bin/python2 \
     $CONFIG
-  cmake --build .
+  cmake --build build
 }
 
 check() {

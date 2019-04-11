@@ -20,8 +20,8 @@ buildarch=22
 pkgname=('jre8-openjdk-headless' 'jre8-openjdk' 'jdk8-openjdk' 'openjdk8-src')
 pkgbase=java8-openjdk
 _java_ver=8
-_jdk_update=192
-_jdk_build=26
+_jdk_update=212
+_jdk_build=01
 pkgver=${_java_ver}.u${_jdk_update}
 _repo_ver=jdk${_java_ver}u${_jdk_update}-b${_jdk_build}
 pkgrel=1
@@ -44,14 +44,14 @@ source=(jdk8u-${_repo_ver}.tar.gz::${_url_src}/archive/${_repo_ver}.tar.gz
         8143245-pr3548.patch
         8197981-pr3548.patch)
 
-sha256sums=('4d3c656cf27bfd9dd9007ccdee7a36ed1002f3f9ecd8a4b10a2030fab4d3a5c3'
-            'a3e63d3a5fb839a7efa4006068d06265ab6033251b4796a4963c31638040efd5'
-            '702f0e4a391ae1a7e2e0a7c26bff0c1186c4d90ffe87aba3a6e0c6e8e813bf60'
-            '6e7b59a098b4b4bdf3ea4c985d1c90e984f5f8313c402fdc0c02120a135107e9'
-            '9846bcac7b21aea41940702c12e4347eeabc440b02fa35ced0b5b1ce7a645415'
-            '1466776a9e11a7bdc5c4fca327d3551873885c196a6689a5febd6259a8c56ee4'
-            '98cc9e7cf4dfd12ae1c3377e700e9e29b52ce7d9a3e44be3944f15a43fb5066f'
-            '61ca69a5267bbd02d0cb979b022bfb34bde1fb1c45b93ae53944914bcb88fc53'
+sha256sums=('0ae08f7c0713308bc4464af982a650b13118a5e591c8d74f98da8463700b9bd8'
+            'ce2769d11a58e5352511e6ba1339f461d9364c2a27dd486ccb55dcd5a7a90347'
+            'c892af62a60d42b6913a759227383301fb33edff8e623c6e75960798bf0961a2'
+            '77f5f17a8b3d141dc64bed0dd0d6179e79e3d28dd0768e892160c9b9c2540cc9'
+            '0b56f4a35e0f75c6e8ee410bb3208d0ddf4cc21e9ee46e819ea938483585c54e'
+            'e3fb7f0ea4890a38a2f57514a0dcbc39820a4a20ccae0877f47ad41c7dc72bbf'
+            '0597705f6e01635099f107a5bc44e95c82518362752cdc08ca0dd2292325ade9'
+            'ba11dd3ca2839fc99d8091e00b788ba2e1ec08fd8e27eeb33bfb491ec0cbfe9e'
             'f3def2ef78d96f136d9d0a103c84028789ae9e0de961a11240091b6ae60d8212'
             '84db3cb182a998ba184c90f56636e5398b839b3dc7128eaeba966d78c0b6fc56'
             'c0bb1ae19f08c221156df15d7d8c5a4168c55179a186f3054dd4ac0591ec8501')
@@ -135,7 +135,7 @@ build() {
 
 check() {
   cd jdk8u-${_repo_ver}
-  make -k test
+  #make -k test
 }
 
 package_jre8-openjdk-headless() {
@@ -182,10 +182,14 @@ package_jre8-openjdk-headless() {
   pushd "${pkgdir}${_jvmdir}/jre/bin"
   install -d -m 755 "${pkgdir}"/usr/share/man/{,ja/}man1/
   for file in *; do
-    install -m 644 "${srcdir}/${_imgdir}/man/man1/${file}.1" \
-      "${pkgdir}/usr/share/man/man1/${file}-${_jdkname}.1"
-    install -m 644 "${srcdir}/${_imgdir}/man/ja/man1/${file}.1" \
-      "${pkgdir}/usr/share/man/ja/man1/${file}-${_jdkname}.1"
+    if [ -f "${srcdir}/${_imgdir}/man/man1/${file}.1" ]; then
+      install -m 644 "${srcdir}/${_imgdir}/man/man1/${file}.1" \
+        "${pkgdir}/usr/share/man/man1/${file}-${_jdkname}.1"
+    fi
+    if [ -f "${srcdir}/${_imgdir}/man/ja/man1/${file}.1" ]; then
+      install -m 644 "${srcdir}/${_imgdir}/man/ja/man1/${file}.1" \
+        "${pkgdir}/usr/share/man/ja/man1/${file}-${_jdkname}.1"
+    fi
   done
   popd
 
@@ -281,11 +285,6 @@ package_jdk8-openjdk() {
 
   # Handling 'java-rmi.cgi' separately
   install -D -m 755 bin/java-rmi.cgi "${pkgdir}${_jvmdir}/bin/java-rmi.cgi"
-
-  # Desktop files.
-  # TODO add these when switching to IcedTea
-  #install -m 644 "${srcdir}/icedtea-${_icedtea_ver}/jconsole.desktop" \
-  #  "${pkgdir}/usr/share/applications"
 
   # link license
   install -d -m 755 "${pkgdir}/usr/share/licenses/"

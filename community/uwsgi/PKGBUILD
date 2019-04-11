@@ -1,4 +1,3 @@
-# $Id$
 # Maintainer: Daniel Wallace <danielwallace at gtmanfred dot com>
 # Maintainer: Sven-Hendrik Haase <sh@lutzhaase.com>
 # Contributor: Valentin Hăloiu <vially.ichb+aur@gmail.com>
@@ -23,10 +22,9 @@ pkgname=(uwsgi
          uwsgi-plugin-jvm
          uwsgi-plugin-webdav
          uwsgi-plugin-zabbix
-         uwsgi-plugin-notfound
-         mod_proxy_uwsgi)
-pkgver=2.0.17.1
-pkgrel=4
+         uwsgi-plugin-notfound)
+pkgver=2.0.18
+pkgrel=1
 arch=(x86_64)
 url="http://projects.unbit.it/$pkgbase"
 license=(GPL2)
@@ -34,7 +32,7 @@ backup=('etc/uwsgi/emperor.ini')
 conflicts=(python-$pkgbase)
 makedepends=(gcc python python2 ruby python2-greenlet python-greenlet php-embed curl libxml2 libyaml
              perl lua51 pcre libedit openssl bzip2 gmp pam java-environment=7
-             jansson classpath python2-gevent apache systemd)
+             jansson classpath python2-gevent systemd)
 optdepends=('systemd: daemon scripts')
 source=("https://projects.unbit.it/downloads/$pkgbase-$pkgver.tar.gz"
         uwsgiplugin.py::https://raw.githubusercontent.com/unbit/uwsgi/9787f6882c2475aa9873e400988160b17dd04545/plugins/systemd_logger/uwsgiplugin.py
@@ -49,7 +47,7 @@ source=("https://projects.unbit.it/downloads/$pkgbase-$pkgver.tar.gz"
         emperor.uwsgi.socket
         uwsgi.logrotate
         uwsgi.sysusers)
-sha512sums=('10d357961fde3a3f5f8e77986cc647313f95a33243e24c2afc482fce21df68a8ae48f90e7b5b76d7edc3cf8fd474d99823d6d60ef7477349abc65a319222f11b'
+sha512sums=('6561703279bcc4a81311d033810ac066d0f113bab13b0942f3eef86cac29c584a6641b52476840d6895151aee5ed064ae2d03b18932cf7f47e62f4eeed76da61'
             '68eef703de39cb336915e1e9c36b11c65c2d46482407b0234ca245df0e052952abb7dd85b0a1cd4507c78356a3b7a55424524b3aa0997b559b51e7b20eab5e16'
             'acfe9fb089d1905c3d736dbeaaef7eb1848b4ce8d1f585de653086cf7f90c166a1e493d0b62ba030a4bcf2eca9c919e0d6deea2ea1c0bcb8533d7cb040d2f67c'
             '4def9dcd06cfc2c6ce554add9d9545a01f3bb2681f0a2a6fc4ba68f91011111803a955cc41b5e70832ca448b196109368fdf874e81b7ec0edee4b51f864e16f7'
@@ -94,9 +92,6 @@ build() {
     python2 uwsgiconfig.py --plugin plugins/gevent archlinux gevent2
     python2 uwsgiconfig.py --plugin plugins/zabbix archlinux zabbix
     python2 uwsgiconfig.py --plugin plugins/notfound archlinux notfound
-
-    pushd $srcdir/$pkgbase-$pkgver/apache2
-    /usr/bin/apxs -c mod_proxy_uwsgi.c
 }
 
 package_uwsgi() {
@@ -193,12 +188,4 @@ package_uwsgi-plugin-notfound() {
     depends=(uwsgi)
     pkgdesc="Plugin for notfound support"
     install -Dm755 $pkgbase-$pkgver/notfound_plugin.so $pkgdir/usr/lib/uwsgi/notfound_plugin.so
-}
-
-package_mod_proxy_uwsgi(){
-    depends=(uwsgi apache)
-    pkgdesc="Apache uWSGI proxy module"
-    install -Dm755 \
-        $pkgbase-$pkgver/apache2/.libs/mod_proxy_uwsgi.so \
-        $pkgdir/usr/lib/httpd/modules/mod_proxy_uwsgi.so
 }

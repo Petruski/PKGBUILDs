@@ -7,7 +7,7 @@
 #  - build with pulseaudio as sound server, not jack (x86 asm)
 
 pkgname=snd
-pkgver=18.8
+pkgver=19.2
 pkgrel=1
 pkgdesc="An advanced sound editor"
 arch=('x86_64')
@@ -24,11 +24,10 @@ optdepends=('wavpack: For wav support'
             'timidity++: For MIDI to WAVE support'
             'vorbis-tools: For OGG support')
 source=("https://sourceforge.net/projects/${pkgname}/files/${pkgname}/${pkgver}/${pkgname}-${pkgver}.tar.gz")
-sha512sums=('964773c0df3cf7de1b2fe97e00f54d1c7d8792f4fbcbcf03ad018221ef95ac5b052d0450f314329903ab8574454863f0915b8d827e312a2c643937c7bd8c59c2')
+sha512sums=('b85de05ab27c72e6d11ec33eb7a1a9059cdca91a30b440364fb7e07f883eea0645ded2ddc95190bb5f4e6e518e4d294ad8ecdf0a7f88745598eeaff1a4807a13')
 
 build() {
   cd "${pkgname}-${pkgver}"
-#  LDFLAGS+=" -Wl,-z,noexecstack"
   ./configure --prefix=/usr \
               --with-alsa \
               --with-gmp \
@@ -42,10 +41,12 @@ build() {
 package() {
   cd "${pkgname}-${pkgver}"
   make prefix="${pkgdir}/usr" install
-  install -vDm 644 COPYING "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
-  install -vDm 644 HISTORY.Snd  "${pkgdir}/usr/share/doc/${pkgname}/HISTORY"
-  install -vDm 644 NEWS "${pkgdir}/usr/share/doc/${pkgname}/NEWS"
-  install -vDm 644 README.Snd  "${pkgdir}/usr/share/doc/${pkgname}/README"
+  install -vDm 644 COPYING "${pkgdir}/usr/share/licenses/$pkgname/LICENSE"
+  # docs
+  install -vDm 644 {{HISTORY,README}.Snd,NEWS} \
+    -t "${pkgdir}/usr/share/doc/${pkgname}/"
+  install -vDm 644 *.html -t "${pkgdir}/usr/share/doc/${pkgname}/html"
+  install -vDm 644 pix/*.png -t "${pkgdir}/usr/share/doc/${pkgname}/html/pix"
 }
 
 # vim:set ts=2 sw=2 et:

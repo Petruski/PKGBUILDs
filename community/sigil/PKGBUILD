@@ -1,4 +1,3 @@
-# $Id$
 # Maintainer: Eli Schwartz <eschwartz@archlinux.org>
 # Maintainer: Alad Wenter <alad@mailbox.org>
 # Contributor: Giovanni Scafora <giovanni@archlinux.org>
@@ -8,40 +7,48 @@
 #  - depend on xerces-c to avoid x86isms in bundled version
 
 pkgname=sigil
-pkgver=0.9.10
-pkgrel=2
+pkgver=0.9.13
+pkgrel=1
 pkgdesc="WYSIWYG ebook editor"
 arch=('x86_64')
 url="https://sigil-ebook.com/"
 license=('GPL3')
-depends=('hicolor-icon-theme' 'hunspell' 'minizip' 'python-lxml' 'qt5-webkit' 'xerces-c')
+depends=('hicolor-icon-theme' 'hunspell' 'mathjax' 'minizip' 'python-css-parser'
+         'python-lxml' 'qt5-webkit' 'qt5-xmlpatterns' 'xerces-c')
 makedepends=('qt5-tools' 'qt5-svg' 'cmake')
 optdepends=('hunspell-en: for English dictionary support'
             'hyphen-en: for English hyphenation support in plugins'
             'python-html5lib: recommended for plugins'
             'python-chardet: recommended for plugins'
             'python-cssselect: recommended for plugins'
-            'python-cssutils: recommended for plugins'
             'python-pillow: recommended for plugins'
             'python-regex: recommended for plugins'
             'python-pyqt5: recommended for plugins'
             'tk: recommended for plugins')
+install=${pkgname}.install
 source=("Sigil-${pkgver}.tar.gz::https://github.com/Sigil-Ebook/Sigil/archive/${pkgver}.tar.gz"
-	"https://github.com/Sigil-Ebook/Sigil/releases/download/${pkgver}/Sigil-${pkgver}.tar.gz.sig")
-sha256sums=('294954c4c2b3f1f9348d4f1bff18edebaba44afae901be3900154778b2f877ed'
+        "https://github.com/Sigil-Ebook/Sigil/releases/download/${pkgver}/Sigil-${pkgver}.tar.gz.sig")
+sha256sums=('7b9f31a6cc7ef469d6eb07cd1b16b81c06aaa4a9d27d122d7e77e35e03606777'
             'SKIP')
 validpgpkeys=('B5A56206AB0FBC1A24EFAB8AA166D29A8FCDAC63') # Doug Massay <douglaslmassay@gmail.com>
 
-build() {
-    cd "${srcdir}/Sigil-${pkgver}"
+prepare() {
+    cd "${srcdir}"/Sigil-${pkgver}
 
-    mkdir -p build
-    cd build
+    # devendor css_parser as it's a direct copy of the external package;
+    # upstream maintains both and plans to switch soon
+    rm -r src/Resource_Files/plugin_launchers/python/css_parser/
+}
+
+build() {
+    mkdir -p "${srcdir}"/Sigil-${pkgver}/build
+    cd "${srcdir}"/Sigil-${pkgver}/build
 
     cmake -G "Unix Makefiles" \
         -DUSE_SYSTEM_LIBS=1 \
         -DSYSTEM_LIBS_REQUIRED=1 \
         -DINSTALL_BUNDLED_DICTS=0 \
+        -DMATHJAX_DIR=/usr/share/mathjax \
         -DCMAKE_INSTALL_PREFIX=/usr \
         -DCMAKE_C_FLAGS:STRING="${CFLAGS}" \
         -DCMAKE_CXX_FLAGS:STRING="${CXXFLAGS}" \

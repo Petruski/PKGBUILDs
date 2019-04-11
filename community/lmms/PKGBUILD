@@ -10,10 +10,10 @@
 #  - remove -DWINE_INCLUDE_DIR and -DWINE_LIBRARY from cmake command
 #  - upstream rpmalloc fix for ARM
 
-_pkgver=1.2.0-rc7
+_pkgver=1.2.0-rc8
 pkgname=lmms
 pkgver=${_pkgver/-}
-pkgrel=1
+pkgrel=2
 pkgdesc='The Linux MultiMedia Studio'
 arch=('x86_64')
 url="https://lmms.io"
@@ -43,8 +43,6 @@ prepare() {
   git submodule update
   # setting lib dir
   sed -e 's|lib64|lib|g' -i cmake/modules/DetectMachine.cmake
-  # setting proper DESTDIR based install path for bash-completion
-  sed -e 's/\(${BASHCOMP_USER\)/\\$DESTDIR\1/g' -i cmake/modules/BashCompletion.cmake
   # upstream rpmalloc fix for ARM
   patch -p1 -d src/3rdparty/rpmalloc/rpmalloc -i "${srcdir}/1c580b394e1a20e63d63c72cad421f7be4422089.patch"
 }

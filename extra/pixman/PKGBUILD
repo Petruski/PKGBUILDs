@@ -1,38 +1,45 @@
-# $Id: PKGBUILD 149216 2012-02-06 13:29:48Z jgc $
 # Maintainer: Jan de Groot <jgc@archlinux.org>
+# Maintainer: Andreas Radke <andyrtr@archlinux.org>
 # Contributor: Alexander Baldeck <alexander@archlinux.org>
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
-#  - disable arm extensions that aren't supported, autodetection fails
+#  - disable x86 extensions (mmx, sse2, ssse3)
 
 pkgname=pixman
-pkgver=0.34.0
+pkgver=0.38.4
 pkgrel=1
 pkgdesc="The pixel-manipulation library for X and cairo"
-arch=(i686 x86_64)
-url="http://xorg.freedesktop.org"
+arch=(x86_64)
+url="https://cgit.freedesktop.org/pixman/"
 license=('custom')
 depends=('glibc')
-source=(http://xorg.freedesktop.org/releases/individual/lib/${pkgname}-${pkgver}.tar.bz2)
-sha1sums=('367698744e74d6d4f363041482965b9ea7fbe4a5')
+makedepends=('meson' 'libpng')
+source=(https://xorg.freedesktop.org/releases/individual/lib/${pkgname}-${pkgver}.tar.bz2)
+sha1sums=('87e1abc91ac4e5dfcc275f744f1d0ec3277ee7cd')
+#validpgpkeys=('') # Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
 
 build() {
-  cd "${srcdir}/${pkgname}-${pkgver}"
-  [[ $CARCH = "arm" ]] && CONFIG="--disable-arm-simd --disable-arm-neon --disable-arm-iwmmxt"
-  [[ $CARCH = "armv6h" ]] && CONFIG="--disable-arm-simd --disable-arm-neon --disable-arm-iwmmxt"
-  [[ $CARCH = "armv7h" ]] && CONFIG="--disable-arm-neon --disable-arm-iwmmxt"
-  ./configure --prefix=/usr --disable-static $CONFIG
-  make
+  arch-meson $pkgbase-$pkgver build \
+    -D loongson-mmi=disabled \
+    -D vmx=disabled \
+    -D arm-simd=disabled \
+    -D neon=disabled \
+    -D iwmmxt=disabled \
+    -D mmx=disabled \
+    -D sse2=disabled \
+    -D ssse3=disabled \
+    -D mips-dspr2=disabled \
+    -D gtk=disabled
+  ninja -C build
 }
 
 check() {
-  cd "${srcdir}/${pkgname}-${pkgver}"
-  #make check
+  meson test -C build
 }
 
 package() {
-  cd "${srcdir}/${pkgname}-${pkgver}"
-  make DESTDIR="${pkgdir}" install
-  install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
-  install -m644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/"
+  DESTDIR="$pkgdir" meson install -C build
+  install -Dt "$pkgdir/usr/share/licenses/$pkgname" -m644 $pkgname-$pkgver/COPYING
 }
+
+# vim:set et sw=2:

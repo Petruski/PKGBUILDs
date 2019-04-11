@@ -15,7 +15,7 @@ buildarch=12
 highmem=1
 
 pkgname=chromium
-pkgver=70.0.3538.77
+pkgver=73.0.3683.103
 pkgrel=2
 _launcher_ver=6
 pkgdesc="A web browser built for speed, simplicity, and security"
@@ -26,25 +26,29 @@ depends=('gtk3' 'nss' 'alsa-lib' 'xdg-utils' 'libxss' 'libcups' 'libgcrypt'
          'ttf-font' 'systemd' 'dbus' 'libpulse' 'pciutils' 'json-glib'
          'desktop-file-utils' 'hicolor-icon-theme')
 makedepends=('python' 'python2' 'gperf' 'yasm' 'mesa' 'ninja' 'nodejs' 'git'
-             'clang' 'lld' 'gn' 'distcc-clang')
+             'clang' 'lld' 'gn' 'java-runtime-headless' 'distcc-clang')
 optdepends=('kdialog: needed for file dialogs in KDE'
             'gnome-keyring: for storing passwords in GNOME keyring'
             'kwallet: for storing passwords in KWallet')
 install=chromium.install
 source=(https://commondatastorage.googleapis.com/chromium-browser-official/$pkgname-$pkgver.tar.xz
         chromium-launcher-$_launcher_ver.tar.gz::https://github.com/foutrelis/chromium-launcher/archive/v$_launcher_ver.tar.gz
-        include-stdint.h-in-pdfium_mem_buffer_file_write.h.patch
-        chromium-harfbuzz-r0.patch
-        chromium-widevine-r2.patch
         chromium-system-icu.patch
-        chromium-skia-harmony.patch)
-sha256sums=('c914f86c4c8375b719eca89ea89dbec4ae3d09df3f758d5f7c91d4914d290449'
+        chromium-color_utils-use-std-sqrt.patch
+        chromium-media-fix-build-with-libstdc++.patch
+        chromium-avoid-log-flooding-in-GLSurfacePresentationHelper.patch
+        chromium-widevine.patch
+        chromium-skia-harmony.patch
+        0001-crashpad-include-limits.patch)
+sha256sums=('eb02c419de98bb8849fd0a37a3e7bbb813938c37e3d6b2c2526df3e84f9653af'
             '04917e3cd4307d8e31bfb0027a5dce6d086edb10ff8a716024fbb8bb0c7dccf1'
-            'cd1e87bf3618b7897c5caf7b0f4213cfa5ce917acb0613ecd2ab3f830f0cbfbb'
-            '1b370d49c43e88acfe7c0b1f9517047e927f3407bd80b4a48bba32c001f80136'
-            '02c69bb3954087db599def7f5b6d65cf8f7cf2ed81dfbdaa4bb7b51863b4df15'
-            'c4f2d1bed9034c02b8806f00c2e8165df24de467803855904bff709ceaf11af5'
-            'feca54ab09ac0fc9d0626770a6b899a6ac5a12173c7d0c1005bc3964ec83e7b3')
+            'e2d284311f49c529ea45083438a768db390bde52949995534034d2a814beab89'
+            'b3b6f5147d519c586cbdaf3b227dd1719676fa3a65edd6f08989087afd287afa'
+            'f51fe91427d8638c5551746d2ec7de99e8059dd76889cfeaee8ca3d8fed62265'
+            'f2b12ccf83a8e0adda4a87ae5c983df5e092ccf1f9a6f2e05799ce4d451dbda1'
+            'd081f2ef8793544685aad35dea75a7e6264a2cb987ff3541e6377f4a3650a28b'
+            '5887f78b55c4ecbbcba5930f3f0bb7bc0117c2a41c2f761805fcf7f46f1ca2b3'
+            'df99f49ad58b70c9a3e1827d7e80b62e4363419334ed83373cf55b79c17b6f10')
 
 # Possible replacements are listed in build/linux/unbundle/replace_gn_files.py
 # Keys are the names in the above script; values are the dependencies in Arch
@@ -58,7 +62,7 @@ declare -gA _system_libs=(
   [libdrm]=
   [libjpeg]=libjpeg
   #[libpng]=libpng            # https://crbug.com/752403#c10
-  #[libvpx]=libvpx            # needs unreleased libvpx
+  [libvpx]=libvpx
   [libwebp]=libwebp
   [libxml]=libxml2
   [libxslt]=libxslt
@@ -90,6 +94,7 @@ prepare() {
     tools/generate_shim_headers/generate_shim_headers.py
 
   # Arch Linux ARM fixes
+  patch -p1 -i ../0001-crashpad-include-limits.patch
 
   # Build ARMv7 with NEON
   [[ $CARCH == "armv7h" ]] && MAKEFLAGS="-j4" && CFLAGS=`echo $CFLAGS | sed -e 's/vfpv3-d16/neon/'` && CXXFLAGS="$CFLAGS"
@@ -103,15 +108,20 @@ prepare() {
     third_party/blink/renderer/core/xml/parser/xml_document_parser.cc \
     third_party/libxml/chromium/libxml_utils.cc
 
-  # https://crbug.com/879900
-  patch -Np1 -i ../include-stdint.h-in-pdfium_mem_buffer_file_write.h.patch
+  # https://crbug.com/819294#c88
+  patch -Np1 -i ../chromium-color_utils-use-std-sqrt.patch
+
+  # https://crbug.com/931373
+  patch -d media -Np1 -i ../../chromium-media-fix-build-with-libstdc++.patch
+
+  # https://crbug.com/879929
+  patch -Np1 -i ../chromium-avoid-log-flooding-in-GLSurfacePresentationHelper.patch
+
+  # Load Widevine CDM if available
+  patch -Np1 -i ../chromium-widevine.patch
 
   # https://crbug.com/skia/6663#c10
-  patch -Np4 -i ../chromium-skia-harmony.patch
-
-  # Fixes from Gentoo
-  patch -Np1 -i ../chromium-harfbuzz-r0.patch
-  patch -Np1 -i ../chromium-widevine-r2.patch
+  patch -Np0 -i ../chromium-skia-harmony.patch
 
   # https://bugs.gentoo.org/661880#c21
   patch -Np1 -i ../chromium-system-icu.patch

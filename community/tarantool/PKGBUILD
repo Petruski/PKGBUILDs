@@ -6,9 +6,9 @@
 buildarch=12
 
 pkgname=tarantool
-_commit=9a543202c93ef903b07b293463650d78002ae866
-pkgver=2.0.4.r497
-pkgrel=3
+_commit=42f8dddda09fcdc3b6a2b36001b4434f576deec1
+pkgver=2.1.2.r6
+pkgrel=1
 pkgdesc='Lua application server integrated with a database management system'
 arch=(x86_64)
 url='https://www.tarantool.org'
@@ -44,6 +44,7 @@ pkgver() {
 
 prepare() {
   cd tarantool
+
   git submodule init
   git config -f .gitmodules 'submodule.third_party/luajit.url' "$srcdir/luajit"
   git config -f .gitmodules 'submodule.src/lib/msgpuck.url' "$srcdir/msgpuck"
@@ -73,7 +74,8 @@ build() {
     -DENABLE_BUNDLED_LIBYAML:BOOL=OFF \
     -DENABLE_BACKTRACE:BOOL=OFF \
     -DWITH_SYSTEMD:BOOL=ON \
-    -DENABLE_DIST:BOOL=ON
+    -DENABLE_DIST:BOOL=ON \
+    .
   make
 }
 

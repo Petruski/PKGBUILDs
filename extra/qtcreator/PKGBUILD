@@ -12,12 +12,12 @@
 buildarch=12
 
 pkgname=qtcreator
-pkgver=4.7.2
-_clangver=7.0.0
-pkgrel=1
+pkgver=4.8.2
+_clangver=8.0.0
+pkgrel=2
 pkgdesc='Lightweight, cross-platform integrated development environment'
 arch=(x86_64)
-url='http://qt-project.org'
+url='https://www.qt.io'
 license=(LGPL)
 depends=(qt5-tools qt5-quickcontrols qt5-quickcontrols2 qt5-webengine clang=$_clangver qbs clazy)
 makedepends=(git mesa llvm python)
@@ -31,10 +31,10 @@ optdepends=('qt5-doc: integrated Qt documentation'
             'git: git support'
             'mercurial: mercurial support'
             'bzr: bazaar support')
-source=("http://download.qt.io/official_releases/qtcreator/${pkgver%.*}/$pkgver/qt-creator-opensource-src-$pkgver.tar.xz"
+source=("https://download.qt.io/official_releases/qtcreator/${pkgver%.*}/$pkgver/qt-creator-opensource-src-$pkgver.tar.xz"
         qtcreator-clang-plugins.patch)
-sha256sums=('f58217e9314702160957c49b8729a662445e901e5f158c64c57550579d65ccc7'
-            '6f19fc9d83964a5460d224b3d44ce580553847960181fe0364e2ce26e1efd2e6')
+sha256sums=('a8257daf39f6025c8523285dc73fd6b66645f3ff071e112b484325966eee0c92'
+            '34ea74698ddff9925e06bff6b4c995bf93488d1104e8cc517bcfdd621effb428')
 
 prepare() {
   mkdir -p build

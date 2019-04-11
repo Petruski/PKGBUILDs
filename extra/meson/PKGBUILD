@@ -7,10 +7,10 @@
 #  - remove checkdepend on dmd
 
 pkgname=meson
-pkgver=0.48.1
-pkgrel=1
+pkgver=0.49.2
+pkgrel=2
 pkgdesc='High productivity build system'
-url='http://mesonbuild.com/'
+url='https://mesonbuild.com/'
 arch=('any')
 license=('Apache')
 depends=('python-setuptools' 'ninja')
@@ -20,14 +20,19 @@ checkdepends=('gcc-objc' 'vala' 'rust' 'gcc-fortran' 'mono' 'boost' 'qt4' 'qt5-b
               'doxygen' 'vulkan-validation-layers' 'openssh' 'mercurial' 'gtk-sharp-2' 'qt5-tools'
               'libwmf' 'valgrind')
 source=(https://github.com/mesonbuild/meson/releases/download/${pkgver}/meson-${pkgver}.tar.gz{,.asc}
+        4878.patch
         arch-meson)
-sha512sums=('ba4921530049f002c362bc420bd87181074893109ce4b1fedb18545227d27ea96c09798eb02f1f8fabbf6ac5c185b0b7eca42df2a34ad0559f95a97d78811702'
+sha512sums=('d07a5dfd699f1e4b00af39c377ec186c91718d9595cb0ab506b4b40c0c63ddd14eccbe8afb446635272c431e2a78032888be0bc8f6064044da53e8c0b5f7be3f'
             'SKIP'
-            '0e537c4fc04535decf901713f05d895dd8b93f2136e463b4a5adc5f2bf3a3e4c4ee07b5936fd7d01309af75a50fb1dc8d842b953c039ffe096efd54fd86aa7d0')
+            'ff1326c7b56da98eab615b40e07cba86d6ceee18d29e8b5c57ccf73980a7a466c8e5695cc0b96a36330cd0d51e52b8fed08456ebea6763edb736ae7116be2f4b'
+            '278f5e4de3aa1170d9b4f9f212985d664f44d90ffec727febeeea1ed570046c6469558a5d123a41bf4c2fdf99dbe7832515b06f1ace423c63e2e95ba6d0ef235')
 validpgpkeys=('95181F4EED14FDF4E41B518D3BF4693BFEEB9428') # Jussi Pakkanen <jpakkane@gmail.com>
 
 prepare() {
   cd ${pkgname}-${pkgver}
+
+  # https://github.com/mesonbuild/meson/issues/4884
+  patch -Np1 -i ../4878.patch
 
   # Succeeds for us?
   mv 'test cases/failing/85 gtest dependency with version' 'test cases/frameworks/'

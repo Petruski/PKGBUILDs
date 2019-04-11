@@ -11,29 +11,34 @@ buildarch=12
 highmem=1
 
 pkgname=firefox
-pkgver=63.0
-pkgrel=2
+pkgver=66.0.3
+pkgrel=1
 pkgdesc="Standalone web browser from mozilla.org"
 arch=(x86_64)
 license=(MPL GPL LGPL)
 url="https://www.mozilla.org/firefox/"
 depends=(gtk3 mozilla-common libxt startup-notification mime-types dbus-glib
-         ffmpeg nss hunspell-en_US sqlite ttf-font libpulse libvpx icu)
+         ffmpeg nss ttf-font libpulse)
 makedepends=(unzip zip diffutils python2-setuptools yasm mesa imake inetutils
              xorg-server-xvfb autoconf2.13 rust mercurial clang llvm jack gtk2
-             python nodejs python2-psutil cbindgen)
+             python nodejs python2-psutil cbindgen nasm distcc-clang)
 optdepends=('networkmanager: Location detection via available WiFi networks'
             'libnotify: Notification integration'
             'pulseaudio: Audio support'
-            'speech-dispatcher: Text-to-Speech')
-options=(!emptydirs !makeflags !strip)
+            'speech-dispatcher: Text-to-Speech'
+            'hunspell-en_US: Spell checking, American English')
+options=(!emptydirs !makeflags)
 source=("https://hg.mozilla.org/releases/mozilla-release/archive/FIREFOX_${pkgver//./_}_RELEASE.tar.gz"
-        $pkgname.desktop firefox-symbolic.svg
-        https://hg.mozilla.org/mozilla-central/raw-rev/537f4d1d837a)
-sha256sums=('47ff34ff0ec51cdf7f5c453d91054543e123500b65593891e50144189adc04b8'
-            '677e1bde4c6b3cff114345c211805c7c43085038ca0505718a11e96432e9811a'
-            '9a1a572dc88014882d54ba2d3079a1cf5b28fa03c5976ed2cb763c93dabbd797'
-            '9fa42f3a4ccd255b56f4157119c08ff19df9f972aa25af4cbb685e3683139c24')
+        0001-bz-1468911.patch
+        arm.patch
+        build-arm-libopus.patch
+        $pkgname.desktop firefox-symbolic.svg)
+sha256sums=('fde34091a75b0f54f9e5b8c3392866510a6597f2bd01036d48345934f4ce4859'
+            '821f858bac2e13ce02b8c20d5387d4ecc8ab2d0e4ebe0a517cbf935da6aeb31b'
+            '2c9e39b9b62d5a75e31908cb4d42ff8006ff9406aed2f7deff826fe1466cd31a'
+            '2d4d91f7e35d0860225084e37ec320ca6cae669f6c9c8fe7735cdbd542e3a7c9'
+            '4a783dca1f88e003c72f32d22719a0915f3fa576adbc492240e7cc250246ce10'
+            '9a1a572dc88014882d54ba2d3079a1cf5b28fa03c5976ed2cb763c93dabbd797')
 
 # Google API keys (see http://www.chromium.org/developers/how-tos/api-keys)
 # Note: These are for Arch Linux use ONLY. For your own distribution, please
@@ -52,6 +57,9 @@ prepare() {
   mkdir mozbuild
   cd mozilla-release-FIREFOX_${pkgver//./_}_RELEASE
 
+  # https://bugzilla.mozilla.org/show_bug.cgi?id=1521249
+  patch -Np1 -i ../0001-bz-1468911.patch
+
   echo -n "$_google_api_key" >google-api-key
   echo -n "$_mozilla_api_key" >mozilla-api-key
 
@@ -61,32 +69,36 @@ ac_add_options --enable-application=browser
 ac_add_options --prefix=/usr
 ac_add_options --enable-release
 #ac_add_options --enable-hardening
+ac_add_options --enable-optimize="-O2"
+#ac_add_options --enable-rust-simd
+#ac_add_options --enable-lto
+#export MOZ_PGO=1
+export CC=clang
+export CXX=clang++
+export AR=llvm-ar
+export NM=llvm-nm
+export RANLIB=llvm-ranlib
 
 # Branding
 ac_add_options --enable-official-branding
 ac_add_options --enable-update-channel=release
 ac_add_options --with-distribution-id=org.archlinux
 export MOZILLA_OFFICIAL=1
+export MOZ_APP_REMOTINGNAME=${pkgname//-/}
 export MOZ_TELEMETRY_REPORTING=1
 export MOZ_REQUIRE_SIGNING=1
 
 # Keys
-ac_add_options --with-google-api-keyfile=${PWD@Q}/google-api-key
+ac_add_options --with-google-location-service-api-keyfile=${PWD@Q}/google-api-key
+ac_add_options --with-google-safebrowsing-api-keyfile=${PWD@Q}/google-api-key
 ac_add_options --with-mozilla-api-keyfile=${PWD@Q}/mozilla-api-key
 
 # ALARM
 ac_add_options --disable-webrtc
 
 # System libraries
-ac_add_options --enable-system-ffi
-ac_add_options --enable-system-sqlite
-ac_add_options --with-system-bz2
-ac_add_options --with-system-icu
-ac_add_options --with-system-jpeg
-ac_add_options --with-system-libvpx
 ac_add_options --with-system-nspr
 ac_add_options --with-system-nss
-ac_add_options --with-system-zlib
 
 # Features
 ac_add_options --enable-alsa
@@ -99,17 +111,16 @@ END
 
   if [[ $CARCH == "armv7h" ]]; then
     echo "ac_add_options --disable-elf-hack" >> .mozconfig
-    echo 'ac_add_options --enable-optimize="-O2 -fno-schedule-insns"' >> .mozconfig
     # https://bugzilla.redhat.com/show_bug.cgi?id=1641623
     echo "ac_add_options --disable-av1" >> .mozconfig
     export RUSTFLAGS="-Cdebuginfo=0"
   elif [[ $CARCH == "aarch64" ]]; then
-    echo 'ac_add_options --enable-optimize="-O2"' >> .mozconfig
     echo 'ac_add_options --enable-rust-simd' >> .mozconfig
   fi
 
-  patch -Rp1 -i ../537f4d1d837a
   LDFLAGS+=" -Wl,--no-keep-memory -Wl,--reduce-memory-overheads"
+  patch -p1 -i ../arm.patch
+  patch -p1 -i ../build-arm-libopus.patch
 }
 
 build() {
@@ -118,6 +129,9 @@ build() {
   export MOZ_SOURCE_REPO="$_repo"
   export MOZ_NOSPAM=1
   export MOZBUILD_STATE_PATH="$srcdir/mozbuild"
+
+  # LTO needs more open files
+  ulimit -n 4096
 
   ./mach build
   ./mach buildsymbols

@@ -4,19 +4,19 @@
 buildarch=4
 
 pkgbase=linux-am33x
-_srcname=linux-4.19
+_srcname=linux-5.0
 _kernelname=${pkgbase#linux}
 _desc="TI AM335x Beaglebone (Black)"
-pkgver=4.19.0
-pkgrel=1
-rcnrel=bone3
+pkgver=5.0.5
+pkgrel=2
+rcnrel=bone8
 arch=('armv7h')
 url="http://www.kernel.org/"
 license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'dtc')
 options=('!strip')
-source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
-        #"http://www.kernel.org/pub/linux/kernel/v4.x/patch-${pkgver}.xz"
+source=("http://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
+        "http://www.kernel.org/pub/linux/kernel/v5.x/patch-${pkgver}.xz"
         "http://rcn-ee.com/deb/sid-armhf/v${pkgver}-${rcnrel}/patch-${pkgver%.0}-${rcnrel}.diff.gz"
         "git+https://github.com/RobertCNelson/bb.org-overlays.git"
         '0001-add-lcd-cape-for-chiliboard.patch'
@@ -24,12 +24,13 @@ source=("http://www.kernel.org/pub/linux/kernel/v4.x/${_srcname}.tar.xz"
         'config'
         'linux.preset'
         '99-linux.hook')
-md5sums=('740a90cf810c2105df8ee12e5d0bb900'
-         '941ece5b30da62b4d9c52fd05516cb8f'
+md5sums=('7381ce8aac80a01448e065ce795c19c0'
+         '3a96e9dbfe3bb0b28cef70e9972b0982'
+         '4e72b75f0c8cb61b9ff00c79e44efd08'
          'SKIP'
          'ee16bcdbbf978e714455933ecd6dd8fe'
          '5698870a716fed205215d258cc71e296'
-         'd0370d52f1e830ebf5de5a76a68cdf4f'
+         '8e456be0558a55f82eb9805c7dac3a72'
          '78ccc998f27eec49a9d5490218b1b1ab'
          '79fa396e3f9a09a85156d6d7c2d34b58')
 
@@ -37,7 +38,7 @@ prepare() {
   cd "${srcdir}/${_srcname}"
 
   # add upstream patch
-  #git apply --whitespace=nowarn "${srcdir}/patch-${pkgver}"
+  git apply --whitespace=nowarn "${srcdir}/patch-${pkgver}"
 
   # RCN patch
   git apply ../patch-${pkgver%.0}-${rcnrel}.diff

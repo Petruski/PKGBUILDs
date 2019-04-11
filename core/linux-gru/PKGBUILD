@@ -6,9 +6,9 @@ buildarch=8
 pkgbase=linux-gru
 _kernelname=${pkgbase#linux}
 _desc="Gru Chromebooks"
-pkgver=4.4.162
+pkgver=4.4.178
 pkgrel=1
-_commit=bab82969195f719cc44d52572030149bbbecc66d
+_commit=0c2673a71b5a4c1a5b6c0434e620776b170e7882
 arch=('aarch64')
 url="https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-4.4"
 license=('GPL2')
@@ -22,12 +22,12 @@ source=("https://chromium.googlesource.com/chromiumos/third_party/kernel/+archiv
         'kernel.its'
         'kernel.keyblock'
         'kernel_data_key.vbprivk')
-md5sums=('7de91c238883a2e6836bb445eee0a1a0'
+md5sums=('40327bd1fe27690a2d852e87a3ae9a25'
          'd3b3d9d59f91cc6fad24c29873ad87bc'
          '66cd7c64f8861025fa8e394675222aa1'
          '8f416793377fc69914851a32fe6ca33e'
-         '3c83ce8f2f835e0d4fc1a1ef48aa6fef'
-         '51896870709e97c4f131e99c33ff115d'
+         '8d7fc424859a4b41cc8cb78e1dac3e11'
+         '721dc956ac392901d3d4357132aa70d4'
          '61c5ff73c136ed07a7aadbf58db3d96a'
          '584777ae88bce2c5659960151b64c7d8')
 

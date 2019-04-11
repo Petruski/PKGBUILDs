@@ -12,16 +12,15 @@ _prefix=/usr
 pkgbase=kodi-rbp-git
 _suffix=rbp-git
 pkgname=("kodi-$_suffix" "kodi-eventclients-$_suffix" "kodi-tools-texturepacker-$_suffix" "kodi-dev-$_suffix")
-pkgver=18.0b4.20181023
+pkgver=18.1rc1.20190211
 pkgrel=1
 _codename=Leia
-_tag="18.0b4-$_codename"
-_rtype=Alpha
-_ffmpeg_version="4.0.2-$_codename-$_rtype"3
-_libdvdcss_version="1.4.1-$_codename-Beta"-3
-_libdvdnav_version="6.0.0-$_codename-$_rtype"-3
-_libdvdread_version="6.0.0-$_codename-$_rtype"-3
-_fmt_version="3.0.1"
+_tag="18.1rc1-$_codename"
+_ffmpeg_version="4.0.3-$_codename-RC5"
+_libdvdcss_version="1.4.2-$_codename-Beta-5"
+_libdvdnav_version="6.0.0-$_codename-Alpha-3"
+_libdvdread_version="6.0.0-$_codename-Alpha-3"
+_fmt_version="5.1.0"
 _crossguid_version="8f399e8bd4"
 _fstrcmp_version="0.7.D001"
 _flatbuffers_version="1.9.0"
@@ -31,7 +30,7 @@ license=('GPL2')
 makedepends=(
   'afpfs-ng' 'bluez-libs' 'boost' 'cmake' 'curl' 'doxygen'
   'gperf' 'hicolor-icon-theme' 'jasper' 'java-environment' 'libaacs' 'libass'
-  'libbluray-kodi-rbp' 'libcdio' 'libmariadbclient' 'libmicrohttpd' 'groff'
+  'libbluray-kodi-rbp' 'libcdio' 'mariadb-libs' 'libmicrohttpd' 'groff'
   'libmodplug' 'libmpeg2' 'libnfs' 'libplist' 'libpulse' 'libssh' 'libcec-rpi'
   'libxrandr' 'libxslt' 'lirc' 'lzo' 'nasm' 'nss-mdns' 'python2-pillow'
   'python2-pybluez' 'python2-simplejson' 'raspberrypi-firmware' 'rtmpdump'
@@ -43,7 +42,8 @@ source=("https://github.com/popcornmix/xbmc/archive/newclock5_$_tag.tar.gz"
   'kodi-framebuffer'
   '99-kodi.rules'
   'polkit.rules'
-  'hifiberry_digi.patch'
+  '00-fix.building.with.mariadb.patch::https://github.com/wsnipex/xbmc/commit/cd20c8eb8a0394db1f028b118c4ca9b91b7e746a.patch'
+  '01-fix.passthrough.for.hifiberry_digi.patch'
   "ffmpeg-$_ffmpeg_version.tar.gz::https://github.com/xbmc/FFmpeg/archive/$_ffmpeg_version.tar.gz"
   "libdvdcss-$_libdvdcss_version.tar.gz::https://github.com/xbmc/libdvdcss/archive/$_libdvdcss_version.tar.gz"
   "libdvdnav-$_libdvdnav_version.tar.gz::https://github.com/xbmc/libdvdnav/archive/$_libdvdnav_version.tar.gz"
@@ -63,17 +63,18 @@ noextract=(
   "fstrcmp-$_fstrcmp_version.tar.gz"
   "flatbuffers-$_flatbuffers_version.tar.gz"
 )
-sha256sums=('4022a169e1467a4d5c3b338ae0882d22febe49f2e5727c83b60a6e6201e9dae7'
+sha256sums=('a8b30401511a6be27e57d04aacfdc77aa551b038ac67071ec186fcce7c23d1ab'
             '6eded8b5f52808d5ffa77de546fbf799a255dde2473540e8a8bd46daa6f753d9'
             'fe7a1ab2a6e2bf00f756c76545a338d2763003052764d722d492b06b1bc05f5e'
             'b31570f95654434b01fd8531612fbb6be77cbc1c519dd60f92feae26eb160f3d'
             '9ea592205023ba861603d74b63cdb73126c56372a366dc4cb7beb379073cbb96'
-            '0b9d951911a8576c26dec8a31f394282677e48afff49b9579448121d27b8509e'
-            '0e4980abac7b886e0eb5f4157941947be3c10d616a19bd311dc2f9fd2eb6a631'
-            '579aa102ac14ff4a21aa4081fe47f8cb3941002a37ee96286d3737afd79e80d9'
+            '849daf1d5b081ef6d0e428bbc7d448799fc43a8ac9e79cd7513de0eb5a91b0bb'
+            '70d8123f1727d4791abba2c809f126ae0c7c42078eb6aaeed1622d4ed9b52694'
+            '9a971662e44353c120f2ccf87655571998956e699a2dd800ec708b8b928a53c8'
+            '38816f8373e243bc5950449b4f3b18938c4e1c59348e3411e23f31db4072e40d'
             '071e414e61b795f2ff9015b21a85fc009dde967f27780d23092643916538a57a'
             'a30b6aa0aad0f2c505bc77948af2d5531a80b6e68112addb4c123fca24d5d3bf'
-            'dce62ab75a161dd4353a98364feb166d35e7eea382169d59d9ce842c49c55bad'
+            '73d4cab4fa8a3482643d8703de4d9522d7a56981c938eca42d929106ff474b44'
             '3d77d09a5df0de510aeeb940df4cb534787ddff3bb1828779753f5dfa1229d10'
             'e4018e850f80700acee8da296e56e15b1eef711ab15157e542e7d7e1237c3476'
             '5ca5491e4260cacae30f1a5786d109230db3f3a6e5a0eb45d0d0608293d247e3')
@@ -84,6 +85,8 @@ prepare() {
   [[ -d kodi-build ]] && rm -rf kodi-build
   mkdir $srcdir/kodi-build
 
+  patch -Np1 -i ../00-fix.building.with.mariadb.patch
+  patch -Np1 -i ../01-fix.passthrough.for.hifiberry_digi.patch
 }
 
 build() {
@@ -116,6 +119,8 @@ build() {
     -DENABLE_INTERNAL_CROSSGUID=ON \
     -DENABLE_INTERNAL_FSTRCMP=ON \
     -DENABLE_INTERNAL_FLATBUFFERS=ON \
+    -DENABLE_MARIADBCLIENT=ON \
+    -DENABLE_MYSQLCLIENT=OFF \
     -Dlibdvdcss_URL="$srcdir/libdvdcss-$_libdvdcss_version.tar.gz" \
     -Dlibdvdnav_URL="$srcdir/libdvdnav-$_libdvdnav_version.tar.gz" \
     -Dlibdvdread_URL="$srcdir/libdvdread-$_libdvdread_version.tar.gz" \
@@ -133,17 +138,16 @@ package_kodi-rbp-git() {
   pkgdesc="A software media player and entertainment hub for digital media (Raspberry Pi)"
   depends=(
     'bluez-libs' 'desktop-file-utils' 'freetype2' 'fribidi' 'libcec-rpi'
-    'hicolor-icon-theme' 'libass' 'libcdio' 'libjpeg-turbo' 'libmariadbclient'
+    'hicolor-icon-theme' 'libass' 'libcdio' 'libjpeg-turbo' 'mariadb-libs'
     'libmicrohttpd' 'libpulse' 'libssh' 'libxrandr' 'lirc' 'raspberrypi-firmware'
     'libxslt' 'lzo' 'python2-pillow' 'python2-simplejson' 'smbclient'
     'speex' 'taglib' 'tinyxml' 'xorg-xdpyinfo' 'yajl' 'libinput' 'libxkbcommon' 'libbluray-kodi-rbp'
-    'fbset'
+    'fbset' 'libnfs' 'curl'
   )
   optdepends=(
     'afpfs-ng: Apple shares support'
     'bluez: Blutooth support'
     'python2-pybluez: Bluetooth support'
-    'libnfs: NFS shares support'
     'libplist: Limited AirPlay support'
     'lsb-release: log distro information in crashlog'
     'shairplay: Limited AirPlay support'
@@ -158,7 +162,6 @@ package_kodi-rbp-git() {
   _components=('kodi' 'kodi-bin')
 
   cd kodi-build
-  # install eventclients
   for _cmp in ${_components[@]}; do
   DESTDIR="$pkgdir" /usr/bin/cmake \
     -DCMAKE_INSTALL_COMPONENT="$_cmp" \
@@ -185,10 +188,9 @@ package_kodi-eventclients-rbp-git() {
   optdepends=('python2: most eventclients are implemented in python2')
   _components=('kodi-eventclients-common'
     'kodi-eventclients-ps3'
-    'kodi-eventclients-xbmc-send')
+    'kodi-eventclients-kodi-send')
 
   cd kodi-build
-  # install eventclients
   for _cmp in ${_components[@]}; do
     DESTDIR="$pkgdir" /usr/bin/cmake \
       -DCMAKE_INSTALL_COMPONENT="$_cmp" \
@@ -206,7 +208,6 @@ package_kodi-tools-texturepacker-rbp-git() {
   _components=('kodi-tools-texturepacker')
 
   cd kodi-build
-  # install eventclients
   for _cmp in ${_components[@]}; do
     DESTDIR="$pkgdir" /usr/bin/cmake \
       -DCMAKE_INSTALL_COMPONENT="$_cmp" \
@@ -230,7 +231,6 @@ package_kodi-dev-rbp-git() {
     'kodi-visualization-dev')
 
   cd kodi-build
-  # install eventclients
   for _cmp in ${_components[@]}; do
     DESTDIR="$pkgdir" /usr/bin/cmake \
       -DCMAKE_INSTALL_COMPONENT="$_cmp" \

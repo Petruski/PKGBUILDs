@@ -6,11 +6,11 @@
 #  - skip qtwebengine on v5
 
 pkgname=qt5-doc
-_qtver=5.11.2
+_qtver=5.12.2
 pkgver=${_qtver/-/}
 pkgrel=1
 arch=('any')
-url='http://qt-project.org/'
+url='https://www.qt.io'
 license=('GPL3' 'LGPL3' 'FDL' 'custom')
 pkgdesc='A cross-platform application and UI framework (Documentation)'
 depends=('qt5-base')
@@ -18,8 +18,8 @@ makedepends=('qt5-tools' 'python2' 'pciutils' 'libxtst' 'libxcursor' 'libxrandr'
              'gperf' 'nss' 'clang')
 groups=('qt' 'qt5')
 _pkgfqn="qt-everywhere-src-${_qtver}"
-source=("http://download.qt.io/official_releases/qt/${pkgver%.*}/${_qtver}/single/${_pkgfqn}.tar.xz")
-sha256sums=('c6104b840b6caee596fa9a35bc5f57f67ed5a99d6a36497b6fe66f990a53ca81')
+source=("https://download.qt.io/official_releases/qt/${pkgver%.*}/${_qtver}/single/${_pkgfqn}.tar.xz")
+sha256sums=('59b8cb4e728450b21224dcaaa40eb25bafc5196b6988f2225c394c6b7f881ff5')
 
 prepare() {
   cd ${_pkgfqn}
