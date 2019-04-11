@@ -1,7 +1,7 @@
-From 790f8fb5b11fd931de5074b3ac093d00f2e03c84 Mon Sep 17 00:00:00 2001
+From 76777110d0346ba566d65efb27f8c8549dd8c76c Mon Sep 17 00:00:00 2001
 From: Olof Johansson <olofj@chromium.org>
 Date: Tue, 3 Mar 2015 13:22:33 +0100
-Subject: [PATCH 22/29] BACKPORT: platform/chrome: cros_ec_lightbar - fix
+Subject: [PATCH 22/33] BACKPORT: platform/chrome: cros_ec_lightbar - fix
  duplicate const warning
 
 Almost clean cherry-pick of 377415abab7b49c982475990cd06eef9f33e2ccc
@@ -34,5 +34,5 @@ index 78083a54c3cd..01357c88d8e8 100644
  	"S0S3", "S3S5", "STOP", "RUN", "PULSE", "TEST", "KONAMI",
  };
 -- 
-2.16.1
+2.21.0
 

@@ -1,7 +1,7 @@
-From f05329b04ab2303157539fee3535fa70a4cad9fb Mon Sep 17 00:00:00 2001
+From 012c455f2a1eb8f6effa273feb2a69d4a57ef894 Mon Sep 17 00:00:00 2001
 From: Theodore Ts'o <tytso@mit.edu>
 Date: Thu, 17 Jul 2014 04:13:05 -0400
-Subject: [PATCH 26/29] BACKPORT: random: introduce getrandom(2) system call
+Subject: [PATCH 26/33] BACKPORT: random: introduce getrandom(2) system call
 
 Almost clean cherry-pick of c6e9d6f38894798696f23c8084ca7edbf16ee895
 
@@ -146,10 +146,10 @@ Reviewed-by: Zach Brown <zab@zabbo.net>
 ---
  arch/x86/syscalls/syscall_32.tbl  |  1 +
  arch/x86/syscalls/syscall_64.tbl  |  1 +
- drivers/char/random.c             | 41 +++++++++++++++++++++++++++++++++++----
+ drivers/char/random.c             | 41 ++++++++++++++++++++++++++++---
  include/linux/syscalls.h          |  3 +++
- include/uapi/asm-generic/unistd.h |  4 +++-
- include/uapi/linux/random.h       |  9 +++++++++
+ include/uapi/asm-generic/unistd.h |  4 ++-
+ include/uapi/linux/random.h       |  9 +++++++
  6 files changed, 54 insertions(+), 5 deletions(-)
 
 diff --git a/arch/x86/syscalls/syscall_32.tbl b/arch/x86/syscalls/syscall_32.tbl
@@ -323,5 +323,5 @@ index 7471b5b3b8ba..f9c5282f1374 100644
  
  
 -- 
-2.16.1
+2.21.0
 

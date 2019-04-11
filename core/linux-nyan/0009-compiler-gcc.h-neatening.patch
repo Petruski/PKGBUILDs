@@ -1,7 +1,7 @@
-From dbe460c53088748b54ba981f2fded72d5f176d5f Mon Sep 17 00:00:00 2001
+From 0136681843ff20e2379eea9db8c5f7c55dcfccdd Mon Sep 17 00:00:00 2001
 From: Joe Perches <joe@perches.com>
 Date: Thu, 25 Jun 2015 15:01:00 -0700
-Subject: [PATCH 09/29] compiler-gcc.h: neatening
+Subject: [PATCH 09/33] compiler-gcc.h: neatening
 
  - Move the inline and noinline blocks together
 
@@ -24,7 +24,7 @@ Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 (cherry picked from commit f6d133f877c8bb0a0934dc8c521c758ee771e901)
 ---
- include/linux/compiler-gcc.h | 85 ++++++++++++++++++++++++--------------------
+ include/linux/compiler-gcc.h | 85 ++++++++++++++++++++----------------
  1 file changed, 47 insertions(+), 38 deletions(-)
 
 diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
@@ -162,5 +162,5 @@ index 24545cd90a25..0b008ade320e 100644
 -
 -#define __always_inline		inline __attribute__((always_inline))
 -- 
-2.16.1
+2.21.0
 

@@ -1,7 +1,7 @@
-From dd7fbad15ef3d4fe910aa8db522536597a8e53f0 Mon Sep 17 00:00:00 2001
+From 70535617d6c69086a080733f077483e830025aef Mon Sep 17 00:00:00 2001
 From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Date: Thu, 5 Nov 2015 18:45:05 -0800
-Subject: [PATCH 11/29] include/linux/compiler-gcc.h: hide assume_aligned
+Subject: [PATCH 11/33] include/linux/compiler-gcc.h: hide assume_aligned
  attribute from sparse
 
 The patch "slab.h: sprinkle __assume_aligned attributes" causes *tons* of
@@ -58,5 +58,5 @@ index e28b08957bb4..d53681205635 100644
   * GCC 'asm goto' miscompiles certain code sequences:
   *
 -- 
-2.16.1
+2.21.0
 

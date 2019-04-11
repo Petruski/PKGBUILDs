@@ -1,7 +1,7 @@
-From c7da18659d98939a033dc3ede32542df5dc190cb Mon Sep 17 00:00:00 2001
+From 7b300bbb0fc01cc98500496fa04bb942c714c28e Mon Sep 17 00:00:00 2001
 From: Joe Perches <joe@perches.com>
 Date: Thu, 25 Jun 2015 15:01:02 -0700
-Subject: [PATCH 10/29] compiler-gcc: integrate the various compiler-gcc[345].h
+Subject: [PATCH 10/33] compiler-gcc: integrate the various compiler-gcc[345].h
  files
 
 As gcc major version numbers are going to advance rather rapidly in the
@@ -23,10 +23,10 @@ Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 (cherry picked from commit cb984d101b30eb7478d32df56a0023e4603cba7f)
 ---
- include/linux/compiler-gcc.h  | 120 ++++++++++++++++++++++++++++++++++++++++--
- include/linux/compiler-gcc3.h |  23 --------
- include/linux/compiler-gcc4.h |  92 --------------------------------
- include/linux/compiler-gcc5.h |  66 -----------------------
+ include/linux/compiler-gcc.h  | 120 ++++++++++++++++++++++++++++++++--
+ include/linux/compiler-gcc3.h |  23 -------
+ include/linux/compiler-gcc4.h |  92 --------------------------
+ include/linux/compiler-gcc5.h |  66 -------------------
  4 files changed, 116 insertions(+), 185 deletions(-)
  delete mode 100644 include/linux/compiler-gcc3.h
  delete mode 100644 include/linux/compiler-gcc4.h
@@ -363,5 +363,5 @@ index cdd1cc202d51..000000000000
 -#define __HAVE_BUILTIN_BSWAP16__
 -#endif /* CONFIG_ARCH_USE_BUILTIN_BSWAP */
 -- 
-2.16.1
+2.21.0
 
