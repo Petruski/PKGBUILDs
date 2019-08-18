@@ -1,4 +1,4 @@
-From e66075fbacc41e808a0313c66dc337e62e1e951e Mon Sep 17 00:00:00 2001
+From f685844e96a5ffebabf47b92a13bf3861f9fab33 Mon Sep 17 00:00:00 2001
 From: Arnd Bergmann <arnd@arndb.de>
 Date: Thu, 14 Dec 2017 15:32:41 -0800
 Subject: [PATCH 33/33] exec: avoid gcc-8 warning for get_task_comm
@@ -81,5 +81,5 @@ index 5d620948d084..38e7ad8341ae 100644
  #ifdef CONFIG_SMP
  void scheduler_ipi(void);
 -- 
-2.21.0
+2.22.0
 

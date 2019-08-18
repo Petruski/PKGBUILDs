@@ -1,4 +1,4 @@
-From 70535617d6c69086a080733f077483e830025aef Mon Sep 17 00:00:00 2001
+From c2d1e95187507b624bce986da618f6ecea67b9ed Mon Sep 17 00:00:00 2001
 From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Date: Thu, 5 Nov 2015 18:45:05 -0800
 Subject: [PATCH 11/33] include/linux/compiler-gcc.h: hide assume_aligned
@@ -58,5 +58,5 @@ index e28b08957bb4..d53681205635 100644
   * GCC 'asm goto' miscompiles certain code sequences:
   *
 -- 
-2.21.0
+2.22.0
 

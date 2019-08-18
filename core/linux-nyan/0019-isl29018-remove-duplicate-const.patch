@@ -1,4 +1,4 @@
-From 82198ad78db3682c6e7bf20de0f23d80094a1a6a Mon Sep 17 00:00:00 2001
+From a6872d6c26ac1f73a9ce7b1b2273f9241d6d37eb Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Sun, 20 Aug 2017 00:44:35 +0200
 Subject: [PATCH 19/33] isl29018: remove duplicate const
@@ -21,5 +21,5 @@ index aff325ae37da..d5a141e5cd0c 100644
  	"als",
  	"ir",
 -- 
-2.21.0
+2.22.0
 

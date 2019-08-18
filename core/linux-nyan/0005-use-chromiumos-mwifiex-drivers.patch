@@ -1,4 +1,4 @@
-From 15b7aec9be61fbbeb087bf666cc8c662f51d5f19 Mon Sep 17 00:00:00 2001
+From 8bfd6d2d4e85543b98dcefaa22b20ae58486cb99 Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Wed, 9 Dec 2015 17:08:40 +0100
 Subject: [PATCH 05/33] use chromiumos mwifiex drivers
@@ -28,5 +28,5 @@ index b4877f4faaa9..d3660362a820 100644
  #define BLOCK_MODE	1
  #define BYTE_MODE	0
 -- 
-2.21.0
+2.22.0
 

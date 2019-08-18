@@ -1,4 +1,4 @@
-From 65f485f9f9765dd87209dd323196f5ee28d853aa Mon Sep 17 00:00:00 2001
+From f35635f46708b81f9996c248522530b24a89e514 Mon Sep 17 00:00:00 2001
 From: Josh Poimboeuf <jpoimboe@redhat.com>
 Date: Fri, 6 May 2016 09:22:25 -0500
 Subject: [PATCH 14/33] compiler-gcc: require gcc 4.8 for powerpc
@@ -58,5 +58,5 @@ index ed297f0eecef..c6196ad793f7 100644
  #endif
  #endif /* CONFIG_ARCH_USE_BUILTIN_BSWAP */
 -- 
-2.21.0
+2.22.0
 

@@ -1,4 +1,4 @@
-From 650ac1dc50d9582ee5792edeacd3ba7507a2c80a Mon Sep 17 00:00:00 2001
+From 3bbe81368e97f7b76e7d7bee24cb0133a1fbca79 Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Sun, 24 Jun 2018 21:34:56 +0200
 Subject: [PATCH 31/33] BACKPORT:  regmap: rbtree: Improve alignment
@@ -33,5 +33,5 @@ index 3394d9e41330..1aa95105bc74 100644
  
  struct regcache_rbtree_ctx {
 -- 
-2.21.0
+2.22.0
 

@@ -1,4 +1,4 @@
-From 352933c096ce9057c0bf5e3f8108ee641c989b9c Mon Sep 17 00:00:00 2001
+From 5e06a354db405c71f054c0e59d9f53e3cf0b1b4d Mon Sep 17 00:00:00 2001
 From: Hannes Frederic Sowa <hannes@stressinduktion.org>
 Date: Mon, 11 Nov 2013 12:20:34 +0100
 Subject: [PATCH 25/33] BACKPORT: random32: add prandom_reseed_late() and call
@@ -105,5 +105,5 @@ index c2b6e62e7b7f..6fb48477901c 100644
  	return 0;
  }
 -- 
-2.21.0
+2.22.0
 

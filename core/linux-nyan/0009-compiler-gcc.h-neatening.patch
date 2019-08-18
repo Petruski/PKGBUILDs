@@ -1,4 +1,4 @@
-From 0136681843ff20e2379eea9db8c5f7c55dcfccdd Mon Sep 17 00:00:00 2001
+From b9b004a4be4c6449fc56c5f5a456e6b7502b0260 Mon Sep 17 00:00:00 2001
 From: Joe Perches <joe@perches.com>
 Date: Thu, 25 Jun 2015 15:01:00 -0700
 Subject: [PATCH 09/33] compiler-gcc.h: neatening
@@ -162,5 +162,5 @@ index 24545cd90a25..0b008ade320e 100644
 -
 -#define __always_inline		inline __attribute__((always_inline))
 -- 
-2.21.0
+2.22.0
 

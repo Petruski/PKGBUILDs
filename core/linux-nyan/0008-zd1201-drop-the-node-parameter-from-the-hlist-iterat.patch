@@ -1,4 +1,4 @@
-From 5c2404ebb2c91d6281e714399f2d07eb19ca832f Mon Sep 17 00:00:00 2001
+From b9f3128b3d7cc4336d56eae96aa9fd7163a56508 Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Wed, 9 Dec 2015 18:06:12 +0100
 Subject: [PATCH 08/33] zd1201: drop the node parameter from the hlist
@@ -58,5 +58,5 @@ index 48273dd05b63..4941f201d6c8 100644
  		kfree_skb(frag->skb);
  		kfree(frag);
 -- 
-2.21.0
+2.22.0
 

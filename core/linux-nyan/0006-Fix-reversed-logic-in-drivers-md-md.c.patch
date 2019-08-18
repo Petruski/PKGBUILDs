@@ -1,4 +1,4 @@
-From 93987f74238287e0601d7f4e41a5eea1ee8f5102 Mon Sep 17 00:00:00 2001
+From 2ffe156f77fb72b7a6898da405f0d923f21f4871 Mon Sep 17 00:00:00 2001
 From: Eddie Kovsky <ewk@edkovsky.org>
 Date: Mon, 25 May 2015 22:36:24 -0600
 Subject: [PATCH 06/33] Fix reversed logic in drivers/md/md.c
@@ -33,5 +33,5 @@ index 51f0345a4ba4..4aa19e7f82b9 100644
  	    /* ignore bottom 8 bits of state, and allow SB_BITMAP_PRESENT to change */
  	    ((state^info->state) & 0xfffffe00)
 -- 
-2.21.0
+2.22.0
 

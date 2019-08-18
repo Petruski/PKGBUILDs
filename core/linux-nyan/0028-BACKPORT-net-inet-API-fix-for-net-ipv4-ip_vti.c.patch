@@ -1,4 +1,4 @@
-From 8c3ba1dc513f24492c630d0a810ffe565cb2301a Mon Sep 17 00:00:00 2001
+From c02750a216b39ee66d535fa3de127dde9dd07f70 Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Sun, 3 Sep 2017 17:39:42 +0200
 Subject: [PATCH 28/33] BACKPORT: net: inet: API fix for net/ipv4/ip_vti.c
@@ -38,5 +38,5 @@ index 065604127418..680054809323 100644
  		if (!IS_ERR(rt)) {
  			tdev = rt->dst.dev;
 -- 
-2.21.0
+2.22.0
 

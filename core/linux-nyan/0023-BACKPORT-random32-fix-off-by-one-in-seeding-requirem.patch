@@ -1,4 +1,4 @@
-From d162811dae94e8b32f71f5d08b93b88bdca2c9fe Mon Sep 17 00:00:00 2001
+From ce589c5f944eb56e454d6be026e083ae0a9c7bf8 Mon Sep 17 00:00:00 2001
 From: Daniel Borkmann <dborkman@redhat.com>
 Date: Mon, 11 Nov 2013 12:20:32 +0100
 Subject: [PATCH 23/33] BACKPORT: random32: fix off-by-one in seeding
@@ -98,5 +98,5 @@ index 52280d5526be..01e8890d1089 100644
  		/* mix it in */
  		prandom_u32_state(state);
 -- 
-2.21.0
+2.22.0
 

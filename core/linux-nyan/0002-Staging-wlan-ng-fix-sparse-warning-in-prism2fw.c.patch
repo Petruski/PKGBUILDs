@@ -1,4 +1,4 @@
-From 683c79735dc22c09d0b6e444bfb4377e2b4418fd Mon Sep 17 00:00:00 2001
+From 3884295e9a217cc99a103a762fc8d839f435abdc Mon Sep 17 00:00:00 2001
 From: A Raghavendra Rao <raghav3276@gmail.com>
 Date: Thu, 7 Aug 2014 14:10:39 +0530
 Subject: [PATCH 02/33] Staging: wlan-ng: fix sparse warning in prism2fw.c
@@ -81,5 +81,5 @@ index 0dfd2a4933ef..54a3bf57a86e 100644
  }
  
 -- 
-2.21.0
+2.22.0
 

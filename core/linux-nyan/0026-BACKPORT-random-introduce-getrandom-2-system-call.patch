@@ -1,4 +1,4 @@
-From 012c455f2a1eb8f6effa273feb2a69d4a57ef894 Mon Sep 17 00:00:00 2001
+From c1439f0737760a134ac093429ae9e0d2f4d79a07 Mon Sep 17 00:00:00 2001
 From: Theodore Ts'o <tytso@mit.edu>
 Date: Thu, 17 Jul 2014 04:13:05 -0400
 Subject: [PATCH 26/33] BACKPORT: random: introduce getrandom(2) system call
@@ -323,5 +323,5 @@ index 7471b5b3b8ba..f9c5282f1374 100644
  
  
 -- 
-2.21.0
+2.22.0
 

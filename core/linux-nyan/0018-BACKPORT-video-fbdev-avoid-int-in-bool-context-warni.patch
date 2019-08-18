@@ -1,4 +1,4 @@
-From 007d36dfb42d77524b57b8e4c5b045d3617dea24 Mon Sep 17 00:00:00 2001
+From 07036712ac2a5e3ba6e94c9bc659f28a4b734a3d Mon Sep 17 00:00:00 2001
 From: Arnd Bergmann <arnd@arndb.de>
 Date: Wed, 14 Jun 2017 12:40:36 +0200
 Subject: [PATCH 18/33] BACKPORT: video: fbdev: avoid int-in-bool-context
@@ -37,5 +37,5 @@ index 67f6dc347df5..d05c0d581ac5 100644
  
  	/* Yikes, EDID data is totally useless */
 -- 
-2.21.0
+2.22.0
 

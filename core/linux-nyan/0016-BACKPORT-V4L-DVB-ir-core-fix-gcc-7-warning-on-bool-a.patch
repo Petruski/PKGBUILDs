@@ -1,4 +1,4 @@
-From 2f525bc09eeddc16a06eaa572327c781446ede90 Mon Sep 17 00:00:00 2001
+From 332c9d362c4f089cfb6c60607a2a49fdd5193108 Mon Sep 17 00:00:00 2001
 From: Arnd Bergmann <arnd@arndb.de>
 Date: Thu, 11 May 2017 13:46:44 +0200
 Subject: [PATCH 16/33] BACKPORT: V4L/DVB: ir-core: fix gcc-7 warning on bool
@@ -36,5 +36,5 @@ index 72e3fa652481..257bb7a6ff54 100644
  				ictx->pad_mouse ? "mouse" : "keyboard");
  			spin_unlock_irqrestore(&ictx->kc_lock, flags);
 -- 
-2.21.0
+2.22.0
 

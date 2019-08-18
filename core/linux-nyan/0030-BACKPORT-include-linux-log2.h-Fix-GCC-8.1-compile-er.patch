@@ -1,4 +1,4 @@
-From 1da3ca90f92451309cdddc4397afe78262240609 Mon Sep 17 00:00:00 2001
+From d82590a9f8e88fac7315f757e4bc88f8cdcef0c3 Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Sun, 24 Jun 2018 18:23:54 +0200
 Subject: [PATCH 30/33] BACKPORT: include/linux/log2.h  Fix GCC 8.1 compile
@@ -176,5 +176,5 @@ index fd7ff3d91e6a..2af7f77866d0 100644
 +)
  #endif /* _LINUX_LOG2_H */
 -- 
-2.21.0
+2.22.0
 

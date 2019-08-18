@@ -1,4 +1,4 @@
-From 17743cd0caf9cd1d1b56eee613522c9cd6fdc059 Mon Sep 17 00:00:00 2001
+From 3147e3b0e8767d3129faf22036df1f9b0fa1ea95 Mon Sep 17 00:00:00 2001
 From: Andrew Morton <akpm@linux-foundation.org>
 Date: Fri, 6 Nov 2015 16:30:09 -0800
 Subject: [PATCH 12/33] include/linux/compiler-gcc.h: improve __visible
@@ -29,5 +29,5 @@ index d53681205635..667b40ad2700 100644
  #define __visible	__attribute__((externally_visible))
  #endif
 -- 
-2.21.0
+2.22.0
 

@@ -1,4 +1,4 @@
-From 7b300bbb0fc01cc98500496fa04bb942c714c28e Mon Sep 17 00:00:00 2001
+From 60af7090acd1653e67b7670ff5ca8ca86c6d44fe Mon Sep 17 00:00:00 2001
 From: Joe Perches <joe@perches.com>
 Date: Thu, 25 Jun 2015 15:01:02 -0700
 Subject: [PATCH 10/33] compiler-gcc: integrate the various compiler-gcc[345].h
@@ -363,5 +363,5 @@ index cdd1cc202d51..000000000000
 -#define __HAVE_BUILTIN_BSWAP16__
 -#endif /* CONFIG_ARCH_USE_BUILTIN_BSWAP */
 -- 
-2.21.0
+2.22.0
 

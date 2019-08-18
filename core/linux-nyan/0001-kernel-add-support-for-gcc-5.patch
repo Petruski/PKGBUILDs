@@ -1,4 +1,4 @@
-From 3af0f8ec7be505beb49a67b0d433f487a0bb4e34 Mon Sep 17 00:00:00 2001
+From c0b7c0a371dffa48a20a08e8f2e530c634b4d2e4 Mon Sep 17 00:00:00 2001
 From: Sasha Levin <sasha.levin@oracle.com>
 Date: Mon, 13 Oct 2014 15:51:05 -0700
 Subject: [PATCH 01/33] kernel: add support for gcc 5
@@ -94,5 +94,5 @@ index 000000000000..cdd1cc202d51
 +#define __HAVE_BUILTIN_BSWAP16__
 +#endif /* CONFIG_ARCH_USE_BUILTIN_BSWAP */
 -- 
-2.21.0
+2.22.0
 

@@ -1,4 +1,4 @@
-From 353a8258625550489a115be2897929ebbf41cc2e Mon Sep 17 00:00:00 2001
+From 3591f757d8c6e7fa756b15cf2a0e1571b2adc1f4 Mon Sep 17 00:00:00 2001
 From: Ronny Lorenz <ronny@tbi.univie.ac.at>
 Date: Wed, 9 Dec 2015 18:04:06 +0100
 Subject: [PATCH 07/33] Fix several compilation issues with GCC5.2
@@ -60,7 +60,7 @@ index 960183d4258f..7ae2c04fd4e0 100644
  	int l;
  	u8 *parse = input;
 diff --git a/mm/rmap.c b/mm/rmap.c
-index 743cef590630..5b0dd2041e41 100644
+index fa91196b3521..449cdfb114e5 100644
 --- a/mm/rmap.c
 +++ b/mm/rmap.c
 @@ -523,7 +523,7 @@ __vma_address(struct page *page, struct vm_area_struct *vma)
@@ -73,5 +73,5 @@ index 743cef590630..5b0dd2041e41 100644
  {
  	unsigned long address = __vma_address(page, vma);
 -- 
-2.21.0
+2.22.0
 

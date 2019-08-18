@@ -1,4 +1,4 @@
-From 566f501b5b929ac5610f03ffbfe6cb4a6920f229 Mon Sep 17 00:00:00 2001
+From e3ed603ec3790ff2652737278a8f4dabdcf34f28 Mon Sep 17 00:00:00 2001
 From: Paolo Bonzini <pbonzini@redhat.com>
 Date: Thu, 31 Mar 2016 09:38:51 +0200
 Subject: [PATCH 13/33] compiler-gcc: disable -ftracer for __noclone functions
@@ -39,5 +39,5 @@ index 667b40ad2700..ed297f0eecef 100644
  #endif /* GCC_VERSION >= 40500 */
  
 -- 
-2.21.0
+2.22.0
 

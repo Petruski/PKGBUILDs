@@ -1,4 +1,4 @@
-From 646a44c5d5fee437bd242d39050af73caeaeec7a Mon Sep 17 00:00:00 2001
+From 739698316b0473abda3f0efd3e78dacc4e8bbe8f Mon Sep 17 00:00:00 2001
 From: Xiongfeng Wang <xiongfeng.wang@linaro.org>
 Date: Mon, 8 Jan 2018 07:12:28 -0700
 Subject: [PATCH 32/33] fs/hfsplus: use memcpy() instead of strncpy()
@@ -30,5 +30,5 @@ index f66346155df5..90f60d169217 100644
  		len += XATTR_MAC_OSX_PREFIX_LEN;
  	}
 -- 
-2.21.0
+2.22.0
 
