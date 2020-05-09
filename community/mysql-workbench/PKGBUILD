@@ -6,51 +6,52 @@
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - use our cxxflags plus -fsigned-char
-#  - keep build fix for i686 (fixes 32-bit ARM)
+#  - patch to fix build on 32-bit
+#  - remove -Wno-deprecated-copy flag from CMakeLists.txt
 
 highmem=1
-buildarch=28
+buildarch=12
 
 pkgname=mysql-workbench
-pkgver=8.0.15
+pkgver=8.0.20
 pkgrel=3
 _mysql_version=${pkgver}
 _connector_version=${pkgver}
-_gdal_version=2.4.1
-_boost_version=1.68.0
+_gdal_version=3.0.4
+_boost_version=1.70.0
 pkgdesc='A cross-platform, visual database design tool developed by MySQL'
 arch=('x86_64')
 url='https://www.mysql.com/products/workbench/'
 license=('GPL2')
-depends=('cairo' 'ctemplate' 'desktop-file-utils' 'freetype2' 'gtkmm3'
+depends=('cairo' 'desktop-file-utils' 'freetype2' 'gtkmm3'
 	'hicolor-icon-theme' 'libgl' 'libsecret' 'libiodbc' 'libxml2'
 	'libzip' 'mysql-python' 'pcre' 'python2' 'python2-cairo' 'libssh'
 	'python2-pexpect' 'tinyxml' 'unixodbc' 'vsqlite++' 'proj' 'json-c'
-	'antlr4-runtime' 'giflib' 'zstd' 'curl')
+	'antlr4-runtime' 'giflib' 'zstd' 'curl' 'rapidjson')
 optdepends=('python2-pyodbc: database migration')
 makedepends=('cmake' 'boost' 'mesa' 'swig' 'java-runtime' 'imagemagick' 'antlr4')
 validpgpkeys=('A4A9406876FCBD3C456770C88C718D3B5072E1F5') # MySQL Release Engineering <mysql-build@oss.oracle.com>
 source=("https://cdn.mysql.com/Downloads/MySQLGUITools/mysql-workbench-community-${pkgver}-src.tar.gz"{,.asc}
 	"https://cdn.mysql.com/Downloads/MySQL-${_mysql_version%.*}/mysql-${_mysql_version}.tar.gz"{,.asc}
 	"https://cdn.mysql.com/Downloads/Connector-C++/mysql-connector-c++-${_connector_version}-src.tar.gz"{,.asc}
-	"http://download.osgeo.org/gdal/${_gdal_version}/gdal-${_gdal_version}.tar.xz"
+	"https://download.osgeo.org/gdal/${_gdal_version}/gdal-${_gdal_version}.tar.xz"
 	"https://downloads.sourceforge.net/project/boost/boost/${_boost_version}/boost_${_boost_version//./_}.tar.bz2"
 	'0001-mysql-workbench-no-check-for-updates.patch'
 	'0002-disable-unsupported-operating-system-warning.patch'
-	'0004-fix-build-for-i686.patch'
+	'0001-fix-buiild-for-32-bit.patch'
 	'atomic.patch'
 	'arch_linux_profile.xml')
-sha256sums=('a61fb363c34e4e11cacafb368f7121c4f59a1bbaaa0a6978ec4579adbe1a4931'
+sha256sums=('06e2b2119b944e40e0ca49a29edf90ff6b02dde6916cb2b83b915e879d781130'
             'SKIP'
-            'bb1bca2dc2f23ee9dd395cc4db93b64561d4ac20b53be5d1dae563f7be64825e'
+            '4d62eaca43cd9c858baca10d02857382887507a17ffdbfa97daf107d0c62ee5f'
             'SKIP'
-            'b7e49cbee7d0e89ece7b2460ca7199dc4368be1b8411251050047232eb527b81'
+            '50eaebd1d59b5681b6959a8c5b95bdeeffd021db0f06264eb497706dbc5b39cb'
             'SKIP'
-            'fd51b4900b2fc49b98d8714f55fc8a78ebfd07218357f93fb796791115a5a1ad'
-            '7f6130bc3cf65f56a618888ce9d5ea704fa10b462be126ad053e80e553d6d8b7'
+            '5569a4daa1abcbba47a9d535172fc335194d9214fdb96cd0f139bb57329ae277'
+            '430ae8354789de4fd19ee52f3b1f739e1fba576f0aded0897c3c2bc00fb38778'
             'cdf687f23bc6e8d52dbee9fa02b23d755e80f88476f0fc2e7c4c71cdfed3792f'
             '2d0f6dcf38f22e49ef7ab9de0230484f1ffac41b7ac40feaf5ef4538ae2f7a18'
-            '763925b336d9a398c15fdd757b6567a2f374a822090d32ffdefca018231128a4'
+            '719501bbd1de673767007c429feed2fc48d1176d456161c4ba69cf3165c0438a'
             '17294a67637ab7ffff5c39262208e63d21acac72cc2492f616ef1d8e0ae9ac02'
             '2ade582ca25f6d6d748bc84a913de39b34dcaa6e621a77740fe143007f2833af')
 
@@ -64,8 +65,9 @@ prepare() {
 	# disable unsupported operating system warning
 	patch -Np1 < "${srcdir}"/0002-disable-unsupported-operating-system-warning.patch
 
-	# fix build for i686
-	patch -Np1 < "${srcdir}"/0004-fix-build-for-i686.patch
+
+	# be happy with more recent antlr
+	sed -i '/set(ANTLR_JAR_FILENAME/s/4.7.1/4.8/' CMakeLists.txt
 
 	# GCC 7.x introduced some new warnings, remove '-Werror' for the build to complete
 	sed -i '/^set/s|-Werror -Wall|-Wall|' CMakeLists.txt
@@ -78,6 +80,12 @@ prepare() {
 
 	# make sure to link against bundled libraries
 	sed -i "/target_link_libraries/s|\\$|-L${srcdir}/install-bundle/usr/lib/ \\$|" backend/wbpublic/CMakeLists.txt
+
+	# remove -Wno-deprecated-copy
+	sed -i 's|-Wno-deprecated-copy||' CMakeLists.txt
+
+	# fix build with 32-bit
+	[[ $CARCH != "aarch64" ]] && patch -Np1 < "${srcdir}"/0001-fix-buiild-for-32-bit.patch
 
 	# link v6 against libatomic
 	cd "${srcdir}/mysql-${_mysql_version}"

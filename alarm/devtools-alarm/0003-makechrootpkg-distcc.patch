@@ -1,4 +1,4 @@
-From 71c1a2307f07d6ddb10c876c532e92827b7eae2c Mon Sep 17 00:00:00 2001
+From 9ca1e5f1c2fdfa559259166e48a4691dfe8f43f4 Mon Sep 17 00:00:00 2001
 From: Kevin Mihelich <kevin@archlinuxarm.org>
 Date: Sun, 28 Dec 2014 22:32:15 -0700
 Subject: [PATCH 3/7] makechrootpkg: distcc
@@ -8,10 +8,10 @@ Subject: [PATCH 3/7] makechrootpkg: distcc
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/makechrootpkg.in b/makechrootpkg.in
-index 8e8e4f5..a920c19 100644
+index f60d978..aa65ae5 100644
 --- a/makechrootpkg.in
 +++ b/makechrootpkg.in
-@@ -226,7 +226,9 @@ _chrootbuild() {
+@@ -230,7 +230,9 @@ _chrootbuild() {
  	# use "$" in arguments to commands with "sudo -i".  ${foo} or
  	# ${1} is OK, but $foo or $1 isn't.
  	# https://bugzilla.sudo.ws/show_bug.cgi?id=765
@@ -23,5 +23,5 @@ index 8e8e4f5..a920c19 100644
  	case $ret in
  		0|14)
 -- 
-2.16.2
+2.22.0
 

@@ -6,12 +6,12 @@
 buildarch=28
 
 pkgname=gn
-pkgver=0.1545.9434c3d2
-_commit=9434c3d281eefb5c3764b5a0575feec9c59bd095
+pkgver=0.1700.97cc440d
+_commit=97cc440d84f050f99ff0161f9414bfa2ffa38f65
 pkgrel=1
 pkgdesc="Meta-build system that generates build files for Ninja"
 arch=('x86_64')
-url="https://gn.googlesource.com/gn/+/master/README.md"
+url="https://gn.googlesource.com/gn/"
 license=('BSD')
 depends=('gcc-libs')
 makedepends=('clang' 'ninja' 'python' 'git')
@@ -33,13 +33,23 @@ prepare() {
 build() {
   cd $pkgname
   ./build/gen.py
-  ninja -C out gn
+  ninja -C out
+}
+
+check() {
+  cd $pkgname
+  ./out/gn_unittests
 }
 
 package() {
   cd $pkgname
   install -D out/gn "$pkgdir/usr/bin/gn"
-  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm644 -t "$pkgdir/usr/share/doc/$pkgname" docs/*
+  install -Dm644 -t "$pkgdir/usr/share/licenses/$pkgname" LICENSE
+
+  mkdir -p "$pkgdir/usr/share/vim/vimfiles"
+  cp -r misc/vim/{autoload,ftdetect,ftplugin,syntax} \
+    "$pkgdir/usr/share/vim/vimfiles/"
 }
 
 # vim:set ts=2 sw=2 et:

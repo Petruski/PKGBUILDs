@@ -6,20 +6,21 @@
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - patch to remove lto from hardcoded cflags
 
-pkgname=kitty
-pkgver=0.13.3
+pkgbase=kitty
+pkgname=(kitty kitty-terminfo)
+pkgver=0.17.3
 pkgrel=1
-pkgdesc="A modern, hackable, featureful, OpenGL based terminal emulator"
+pkgdesc="A modern, hackable, featureful, OpenGL-based terminal emulator"
 arch=('x86_64')
 url="https://github.com/kovidgoyal/kitty"
 license=('GPL3')
-depends=('python3' 'freetype2'  'fontconfig' 'wayland' 'libx11' 'libxkbcommon-x11' 'hicolor-icon-theme' 'libgl')
-makedepends=('pkg-config' 'python-setuptools' 'libxinerama' 'libxcursor' 'libxrandr' 'libxkbcommon' 'glfw-x11' 'wayland-protocols' 'mesa' 'python-sphinx')
+depends=('python3' 'freetype2'  'fontconfig' 'wayland' 'libx11' 'libxkbcommon-x11' 'libxi' 'hicolor-icon-theme' 'libgl' 'libcanberra')
+makedepends=('libxinerama' 'libxcursor' 'libxrandr' 'wayland-protocols' 'python-sphinx')
 optdepends=('imagemagick: viewing images with icat')
 source=("${pkgname}-${pkgver}.tar.gz::https://github.com/kovidgoyal/$pkgname/archive/v$pkgver.tar.gz"
         '0001-remove-lto.patch')
-sha512sums=('71273c0cd71ee2c49af5addeb9512c077f29d3f6e1843243c2cc174292e9ace18cbabd041ba8ef9ad8f41630cdaad01e0869c919634bb084e9724d612cd3a502'
-            '61d225a073bd03bf916d41254132025cee4744899c44ac195a039065b345301fdbca6ed5f5ac2328431c3122b4dce6ec8f5057aaddf25e4ea3f2fdc86ce9486f')
+sha512sums=('99d07917f6d2560c08cd8d11cbc88c2822e934a8a5b694159f902e5a585be9721f634bca4bc04c709ec424342b41061868ae0d95acd483bf011cc0054c503422'
+            '1c0290a42552cbe5b3bb120965bcd2dc20b9236dba43e43ff086adc14dc25417323bf9b750bf1cb06ecb65267d6d479f79daf14f64eac697c06a138fa7baa601')
 
 prepare() {
   cd "$srcdir/$pkgname-$pkgver"
@@ -28,13 +29,37 @@ prepare() {
 
 build() {
   cd "$srcdir/$pkgname-$pkgver"
-  python3 setup.py linux-package
+  python3 setup.py linux-package --update-check-interval=0
 }
 
-package() {
+package_kitty() {
+  depends+=('kitty-terminfo')
+
   cd "$srcdir/$pkgname-$pkgver"
 
-  python3 setup.py linux-package --prefix ${pkgdir}/usr
+  cp -r linux-package "${pkgdir}"/usr
 
-  install -Dm644 ${pkgdir}/usr/share/icons/hicolor/256x256/apps/kitty.png ${pkgdir}/usr/share/pixmaps/kitty.png
+  # completions
+  python __main__.py + complete setup bash | install -Dm644 /dev/stdin "${pkgdir}"/usr/share/bash-completion/completions/kitty
+  python __main__.py + complete setup fish | install -Dm644 /dev/stdin "${pkgdir}"/usr/share/fish/vendor_completions.d/kitty.fish
+  # doesn't know how to http://zsh.sourceforge.net/Doc/Release/Completion-System.html#Autoloaded-files
+  # so we write our own header
+  {
+      echo "#compdef kitty"
+      python __main__.py + complete setup zsh
+  } | install -Dm644 /dev/stdin "${pkgdir}"/usr/share/zsh/site-functions/_kitty
+
+  install -Dm644 "${pkgdir}"/usr/share/icons/hicolor/256x256/apps/kitty.png "${pkgdir}"/usr/share/pixmaps/kitty.png
+
+  rm -r "$pkgdir"/usr/share/terminfo
+
+  install -Dm644 docs/generated/conf/kitty.conf "${pkgdir}"/usr/share/doc/${pkgname}/kitty.conf
+}
+
+package_kitty-terminfo() {
+  pkgdesc='Terminfo for kitty, an OpenGL-based terminal emulator'
+  depends=('ncurses')
+
+  mkdir -p "$pkgdir/usr/share/terminfo"
+  tic -x -o "$pkgdir/usr/share/terminfo" $pkgbase-$pkgver/terminfo/kitty.terminfo
 }

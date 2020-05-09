@@ -1,47 +1,104 @@
+# Maintainer: Jan Alexander Steffens (heftig) <jan.steffens@gmail.com>
 # Maintainer: Jan de Groot <jgc@archlinux.org>
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - remove makedepend on valgrind
+#  - patch to check for and link with libatomic
+#  - patch to disable neon on !aarch64
 
-pkgname=pipewire
-pkgver=0.2.5+3+g371da358
-pkgrel=1
+pkgbase=pipewire
+pkgname=(pipewire pipewire-docs pipewire-jack pipewire-pulse)
+pkgver=0.3.4
+pkgrel=1.1
 pkgdesc="Server and user space API to deal with multimedia pipelines"
 url="https://pipewire.org"
 license=(LGPL2.1)
 arch=(x86_64)
-depends=(gstreamer gst-plugins-base v4l-utils sbc ffmpeg rtkit)
-makedepends=(git meson doxygen graphviz xmltoman)
-install=pipewire.install
-_commit=371da358d1580dc06218d18a12a99611cac39e4e  # master
-source=("git+https://github.com/PipeWire/pipewire#commit=$_commit")
-sha256sums=('SKIP')
-
+makedepends=(git meson doxygen graphviz xmltoman jack2 libpulse
+             alsa-lib gstreamer gst-plugins-base sbc rtkit vulkan-icd-loader
+             dbus libsndfile bluez-libs vulkan-headers)
+_commit=33398d7de83fad1c67c691e0712e3e0108c5e966  # tags/0.3.4
+source=("git+https://github.com/PipeWire/pipewire#commit=$_commit"
+        0001-atomic.patch
+        0002-disable-neon.patch)
+sha256sums=('SKIP'
+            '012c545b4f17b7b4f08ff4994dfe01b1ba125be9f71563a0e2a094e0fb72cec5'
+            '6e465e8413f4c20b2015f4168ca4e9fd07b1186c405b613657f95796fd3fd473')
 
 pkgver() {
-  cd $pkgname
+  cd $pkgbase
   git describe --tags | sed 's/-/+/g'
 }
 
 prepare() {
-  cd $pkgname
-
-  # Reduce docs size
-  printf '%s\n' >>doc/Doxyfile.in \
-    HAVE_DOT=yes DOT_IMAGE_FORMAT=svg INTERACTIVE_SVG=yes
+  cd $pkgbase
+  patch -p1 -i ../0001-atomic.patch
+  patch -p1 -i ../0002-disable-neon.patch
 }
 
 build() {
-  arch-meson $pkgname build \
+  # warning: ‘-Wformat-security’ ignored without ‘-Wformat’ [-Wformat-security]
+  CFLAGS+=" -Wformat"
+
+  arch-meson $pkgbase build \
     -D docs=true \
     -D man=true
+
   ninja -C build
 }
 
 check() {
-  meson test -C build
+  meson test -C build --print-errorlogs
 }
 
-package() {
+_pick() {
+  local p="$1" f d; shift
+  for f; do
+    d="$srcdir/$p/${f#$pkgdir/}"
+    mkdir -p "$(dirname "$d")"
+    mv "$f" "$d"
+    rmdir -p --ignore-fail-on-non-empty "$(dirname "$f")"
+  done
+}
+
+_ver=${pkgver:0:3}
+
+package_pipewire() {
+  depends=(gstreamer gst-plugins-base sbc rtkit vulkan-icd-loader bluez-libs
+           libdbus-1.so libsndfile.so libudev.so libasound.so libsystemd.so
+           libglib-2.0.so libgobject-2.0.so)
+  optdepends=('pipewire-docs: Documentation'
+              'pipewire-jack: JACK support'
+              'pipewire-pulse: PulseAudio support')
+  provides=(libpipewire-$_ver.so)
+  backup=(etc/pipewire/pipewire.conf)
+  install=pipewire.install
+
   DESTDIR="$pkgdir" meson install -C build
+
+  cd "$pkgdir"
+
+  _pick docs usr/share/doc
+
+  _pick pulse usr/bin/pw-pulse usr/lib/pipewire-$_ver/pulse
+
+  _pick jack usr/bin/pw-jack usr/lib/pipewire-$_ver/jack
+  _pick jack usr/lib/spa-0.2/jack
+}
+
+package_pipewire-docs() {
+  pkgdesc+=" (documentation)"
+  mv docs/* "$pkgdir"
+}
+
+package_pipewire-jack() {
+  pkgdesc+=" (JACK support)"
+  depends=(libpipewire-$_ver.so libjack.so)
+  mv jack/* "$pkgdir"
+}
+
+package_pipewire-pulse() {
+  pkgdesc+=" (PulseAudio support)"
+  depends=(libpipewire-$_ver.so libglib-2.0.so)
+  mv pulse/* "$pkgdir"
 }

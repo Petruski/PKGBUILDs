@@ -6,31 +6,35 @@
 #  - removed AUTOBAHN_USE_NVX=1 from python build/install commands
 
 pkgname=python-autobahn
-pkgver=19.3.3
+pkgver=20.4.3
 pkgrel=1
 pkgdesc='Real-time framework for Web, Mobile & Internet of Things'
 arch=(x86_64)
 url='https://crossbar.io/autobahn/'
 license=(MIT)
-depends=(python-cffi python-twisted python-six python-txaio python-wsaccel)
-makedepends=(python-setuptools python-argon2_cffi python-msgpack python-passlib python-pynacl)
-checkdepends=(python-mock python-pytest python-pytest-asyncio)
+depends=(python-cffi python-twisted python-txaio python-wsaccel
+         python-setuptools python-cryptography)
+makedepends=(python-argon2_cffi python-cbor python-flatbuffers
+             python-msgpack python-passlib python-pynacl python-pytrie
+             python-ubjson)
+checkdepends=(python-pytest python-pytest-asyncio)
 optdepends=(
+  'python-cbor: CBOR serializer support'
+  'python-flatbuffers: FlatBuffers serializer support'
   'python-msgpack: MsgPack serializer support'
+  'python-u-msgpack: pure-python alternative to python-msgpack for MsgPack serializer support'
+  'python-ubjson: UBJSON serializer support'
+  'python-ujson: accelerated JSON serializer support'
   'python-argon2_cffi: WAMP-SCRAM authentication support'
   'python-passlib: WAMP-SCRAM authentication support'
-  'python-pynacl: WAMP-cryptosign support'
+  'python-pynacl: WAMP-cryptosign and WAMP-cryptobox support'
+  'python-pytrie: WAMP-cryptobox support'
+  'python-pyopenssl: SSL/TLS support'
+  'python-snappy: snappy compression suppport for WebSocket messages'
 )
 
-source=(https://pypi.io/packages/source/a/autobahn/autobahn-$pkgver.tar.gz
-        skip-test-missing-serializers.patch)
-sha256sums=('e92f40ab26fb51672c25cd301ae79a549c6ff7748effe6abdea2ef31d5363a4f'
-            '2d4ec4300f98cddd13c3a4d70e6ae4934a98f17b04628cadfd18654172d04f92')
-
-prepare() {
-  cd "$srcdir/autobahn-$pkgver"
-  patch -Np1 -i ../skip-test-missing-serializers.patch
-}
+source=(https://files.pythonhosted.org/packages/source/a/autobahn/autobahn-$pkgver.tar.gz)
+sha256sums=('c6fe745d52ba9f9eecf791cd31f558df42aebfc4f9ee558a8f1d18c707e1ae1f')
 
 build() {
   cd "$srcdir/autobahn-$pkgver"
@@ -39,8 +43,11 @@ build() {
 
 check() {
   cd "$srcdir/autobahn-$pkgver"
-  USE_TWISTED=1 PYTHONPATH=.:build/lib.linux-$CARCH-3.7 pytest -v autobahn
-  USE_ASYNCIO=1 PYTHONPATH=.:build/lib.linux-$CARCH-3.7 pytest -v autobahn
+  pyver=$(python -c "import sys; print('{}.{}'.format(*sys.version_info[:2]))")
+  # "autobahn on asyncio is tested using pytest, while for twisted we are using twisted trial"
+  # https://github.com/crossbario/autobahn-python/issues/1235#issuecomment-522440810
+  USE_TWISTED=1 PYTHONPATH=.:build/lib.linux-$CARCH-$pyver trial3 autobahn
+  USE_ASYNCIO=1 PYTHONPATH=.:build/lib.linux-$CARCH-$pyver pytest -v autobahn
 }
 
 package() {

@@ -4,21 +4,22 @@
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - remove qt5-webengine dependency for v5/v6
+#  - depend on qt5-webchannel, needed for build, pulled in by qt5-webengine
 
 pkgname=libksysguard
-pkgver=5.15.4
-pkgrel=1.1
+pkgver=5.18.5
+pkgrel=1
 pkgdesc='Libraries for ksysguard'
 arch=(x86_64)
 url='https://www.kde.org/workspaces/plasmadesktop/'
 license=(LGPL)
-depends=(libxres kio)
+depends=(libxres kio qt5-webchannel)
 makedepends=(extra-cmake-modules kdoctools plasma-framework)
 depends_aarch64=(qt5-webengine)
 depends_armv7h=(qt5-webengine)
 groups=(plasma)
 source=("https://download.kde.org/stable/plasma/$pkgver/$pkgname-$pkgver.tar.xz"{,.sig})
-sha256sums=('bc4e335a8aadc01692347c05aa203f29b370eff0463f95422af087212ea6d952'
+sha256sums=('d4d7030a2869a546a211844aa158dcef3598386cc035a8655529938ba102440b'
             'SKIP')
 validpgpkeys=('2D1D5B0588357787DE9EE225EC94D18F7F05997E'  # Jonathan Riddell <jr@jriddell.org>
               '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
@@ -32,8 +33,6 @@ prepare() {
 build() {
   cd build
   cmake ../$pkgname-$pkgver \
-    -DCMAKE_INSTALL_PREFIX=/usr \
-    -DCMAKE_INSTALL_LIBDIR=lib \
     -DBUILD_TESTING=OFF
   make
 }

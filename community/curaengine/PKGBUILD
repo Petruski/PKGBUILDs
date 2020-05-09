@@ -5,19 +5,18 @@
 #  - -DBUILD_TESTS=OFF
 
 pkgname=curaengine
-pkgver=4.0.0
+pkgver=4.5.0
 pkgrel=1
 pkgdesc="Engine for processing 3D models into 3D printing instruction for Ultimaker and other GCode based 3D printers."
 url="https://github.com/Ultimaker/CuraEngine"
 arch=('x86_64')
 license=('AGPL')
-depends=('arcus')
-# TODO: https://github.com/Ultimaker/CuraEngine/blob/master/CMakeLists.txt#L26
-# Package polyclipping in the repos
+depends=('arcus' 'rapidjson' 'polyclipping')
 checkdepends=('cppunit')
-makedepends=('cmake' 'git')
+makedepends=('cmake' 'git' 'gmock' 'gtest')
 source=("$pkgname-$pkgver.tar.gz::https://github.com/Ultimaker/${pkgname}/archive/${pkgver}.tar.gz")
-sha512sums=('478dc2554abea24baeec18e2b2d65a790dd6d31a3b11c87d839a9e928679f40bab9703e86e473bba36f72355485d66bf63515692ac75bceae5881e6537f48c46')
+sha512sums=('481f6b839fe7d4bad14d9820337574d31a928e258ede359c608075f1cc7771e3eb649d5d0cff5f1edbc1e2c1802ee99e1ca2eb36a34799331279cbc0c3294636')
+
 
 build() {
   cd CuraEngine-${pkgver}
@@ -27,6 +26,7 @@ build() {
    cmake .. \
      -DCMAKE_INSTALL_PREFIX=/usr \
      -DBUILD_TESTS=OFF \
+     -DUSE_SYSTEM_LIBS=ON \
      -DCMAKE_BUILD_TYPE=Release
 
   make

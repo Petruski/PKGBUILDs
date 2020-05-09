@@ -6,11 +6,10 @@
 # Contributor: Jack Lloyd <jack@randombit.net>
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
-#  - AArch64 patch
 #  - disable neon on !AArch64
 
 pkgname=botan
-pkgver=2.9.0
+pkgver=2.14.0
 pkgrel=1
 pkgdesc='Crypto library written in C++'
 arch=(x86_64)
@@ -19,25 +18,16 @@ license=(BSD)
 makedepends=(python)
 optdepends=('python: for using botan2.py')
 validpgpkeys=('621DAF6411E1851C4CF9A2E16211EBF1EFBADFBC')
-source=("https://botan.randombit.net/releases/Botan-${pkgver}.tgz"{,.asc}
-        '0001-aarch64-support.patch')
-sha256sums=('305564352334dd63ae63db039077d96ae52dfa57a3248871081719b6a9f2d119'
-            'SKIP'
-            '0e279e3b16e115e26f5dc1edf02a4082f063134513aaf6ad1fbd10a1d2624e37')
-
-prepare() {
-  cd "${pkgname^}-$pkgver"
-
-  patch -p1 -i ../0001-aarch64-support.patch
-}
+source=("https://botan.randombit.net/releases/Botan-${pkgver}.tar.xz"{,.asc})
+sha256sums=('0c10f12b424a40ee19bde00292098e201d7498535c062d8d5b586d07861a54b5'
+            'SKIP')
 
 build() {
   cd "${pkgname^}-$pkgver"
 
   [[ $CARCH != "aarch64" ]] && CONFIG="--disable-neon"
 
-  # botan benefits from -O3. Upstream is using it when testing.
-  CXXFLAGS="$CXXFLAGS -O3" ./configure.py \
+  ./configure.py \
     --prefix=/usr \
     --with-bzip \
     --with-lzma \
@@ -51,7 +41,7 @@ build() {
 check() {
   cd "${pkgname^}-$pkgver"
 
-  ./botan-test
+  LD_LIBRARY_PATH="$PWD" ./botan-test
 }
 
 package() {
@@ -59,6 +49,3 @@ package() {
   install -Dm644 "${pkgname^}-$pkgver/license.txt" \
     "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
-
-# getver: github.com/randombit/botan
-# vim: ts=2 sw=2 et:

@@ -1,4 +1,4 @@
-# Maintainer: David Runge <dave@sleepmap.de>
+# Maintainer: David Runge <dvzrv@archlinux.org>
 # Contributor: Eric Bélanger <eric@archlinux.org>
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
@@ -6,8 +6,8 @@
 #  - explicitly link v5/v6 with libatomic
 
 pkgname=audacity
-pkgver=2.3.1
-pkgrel=1
+pkgver=2.3.3
+pkgrel=2
 epoch=1
 pkgdesc="A program that lets you manipulate digital audio waveforms"
 arch=('x86_64')
@@ -17,12 +17,15 @@ groups=('pro-audio')
 # upstream enquired via mail about:
 # vendors/requires older version of portaudio
 # vendors/doesn't detect system version of portmidi
-depends=('libid3tag' 'libmad' 'libsoxr' 'lilv' 'portsmf' 'soundtouch' 'suil'
-'twolame' 'vamp-plugin-sdk' 'wxgtk3')
-makedepends=('cmake' 'ffmpeg')
+depends=('expat' 'gcc-libs' 'gdk-pixbuf2' 'glib2' 'gtk3' 'libFLAC.so'
+'libFLAC++.so' 'libid3tag' 'libjack.so' 'liblilv-0.so' 'libmad' 'libogg'
+'libsndfile' 'libsoxr' 'libsuil-0.so' 'libtwolame.so' 'libvamp-hostsdk.so'
+'libvorbis.so' 'libvorbisenc.so' 'libvorbisfile.so' 'portsmf' 'soundtouch'
+'wxgtk3')
+makedepends=('cmake' 'ffmpeg' 'lv2')
 optdepends=('ffmpeg: additional import/export capabilities')
 source=("https://github.com/${pkgname}/${pkgname}/archive/Audacity-${pkgver}.tar.gz")
-sha512sums=('066f57bd90d2baea6969f0cbfb63e41a42ed6dac955d87dc7b601c7a270888363e414c57e36393618801ea31b1068b7b22003f52897bf9a44fbc355aaf23cbaa')
+sha512sums=('0789d5bc27933c688b8c99e0d9d9ca65f3b0c59cf74a235feee094a1815bdb59a32a4f50d2938b8fb9d72b0c5ba88451d02f90c5163931774a2088463562c5ef')
 
 prepare() {
   mv -v "${pkgname}-Audacity-${pkgver}" "${pkgname}-${pkgver}"

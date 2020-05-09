@@ -3,33 +3,34 @@
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - patch to fix icudata library linking on ARM
+#  - remove check for clang in configure - picks up distcc
 
 pkgname=icu
-pkgver=64.1
+pkgver=67.1
 pkgrel=1
 pkgdesc="International Components for Unicode library"
 arch=(x86_64)
-url="http://www.icu-project.org/"
+url="http://site.icu-project.org/home"
 license=('custom:icu')
 depends=('gcc-libs' 'sh')
 makedepends=('python')
-#makedepends=('clang')
-# no https available
-source=(#http://download.icu-project.org/files/${pkgname}4c/${pkgver}/${pkgname}4c-${pkgver/./_}-src.tgz
-        https://ssl.icu-project.org/files/${pkgname}4c/${pkgver}/${pkgname}4c-${pkgver//./_}-src.tgz{,.asc}
+provides=(libicu{data,i18n,io,test,tu,uc}.so)
+source=(https://github.com/unicode-org/icu/releases/download/release-${pkgver//./-}/${pkgname}4c-${pkgver//./_}-src.tgz{,.asc}
         icudata-stdlibs.patch)
-# https://ssl.icu-project.org/files/icu4c/62.1/SHASUM512.txt
-sha512sums=('5eca8342d8bdf902689243506643e04512744b33962687e118f6810af6f7fd073678f67b991d2ae9139d257713b63abb4222b96687234df01ad5ff62df16ede0'
+# https://github.com/unicode-org/icu/releases/download/release-65-1/SHASUM512.txt - no checksum file for v67 release
+sha512sums=('4779f1ce1ca7976f6fad6768853ea8c540da54d11509e3b6cfd864a04b5f2db1c3d4b546387f91ad02fb90804525bc37d2543173f0d705d6ca11dc6f2b7640a8'
             'SKIP'
             '8f13898c2b2d69ef516ee0831a73e5865676795716e7becac4457e208642bfdffb42f2a9280e99dcc10303ad721f5dc2e10ef83c633bd723044e98cc72c6bc7b')
 validpgpkeys=('BA90283A60D67BA0DD910A893932080F4FB419E3') #  "Steven R. Loomis (filfla-signing) <srloomis@us.ibm.com>" 
 validpgpkeys+=('9731166CD8E23A83BEE7C6D3ACA5DBE1FD8FABF1') #  "Steven R. Loomis (ICU Project) <srl@icu-project.org>" 
 validpgpkeys+=('FFA9129A180D765B7A5BEA1C9B432B27D1BA20D7') # "Fredrik Roubert <fredrik@roubert.name>"
 validpgpkeys+=('E4098B78AFC94394F3F49AA903996C7C83F12F11') # "keybase.io/srl295 <srl295@keybase.io>"
+validpgpkeys=('4569BBC09DA846FC91CBD21CE1BBA44593CF2AE0') # "Steven R. Loomis (codesign-qormi) <srloomis@us.ibm.com>"
 
 prepare() {
   cd icu/source
   patch -p2 -i ${srcdir}/icudata-stdlibs.patch
+  sed -r -i 's/(for ac_prog in )clang(\+\+)? /\1/g' configure
 }
 
 build() {
@@ -48,8 +49,8 @@ check() {
 
 package() {
   cd icu/source
-  make -j1 DESTDIR=${pkgdir} install
+  make -j1 DESTDIR="${pkgdir}" install
 
   # Install license
-  install -Dm644 ${srcdir}/icu/LICENSE ${pkgdir}/usr/share/licenses/icu/LICENSE
+  install -Dm644 "${srcdir}"/icu/LICENSE "${pkgdir}"/usr/share/licenses/icu/LICENSE
 }

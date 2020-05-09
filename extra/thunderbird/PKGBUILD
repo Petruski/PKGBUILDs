@@ -13,25 +13,30 @@ buildarch=12
 highmem=1
 
 pkgname=thunderbird
-pkgver=60.6.1
+pkgver=68.7.0
 pkgrel=2
 pkgdesc='Standalone mail and news reader from mozilla.org'
 url='https://www.mozilla.org/thunderbird/'
 arch=(x86_64)
 license=(MPL GPL LGPL)
-depends=(gtk3 gtk2 mozilla-common libxt startup-notification mime-types dbus-glib alsa-lib
+depends=(gtk3 mozilla-common libxt startup-notification mime-types dbus-glib alsa-lib
          nss hunspell sqlite ttf-font icu)  # libvpx
-makedepends=(unzip zip diffutils python2 yasm mesa imake gconf libpulse inetutils xorg-server-xvfb
-             autoconf2.13 rust clang llvm)
+makedepends=(unzip zip diffutils python python2 yasm nasm mesa imake libpulse inetutils xorg-server-xvfb
+             autoconf2.13 rust clang llvm gtk2 cbindgen nodejs)
 optdepends=('libcanberra: sound support')
 options=(!emptydirs !makeflags)
-source=(https://ftp.mozilla.org/pub/mozilla.org/thunderbird/releases/$pkgver/source/thunderbird-$pkgver.source.tar.xz
-        rust-1.33.patch
+source=(https://ftp.mozilla.org/pub/mozilla.org/thunderbird/releases/$pkgver/source/thunderbird-$pkgver.source.tar.xz{,.asc}
+        rust-1.43.patch
         $pkgname.desktop
+        arm.patch
         Bug-1238661---fix-mozillaSignalTrampoline-to-work-.patch)
-sha256sums=('17aef9232a76bdc812422883c02b01b4ecb7633c3ee9870da5e4ec0e20ba5f67'
-            '97bdb978d59cf5f0f967750e9d8dfbc8fc73367b08437838c44a308fe2ee5442'
-            '36a655ce3987159990d46a13d9955305a72a8a737e6af983eb170c4f652eb39a')
+sha512sums=('fae763030b7a54930291a10f298b7fa4ffc400849082f576556b9040d095f1007ae686daf1241dff8b73bac35c14acf21c156a18a3e16d62a7719c6cc34e4d1f'
+            'SKIP'
+            '8833130802e2bfb34036444d6855c96a5b819f90c9835decd816bbf50dc507a71b2c343fd53d3fec0d79df791bb56436b06f2430abbeb70c726574a57c385d54'
+            'a0061fcb2a7f66061e336a8d95948592f56f4752e56467f14ba63846720ebf845cce7511d1a2637e3b80d5a1ffdaa2fb783fa37195103425ef65222d45372012'
+            'c25883c4860e511a99d9fbfba5b824145c0862729101721605725f609ca2a41848b741dd100eff390f57031dc5f14af3ea30133de30f75cb20197c420ae20972'
+            '8ca4f72f1fc0a7fc128f05112d8f77be5350826010069ee3b787989131f02b82d014a4781e97ebe5694852c4bb5e87bb5313e562cfb7cb2afb6f904124027e13')
+validpgpkeys=(14F26682D0916CDD81E37B6D61B7B526D98F0353) # Mozilla Software Releases <release@mozilla.com>
 
 # Google API keys (see http://www.chromium.org/developers/how-tos/api-keys)
 # Note: These are for Arch Linux use ONLY. For your own distribution, please
@@ -48,8 +53,7 @@ _mozilla_api_key=16674381-f021-49de-8622-3021c5942aff
 prepare() {
   cd $pkgname-$pkgver
 
-  # https://bugzilla.mozilla.org/show_bug.cgi?id=1539901 (Patch from Fedora)
-  patch -Np1 -i ../rust-1.33.patch
+  patch -Np1 -i ../rust-1.43.patch
 
   echo -n "$_google_api_key" >google-api-key
   echo -n "$_mozilla_api_key" >mozilla-api-key
@@ -65,11 +69,17 @@ ac_add_options --enable-release
 #ac_add_options --enable-optimize
 # https://bugzilla.mozilla.org/show_bug.cgi?id=1521249
 #ac_add_options --enable-rust-simd
+# https://bugzilla.mozilla.org/show_bug.cgi?id=1423822
+#ac_add_options --disable-elf-hack
 
 # Branding
 ac_add_options --enable-official-branding
 ac_add_options --enable-update-channel=release
 ac_add_options --with-distribution-id=org.archlinux
+export BUILD_OFFICIAL=1
+export MOZILLA_OFFICIAL=1
+mk_add_options BUILD_OFFICIAL=1
+mk_add_options MOZILLA_OFFICIAL=1
 
 # Keys
 ac_add_options --with-google-location-service-api-keyfile=${PWD@Q}/google-api-key
@@ -87,7 +97,6 @@ ac_add_options --with-system-jpeg
 # ac_add_options --with-system-libvpx
 ac_add_options --with-system-nspr
 ac_add_options --with-system-nss
-ac_add_options --enable-system-hunspell
 ac_add_options --enable-system-sqlite
 ac_add_options --enable-system-ffi
 
@@ -97,17 +106,25 @@ ac_add_options --disable-jack
 ac_add_options --enable-startup-notification
 ac_add_options --disable-crashreporter
 ac_add_options --disable-updater
+ac_add_options --disable-gconf
 END
 
   if [[ $CARCH == "armv7h" ]]; then
     echo "ac_add_options --disable-elf-hack" >> .mozconfig
-    echo 'ac_add_options --enable-optimize="-g -O2 -fno-schedule-insns"' >> .mozconfig
-  elif [[ $CARCH == "aarch64" ]]; then
-    echo 'ac_add_options --enable-optimize="-O2"' >> .mozconfig
+    MAKEFLAGS="-j2"
   fi
 
+  echo 'ac_add_options --enable-optimize="-g0 -O2"' >> .mozconfig
+  echo "mk_add_options MOZ_MAKE_FLAGS=\"${MAKEFLAGS}\"" >> .mozconfig
+
+  export MOZ_DEBUG_FLAGS=" "
+  export CFLAGS+=" -g0"
+  export CXXFLAGS+=" -g0"
+  export LDFLAGS+=" -Wl,--no-keep-memory -Wl,--reduce-memory-overheads"
+  export RUSTFLAGS="-Cdebuginfo=0"
+
+  patch -p1 -i ../arm.patch
   patch -p1 -i ../Bug-1238661---fix-mozillaSignalTrampoline-to-work-.patch
-  LDFLAGS+=" -Wl,--no-keep-memory -Wl,--reduce-memory-overheads"
 }
 
 build() {
@@ -161,7 +178,6 @@ END
     "$pkgdir/usr/share/applications/$pkgname.desktop"
 
   # Use system-provided dictionaries
-  rm -r "$pkgdir/usr/lib/$pkgname/dictionaries"
   ln -Ts /usr/share/hunspell "$pkgdir/usr/lib/$pkgname/dictionaries"
   ln -Ts /usr/share/hyphen "$pkgdir/usr/lib/$pkgname/hyphenation"
 

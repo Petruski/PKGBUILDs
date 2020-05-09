@@ -9,16 +9,16 @@
 buildarch=14
 
 pkgname=libcec
-pkgver=4.0.3
-pkgrel=2
+pkgver=5.0.0
+pkgrel=1
 pkgdesc="Pulse-Eight's libcec for the Pulse-Eight USB-CEC adapter"
 arch=('x86_64')
 url="http://libcec.pulse-eight.com/"
 license=('GPL')
 makedepends=('cmake')
-depends=('udev' 'lockdev' 'p8-platform' 'libxrandr')
+depends=('udev' 'p8-platform' 'libxrandr')
 source=("$pkgname-$pkgver.tar.gz::https://github.com/Pulse-Eight/$pkgname/archive/$pkgname-$pkgver.tar.gz")
-sha256sums=('ef90d6e4cf9d5847c14d3ff21b71579e5110643f31e8574766d3fa6c89c6239c')
+sha256sums=('7c6ef02f39918ac88a3dac8ea35021f6c4b4b695df9204b3ac9faca673c706cc')
 
 build() {
     cd "$pkgname-$pkgname-$pkgver"

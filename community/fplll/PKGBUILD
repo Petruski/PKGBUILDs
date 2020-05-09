@@ -1,0 +1,30 @@
+# Maintainer: Antonio Rojas <arojas@archlinux.org>
+
+# ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
+#  - explicitly link v5/v6 with libatomic
+
+pkgname=fplll
+pkgver=5.3.2
+pkgrel=1
+pkgdesc="Lattice algorithms using floating-point arithmetic"
+arch=(x86_64)
+url="https://github.com/fplll/fplll"
+license=(LGPL)
+depends=(mpfr qd)
+conflicts=(libfplll)
+provides=(libfplll)
+replaces=(libfplll)
+source=("https://github.com/fplll/fplll/releases/download/$pkgver/$pkgname-$pkgver.tar.gz")
+sha256sums=('4d935d712d11902c60a2a5cb50b696391f4ca4a2de59b0daeca74c29024c21fe')
+
+build() {
+  cd $pkgname-$pkgver
+  [[ $CARCH == "arm" || $CARCH == "armv6h" ]] && LIBS="-latomic"
+  LIBS=$LIBS ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd $pkgname-$pkgver
+  make DESTDIR="$pkgdir" install
+}

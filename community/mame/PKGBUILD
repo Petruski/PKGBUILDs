@@ -9,19 +9,22 @@
 highmem=1
 
 pkgname=mame
-pkgver=0.208
+pkgver=0.220
 pkgrel=1
 pkgdesc="A port of the popular Multiple Arcade Machine Emulator using SDL with OpenGL support."
 url="https://mamedev.org/"
 license=(GPL2)
 arch=(x86_64)
-depends=(sdl2_ttf qt5-base lua libutf8proc pugixml portmidi portaudio)
+depends=(sdl2_ttf qt5-base lua libutf8proc pugixml portmidi portaudio flac)
 makedepends=(nasm python asio rapidjson glm libxinerama)
 conflicts=(sdlmame)
 replaces=(sdlmame)
-source=("https://github.com/mamedev/mame/archive/mame${pkgver/./}.tar.gz" mame.sh)
-sha256sums=('d02dba8e144ac11878226ef48aa8e4d30a33d77dd72210f84e9803908c70e8b2'
-            'da37e17b53759f049234af393bc69c29e1e4aab58df44a9384e7f7160a49db29')
+source=("https://github.com/mamedev/mame/archive/mame${pkgver/./}.tar.gz"
+         mame.sh mame.desktop mame.svg)
+sha256sums=('8150bc8c60e4704ec222a22a8d4dc89c2de92781d0e52e2820126b4357c36c12'
+            'ee1c59bafc5e5441e99fa4c58108a3e18048e60672f34de865c8a5a976094dba'
+            '6beb883c8efed5b7466d43d0658b47c3e4a9928b5d0245ed56446b230e28306b'
+            '17c442c933d764175e4ce1de50a80c0c2ddd5d733caf09c3cd5e6ba697ac43f4')
 
 
 prepare() {
@@ -29,6 +32,8 @@ prepare() {
 
 # Use system libraries
   sed -e 's|\# USE_SYSTEM_LIB|USE_SYSTEM_LIB|g' -i makefile
+# except for asio
+  sed -e 's|USE_SYSTEM_LIB_ASIO|\# USE_SYSTEM_LIB_ASIO|g' -i makefile
 }
 
 build() {
@@ -48,8 +53,8 @@ package() {
 
   # Install the binaries
   install -Dm755 mame "$pkgdir"/usr/lib/mame/mame
-  for _i in castool chdman imgtool jedutil nltool nlwav pngcmp regrep romcmp src2html \
-            split srcclean ldverify ldresample; do
+  for _i in castool chdman floptool imgtool jedutil ldresample ldverify nltool nlwav pngcmp regrep romcmp \
+            split srcclean testkeys unidasm; do
     install -m755 $_i -t "$pkgdir"/usr/lib/mame
     ln -s /usr/lib/mame/$_i "$pkgdir"/usr/bin/mame-$_i
   done
@@ -74,4 +79,8 @@ package() {
   install -d "$pkgdir"/usr/share/man/man{1,6}
   install -m644 docs/man/*.1* "$pkgdir"/usr/share/man/man1/
   install -m644 docs/man/*.6* "$pkgdir"/usr/share/man/man6/
+
+  # install desktop file and icon
+  install -Dm644 "$srcdir"/mame.desktop -t "$pkgdir"/usr/share/applications
+  install -Dm644 "$srcdir"/mame.svg -t "$pkgdir"/usr/share/icons/hicolor/scalable/apps
 }

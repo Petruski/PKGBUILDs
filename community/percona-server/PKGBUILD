@@ -7,30 +7,31 @@
 
 pkgbase=percona-server
 pkgname=('libperconaserverclient' 'percona-server-clients' 'percona-server')
-pkgver=8.0.15_5
-_boost_ver=1.68.0
+pkgver=8.0.18_9
+_boost_ver=1.70.0
 _pkgver=${pkgver/_/-}
 _myver=${pkgver/_rel*}
-pkgrel=2
+pkgrel=3
 arch=('x86_64')
-makedepends=('cmake' 'zlib' 'lz4' 'zstd' 'libaio' 'systemd-tools' 'pam' 'jemalloc' 'openssl' 'rpcsvc-proto')
+makedepends=('cmake' 'zlib' 'lz4' 'zstd' 'libaio' 'systemd-tools' 'pam' 'jemalloc' 'openssl' 'rpcsvc-proto' 'boost' 'doxygen' 'graphviz')
 license=('GPL')
 url="https://www.percona.com/software/mysql-database/percona-server"
 source=("https://www.percona.com/downloads/Percona-Server-${pkgver%.*_*}/Percona-Server-$_pkgver/source/tarball/percona-server-$_pkgver.tar.gz"
-        "http://jenkins.percona.com/downloads/boost/boost_${_boost_ver//./_}.tar.gz"
+        "https://dl.bintray.com/boostorg/release/$_boost_ver/source/boost_${_boost_ver//./_}.tar.gz"
         'my.cnf'
         'mysql-user.conf'
         'build-hostname.patch'
         'no-werror.patch'
         'rocksdb-systemlibs.patch'
+        'rocksdb-make.patch'
         '0001-fix-LF_PINS-padding-calculation.patch')
-sha256sums=('63830bcdcdef28b1344bbb2158c8b9c3c6fcb4dc449d07b45fff89a2cdf5c00e'
-            'da3411ea45622579d419bfda66f45cd0f8c32a181d84adfa936f5688388995cf'
-            'b467b04d6d06152b2abc33f2a6de63fef0fc922dd5119d2ee1d07d3c1a489731'
+sha256sums=('31b980b0f87a8d261f5bdfd353e05dc92b261997a94c3df604d7ed2526fdc2d7'
+            '882b48708d211a5f48e60b0124cf5863c1534cd544ecd0664bb534a4b5d506e9'
             'e638a2657085f15b6728f43c1fd6aa551b27608fbf6b435e33afd3606a0cfb0e'
             '1537fdbb92dd1c135c1eb9f4d10c44fd02e652db66c933d731990a1196f1397c'
             'fe1cb2b079c56ff0f827c7dfb25d004b2190410406820c490dc6152cfe392b70'
-            '38f1acce8d8eff8167f1defcd4ce7063e67beeb7ab67bbf15ba5630290d00b71'
+            '1bbae30fe4c7d8198aaa771a20ca2fbeb6494de9ec4e516e4bab5f1387b3b8bd'
+            '2ff495d271f99c4d0dba89e8ccde7e6b9789a4ea6b55034de9b9217b47e32c03'
             'aa5e960625843b061f47c32b4a267fab1115667b8b7d1ce7ec952efe42eb77af')
 
 prepare() {
@@ -40,6 +41,13 @@ prepare() {
 	patch -p1 -i "$srcdir"/build-hostname.patch
 	patch -p1 -i "$srcdir"/no-werror.patch
 	patch -p1 -i "$srcdir"/rocksdb-systemlibs.patch
+	patch -p1 -i "$srcdir"/rocksdb-make.patch
+
+	for svcfile in mysqld{,@}.service.in; do
+		echo StateDirectory=mysql mysql-files >> scripts/systemd/$svcfile
+		echo RuntimeDirectory=mysqld >> scripts/systemd/$svcfile
+	done
+
 	patch -p1 -i "$srcdir"/0001-fix-LF_PINS-padding-calculation.patch
 }
 
@@ -98,8 +106,9 @@ build() {
 		-DWITH_SYSTEMD=1 \
 		-DWITH_SCALABILITY_METRICS=ON \
 		-DCMAKE_EXE_LINKER_FLAGS='-ljemalloc' \
-		-DWITH_BOOST="../boost_${_boost_ver//./_}" \
+		-DWITH_BOOST=system \
 		-DWITH_NUMA=OFF \
+		-DWITH_BOOST="../boost_${_boost_ver//./_}" \
 		$CONFIG
 
 	make
@@ -146,7 +155,7 @@ package_percona-server-clients() {
 package_percona-server() {
 	pkgdesc='Drop-in replacement for MySQL that provides improved performance, diagnostics, instrumentation and MyRocks storage engine'
 	backup=('etc/mysql/my.cnf')
-	depends=('libaio' 'systemd-tools' 'pam' 'jemalloc' 'lz4' 'zstd' 'openssl' 'libtirpc' 'curl')
+	depends=('libaio' 'systemd-tools' 'pam' 'jemalloc' 'lz4' 'zstd' 'openssl' 'libtirpc' 'curl' 'boost-libs')
 	optdepends=('perl-dbd-mysql')
 	conflicts=('mysql')
 	provides=("mysql=$_myver" "mariadb=$_myver")
@@ -159,10 +168,9 @@ package_percona-server() {
 	install -Dm644 ../mysql-user.conf "$pkgdir"/usr/lib/sysusers.d/mysql.conf
 
 	cd "$pkgdir"
-        install -dm750 -o 89 var/lib/mysql-files
 	chmod 755 usr
 	mv usr/usr/lib/* usr/lib
-	rm -rf usr/{usr,data,run,lib/perconaserver/plugin/debug}
+	rm -rf usr/{usr,data,run,lib/perconaserver/plugin/debug,lib/tmpfiles.d/mysql.conf}
 
 	# Move documentation
 	if [ -f usr/PATENTS ]; then

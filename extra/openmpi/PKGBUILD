@@ -6,7 +6,7 @@
 #  - only use valgrind with v7/v8
 
 pkgname=openmpi
-pkgver=4.0.1
+pkgver=4.0.3
 pkgrel=1
 pkgdesc='High performance message passing library (MPI)'
 url='https://www.open-mpi.org'
@@ -19,8 +19,8 @@ makedepends_aarch64=('valgrind')
 optdepends=('gcc-fortran: fortran support')
 options=('staticlibs')
 source=(https://www.open-mpi.org/software/ompi/v${pkgver%.*}/downloads/${pkgname}-${pkgver}.tar.bz2)
-sha256sums=('cce7b6d20522849301727f81282201d609553103ac0b09162cf28d102efb9709')
-sha512sums=('09f35dc2e44b4f84aab9c5af9d81f90bbdb030e4d90800a5d3ffae88cb32b7faecc9bea0abb113da53c21f73e9d19db68f961f997bc47bdd28d83a87beee0731')
+sha256sums=('1402feced8c3847b3ab8252165b90f7d1fa28c23b6b2ca4632b6e4971267fd03')
+sha512sums=('01f773064c575a0fe6ab081c20c5cf07ba1c9eada5ecfe520d14ce2b9fc6d021d0f56a0159fa354fd6c8e2bb7354a272aa8d0063b351f59251deb56474849acc')
 
 build() {
   cd ${pkgname}-${pkgver}
@@ -32,9 +32,6 @@ build() {
     --sysconfdir=/etc/${pkgname} \
     --enable-mpi-fortran=all \
     --libdir=/usr/lib/${pkgname} \
-    --with-threads=posix \
-    --enable-mpi-thread-multiple \
-    --enable-smp-locks \
     --enable-builtin-atomics \
     --enable-mpi-cxx \
     --enable-pretty-print-stacktrace \

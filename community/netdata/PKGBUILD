@@ -1,38 +1,38 @@
-# Maintainer: Sven-Hendrik Haase <sh@lutzhaase.com>
+# Maintainer: Sven-Hendrik Haase <svenstaro@gmail.com>
 # Contributor: SanskritFritz (gmail)
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - disable LTO
 
 pkgname=netdata
-pkgver=1.13.0
-pkgrel=1
+pkgver=1.21.1
+pkgrel=2
 pkgdesc="Real-time performance monitoring, in the greatest possible detail, over the web"
 url="https://github.com/netdata/netdata"
 arch=('x86_64')
 license=('GPL')
 backup=('etc/netdata/netdata.conf')
-depends=('libmnl' 'libnetfilter_acct' 'zlib')
+depends=('libmnl' 'libnetfilter_acct' 'zlib' 'judy' 'libuv' 'json-c' 'libcap' 'lz4')
 optdepends=('nodejs: for monitoring named and SNMP devices'
             'lm_sensors: for monitoring hardware sensors'
             'iproute2: for monitoring Linux QoS'
             'python: for most of the external plugins'
             'python-psycopg2: for monitoring PostgreSQL databases'
+            'python-mysqlclient: for monitoring MySQL/MariaDB databases'
             'python-requests: for monitoring elasticsearch'
             'hddtemp: for monitoring hhd temperature'
             'apcupsd: for monitoring APC UPS'
             'iw: for monitoring Linux as access point')
-install="$pkgname.install"
-source=("https://github.com/netdata/netdata/releases/download/v${pkgver}/netdata-v${pkgver}.tar.gz"
-        "${pkgname}.tmpfiles"
-        "${pkgname}.sysusers")
-sha512sums=('dc1683ec0b69455c8047f6eee4dd737d97ba8d7d4f501bacee88bcad3f9073fadba979fde6e83016e2a135e582da8e9abd972341ce52435ae8896d6466b087c2'
-            '3f934ddd1f5248f9e11c29050c023d60b76e4098ec9c8d413bb362d43e9242f767fd58310d966076e8400779af8bda2459afcc314b267fcb9f1c84173e14e313'
+install=$pkgname.install
+source=("$pkgname-$pkgver.tar.gz::https://github.com/netdata/netdata/archive/v${pkgver}.tar.gz"
+        "$pkgname.sysusers")
+sha512sums=('66d2e0cb977275250fd7b51e5156957a4506ddba586de5fe796459ea241cbbed7013fd4cf9d7acf6666407352fb34e3b962a2d01565a9cb982c89c76b7cd79b9'
             'a910809a823ba58ca7bdaa72e8d68427b48f452c1fbb2343fa182ecb0a091a7640e73af24b8ba2fdd90e00aed8ef53b7fccd25cb8f04ca9b9fa6c8e52223ca66')
 
 build() {
-  cd "$pkgname-v$pkgver"
+  cd "$pkgname-$pkgver"
 
+  autoreconf -i
   ./configure \
   	--prefix="/usr" \
   	--sbindir="/usr/bin" \
@@ -44,18 +44,14 @@ build() {
 }
 
 package() {
-  cd "$pkgname-v$pkgver"
+  cd "$pkgname-$pkgver"
 
   make DESTDIR="$pkgdir" install
 
-  # Remove /var/*, pacman creates it via tmpfiles hook
-  rm -vrf "${pkgdir}/var"
-  touch "$pkgdir/etc/netdata/netdata.conf"
-  chown -R 134:134 "$pkgdir"/etc/netdata
-  chown -R 134:134 "$pkgdir"/usr/share/netdata/web
+  install -Dm644 system/netdata.conf "$pkgdir"/etc/netdata/netdata.conf
+  chown -R 0:134 "$pkgdir"/usr/share/netdata/web
 
-  install -Dm0644 "system/netdata.service" "$pkgdir/usr/lib/systemd/system/netdata.service"
+  install -Dm0644 "system/netdata.service.v235" "$pkgdir/usr/lib/systemd/system/netdata.service"
   install -Dm0644 "system/netdata.logrotate" "$pkgdir/etc/logrotate.d/netdata"
-  install -Dm0644 "${srcdir}/${pkgname}.tmpfiles" "${pkgdir}/usr/lib/tmpfiles.d/${pkgname}.conf"
   install -Dm0644 "${srcdir}/${pkgname}.sysusers" "${pkgdir}/usr/lib/sysusers.d/${pkgname}.conf"
 }

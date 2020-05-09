@@ -1,4 +1,4 @@
-From d43620a7de14b6d16aeeb7c6494248b306928854 Mon Sep 17 00:00:00 2001
+From 766dab281185d2b9ca82ec49bae357e1ddfe11b7 Mon Sep 17 00:00:00 2001
 From: Kevin Mihelich <kevin@archlinuxarm.org>
 Date: Sun, 25 Feb 2018 16:38:04 -0700
 Subject: [PATCH 7/9] Fix mvsdio SD card detection
@@ -13,10 +13,10 @@ Signed-off-by: Kevin Mihelich <kevin@archlinuxarm.org>
  3 files changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index 121ce50b6d5e..4236a5e8043b 100644
+index aa54d359dab7..f55a9f6ab3e1 100644
 --- a/drivers/mmc/core/core.c
 +++ b/drivers/mmc/core/core.c
-@@ -717,7 +717,7 @@ void mmc_set_data_timeout(struct mmc_data *data, const struct mmc_card *card)
+@@ -712,7 +712,7 @@ void mmc_set_data_timeout(struct mmc_data *data, const struct mmc_card *card)
  			 */
  			limit_us = 3000000;
  		else
@@ -26,10 +26,10 @@ index 121ce50b6d5e..4236a5e8043b 100644
  		/*
  		 * SDHC cards always use these fixed values.
 diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
-index baf3d5da4ccb..f7f1f4f0d2c9 100644
+index fe914ff5f5d6..c4794b1b6205 100644
 --- a/drivers/mmc/core/sd.c
 +++ b/drivers/mmc/core/sd.c
-@@ -356,6 +356,15 @@ int mmc_sd_switch_hs(struct mmc_card *card)
+@@ -376,6 +376,15 @@ int mmc_sd_switch_hs(struct mmc_card *card)
  	if (!status)
  		return -ENOMEM;
  
@@ -46,18 +46,18 @@ index baf3d5da4ccb..f7f1f4f0d2c9 100644
  	if (err)
  		goto out;
 diff --git a/drivers/mmc/host/mvsdio.c b/drivers/mmc/host/mvsdio.c
-index 210247b3d11a..05029d5bd72a 100644
+index 203b61712601..eb8c8c451a22 100644
 --- a/drivers/mmc/host/mvsdio.c
 +++ b/drivers/mmc/host/mvsdio.c
-@@ -23,6 +23,7 @@
+@@ -20,6 +20,7 @@
  #include <linux/of_irq.h>
  #include <linux/mmc/host.h>
  #include <linux/mmc/slot-gpio.h>
 +#include <linux/mmc/sd.h>
  
- #include <asm/sizes.h>
+ #include <linux/sizes.h>
  #include <asm/unaligned.h>
-@@ -149,6 +150,7 @@ static void mvsd_request(struct mmc_host *mmc, struct mmc_request *mrq)
+@@ -147,6 +148,7 @@ static void mvsd_request(struct mmc_host *mmc, struct mmc_request *mrq)
  
  	dev_dbg(host->dev, "cmd %d (hw state 0x%04x)\n",
  		cmd->opcode, mvsd_read(MVSD_HW_STATE));
@@ -66,5 +66,5 @@ index 210247b3d11a..05029d5bd72a 100644
  	cmdreg = MVSD_CMD_INDEX(cmd->opcode);
  
 -- 
-2.17.0
+2.25.0
 

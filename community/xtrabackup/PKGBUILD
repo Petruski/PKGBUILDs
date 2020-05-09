@@ -5,8 +5,8 @@
 #  - remove dependency on numactl
 
 pkgname=xtrabackup
-pkgver=8.0.5
-_boost_ver=1.68.0
+pkgver=8.0.10
+_boostver=1.70.0
 pkgrel=1
 pkgdesc='Non-blocking backup tool for MySQL'
 arch=('x86_64')
@@ -15,10 +15,11 @@ license=('GPL')
 depends=('libaio' 'libev' 'libgcrypt' 'curl' 'perl-dbd-mysql')
 makedepends=('cmake' 'python-sphinx' 'zlib' 'vim' 'libedit' 'libevent' 'protobuf' 're2')
 optdepends=('qpress: for compressed backups')
-source=(https://www.percona.com/downloads/Percona-XtraBackup-LATEST/Percona-XtraBackup-${pkgver%.*}-${pkgver##*.}/source/tarball/percona-xtrabackup-$pkgver.tar.gz
-        http://sourceforge.net/projects/boost/files/boost/${_boost_ver}/boost_${_boost_ver//./_}.tar.gz)
-sha256sums=('0c975127d4b0b20ebb1d76d26c3ba68b8376ac47767b0266f57f94a3cc835e83'
-            'da3411ea45622579d419bfda66f45cd0f8c32a181d84adfa936f5688388995cf')
+source=("https://www.percona.com/downloads/Percona-XtraBackup-LATEST/Percona-XtraBackup-${pkgver%.*}-${pkgver##*.}/source/tarball/percona-xtrabackup-$pkgver.tar.gz"
+        "https://dl.bintray.com/boostorg/release/${_boostver}/source/boost_${_boostver//./_}.tar.bz2")
+
+sha256sums=('6d1b6ed78ace1b9e8ca6fe3ec73e07db8d662e4270fff4f77cd41e4021ee9364'
+            '430ae8354789de4fd19ee52f3b1f739e1fba576f0aded0897c3c2bc00fb38778')
 build() {
   mkdir build
   cd build
@@ -37,7 +38,7 @@ build() {
         -DINSTALL_PLUGINDIR="/usr/lib/xtrabackup/plugin" \
         -DINSTALL_MANDIR="/usr/share/man" \
         -DINSTALL_STATIC_LIBRARIES=OFF \
-        -DWITH_BOOST="../boost_${_boost_ver//./_}" \
+        -DWITH_BOOST="../boost_${_boostver//./_}" \
         ../percona-xtrabackup-$pkgver
   make
 }
@@ -47,5 +48,9 @@ package() {
   make DESTDIR="$pkgdir" install
 
   cd  "$pkgdir"
-  rm -rf usr/xtrabackup-test usr/lib/xtrabackup/plugin/debug
+  rm -rf usr/xtrabackup-test \
+         usr/lib/xtrabackup/plugin/debug \
+         usr/docs \
+         usr/share/man/man8 \
+         usr/share/man/man1/{c,i,m,l,p,z}*
 }

@@ -18,16 +18,16 @@
 pkgbase=go
 pkgname=(go go-pie)
 epoch=2
-pkgver=1.12.3
+pkgver=1.14.2
 pkgrel=1
 arch=(x86_64)
 url='https://golang.org/'
 license=(BSD)
-makedepends=(git go)
+makedepends=(git go perl)
 source=(https://storage.googleapis.com/golang/go$pkgver.src.tar.gz
         default-buildmode-pie.patch)
-sha256sums=('5c507abe8818429d74ebb650a4155d36bc3f9a725e59e76f5d6aca9690be2373'
-            '9d2f0d201d4e002d74f548cc82bd131139bab5dd62191004c71dd430fdc1666d')
+sha256sums=('98de84e69726a66da7b4e58eac41b99cbe274d7e8906eeb8a5b7eb0aadee7f7c'
+            'be1269689de3cf5c926cf7de07f88d2a6d1ecbfc86694baaf5baee3bdcfdd79a')
 
 export GOOS=linux
 case "$CARCH" in
@@ -103,7 +103,7 @@ package_go() {
 
 package_go-pie() {
   pkgdesc='Core compiler tools for the Go programming language (with PIE enabled by default)'
-  provides=(go)
+  provides=("go=$epoch:$pkgver-$pkgrel")
   conflicts=(go)
 
   _package $pkgname

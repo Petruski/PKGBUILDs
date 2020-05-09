@@ -3,56 +3,54 @@
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - patch for chromium GN
+#  - patch for chromium skia
 
 buildarch=12
 highmem=1
 
 pkgname=qt5-webengine
-_qtver=5.12.2
+_qtver=5.14.2
 pkgver=${_qtver/-/}
-pkgrel=2
+pkgrel=3
 arch=('x86_64')
 url='https://www.qt.io'
 license=('LGPL3' 'LGPL2.1' 'BSD')
 pkgdesc='Provides support for web applications using the Chromium browser project'
 depends=('qt5-webchannel' 'qt5-location' 'libxcomposite' 'libxrandr' 'pciutils' 'libxss' 
-         'libevent' 'snappy' 'nss' 'protobuf' 'libxslt' 'minizip' 'ffmpeg' 're2' 'libvpx')
-makedepends=('python2' 'git' 'gperf' 'jsoncpp' 'ninja' 'qt5-tools' 'poppler')
+         'libevent' 'snappy' 'nss' 'libxslt' 'minizip' 'ffmpeg' 're2' 'libvpx' 'krb5' 'ttf-font')
+makedepends=('python2' 'gperf' 'jsoncpp' 'ninja' 'qt5-tools' 'poppler')
 groups=('qt' 'qt5')
 _pkgfqn="${pkgname/5-/}-everywhere-src-${_qtver}"
 source=("https://download.qt.io/official_releases/qt/${pkgver%.*}/${_qtver}/submodules/${_pkgfqn}.tar.xz"
-         qtwebengine-harmony.patch
-         0001-ARM-toolchain-fixes.patch)
-sha256sums=('082b1d6e60c1be61881bc8533acc67d9688620d6b3a538417f62b27b34ead493'
-            'feca54ab09ac0fc9d0626770a6b899a6ac5a12173c7d0c1005bc3964ec83e7b3'
-            '8202b09a1caa82538a2eacd79b62b61d8661c65cdfb275560d231aa31a362b12')
+        icu67.patch
+        0001-ARM-toolchain-fixes.patch
+        0002-Fix-ARM-skia-ICE.patch)
+sha256sums=('e169d6a75d8c397e04f843bc1b9585950fb9a001255cd18d6293f66fa8a6c947'
+            '5315977307e69d20b3e856d3f8724835b08e02085a4444a5c5cefea83fd7d006'
+            'f389de929c6d27217a1c7e3e7118b06e4d15e17123c96ace2c7a791ecad6bcc7')
 
 prepare() {
   mkdir -p build
 
-  # Hack to force using python2
-  mkdir -p bin
-  ln -s /usr/bin/python2 bin/python
+  patch -Np3 -d $_pkgfqn/src/3rdparty/chromium/v8 <icu67.patch
 
-  cd ${_pkgfqn}
+  sed -e 's|7-9|7-9\|10|' -i $_pkgfqn/configure.pri # Support ninja 1.10
 
-  # FreeType 2.8.1
-  patch -Np1 -i ../qtwebengine-harmony.patch
-
-  cd src/3rdparty
+  cd $_pkgfqn/src/3rdparty
   patch -p1 -i ${srcdir}/0001-ARM-toolchain-fixes.patch
+  patch -p1 -i ${srcdir}/0002-Fix-ARM-skia-ICE.patch
 }
 
 build() {
   cd build
 
-  export PATH="$srcdir/bin:$PATH"
   qmake ../${_pkgfqn} -- \
     -proprietary-codecs \
     -system-ffmpeg \
     -webp \
     -spellchecker \
-    -webengine-icu
+    -webengine-icu \
+    -webengine-kerberos
   make
 }
 

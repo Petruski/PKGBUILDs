@@ -3,13 +3,14 @@
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - disable LTO: -DENABLE_LTO='FALSE'
+#  - cherry-pick upstream patch to fix ARM FTBFS
 
 pkgbase=vbam
 pkgname=(
   vbam-sdl
   vbam-wx
 )
-pkgver=2.1.2
+pkgver=2.1.4
 pkgrel=1
 pkgdesc='Nintendo GameBoy Advance emulator'
 arch=(x86_64)
@@ -30,8 +31,15 @@ makedepends=(
   wxgtk3
   zip
 )
-source=(git+https://github.com/visualboyadvance-m/visualboyadvance-m.git#tag=v${pkgver})
+source=(git+https://github.com/visualboyadvance-m/visualboyadvance-m.git#tag=09fbcbac07148ea32add848722dab34a7eb4f6b5)
 sha256sums=(SKIP)
+validpgpkeys=(A0C0E526E36FD2138C149D4D08AB596679D86240) # Rafael Kitover <rkitover@gmail.com>
+
+pkgver() {
+  cd visualboyadvance-m
+
+  git describe --tags | sed 's/^v//'
+}
 
 prepare() {
   for p in sdl wx; do
@@ -40,6 +48,9 @@ prepare() {
     fi
     mkdir build-$p
   done
+
+  cd visualboyadvance-m
+  git cherry-pick -n af0de1c4b308ef8d9a081ecf407805b75a99d877
 }
 
 build() {

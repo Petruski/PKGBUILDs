@@ -5,11 +5,11 @@
 #  - explicitly link v5/v6 with libatomic
 
 pkgname=haproxy
-pkgver=1.9.5
+pkgver=2.1.4
 pkgrel=1
 
 pkgdesc='Reliable, high performance TCP/HTTP load balancer'
-url='https://haproxy.org/'
+url='https://www.haproxy.org/'
 arch=('x86_64')
 license=('GPL')
 
@@ -19,15 +19,15 @@ backup=('etc/haproxy/haproxy.cfg')
 
 install=haproxy.install
 
-source=(https://haproxy.org/download/${pkgver%.*}/src/haproxy-$pkgver.tar.gz
+source=(https://www.haproxy.org/download/${pkgver%.*}/src/haproxy-$pkgver.tar.gz
         haproxy.cfg
         haproxy.sysusers
         0001-Use-CFLAGS-and-LDFLAGS-when-building-contrib.patch)
 
-md5sums=('3f61ebad5074d78ba7d88422624b328c'
-         '27941f31d25d5629f4bdef6bc4b2555a'
-         '2f00e81ee2f3f6e51a0cd9acc6f3ff3e'
-         '5343b0563c2e0e59110a84e2e611d94f')
+sha256sums=('51030ff696d7067162b4d24d354044293aecfbb36d7acc2f840c8d928bfe91cd'
+            'e88edeb2fe23508565e46ff485c93cfb7c2e9c64f231538452ec7ecd7ec37a42'
+            'b02b4088205039f0979aef0ef3e22957f493dd54eabefaee7011f2d795303b3e'
+            'ba489cec86ea7dae643128825d69fd560a53dd9dc85d0bf4e81f2614aade164e')
 
 prepare() {
   cd haproxy-$pkgver
@@ -40,15 +40,16 @@ build() {
 
   [[ $CARCH == "arm" || $CARCH == "armv6h" ]] && ADDLIB="-latomic"
   make CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS" \
+    ADDLIB=$ADDLIB \
     CPU=generic \
-    TARGET=linux2628 \
+    TARGET=linux-glibc \
     USE_GETADDRINFO=1 \
     USE_OPENSSL=1 \
     USE_PCRE=1 USE_PCRE_JIT=1 \
     USE_ZLIB=1 \
     USE_LUA=1 \
     USE_SYSTEMD=1 \
-    ADDLIB=$ADDLIB
+    EXTRA_OBJS="contrib/prometheus-exporter/service-prometheus.o"
 
   for contrib in halog iprange ip6range systemd; do
     make -C contrib/$contrib SBINDIR=/usr/bin OPTIMIZE= CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS"
@@ -71,12 +72,5 @@ package() {
   install -Dm644 ../haproxy.cfg "$pkgdir"/etc/haproxy/haproxy.cfg
   install -Dm644 contrib/systemd/haproxy.service \
     "$pkgdir"/usr/lib/systemd/system/haproxy.service
-
-  install -d "$pkgdir"/usr/share/haproxy/examples/errorfiles
-  install -m644 examples/*.cfg "$pkgdir"/usr/share/haproxy/examples/
-  install -m644 examples/errorfiles/*.http \
-    "$pkgdir"/usr/share/haproxy/examples/errorfiles/
-
-  install -Dm644 examples/haproxy.vim \
-    "$pkgdir"/usr/share/vim/vimfiles/syntax/haproxy.vim
+  cp -r examples "$pkgdir"/usr/share/haproxy/examples
 }

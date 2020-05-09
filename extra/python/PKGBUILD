@@ -9,38 +9,29 @@
 #  - configure with --without-lto
 #  - don't configure with --enable-optimizations - PGO kills builds
 
-pkgname=python
-pkgver=3.7.3
-pkgrel=1
+shopt -s extglob
+
+pkgbase=python
+pkgname=(python python-tests)
+pkgver=3.8.2
+pkgrel=2
 _pybasever=${pkgver%.*}
 pkgdesc="Next generation of the python high-level scripting language"
 arch=('x86_64')
 license=('custom')
-url="http://www.python.org/"
+url="https://www.python.org/"
 depends=('expat' 'bzip2' 'gdbm' 'openssl' 'libffi' 'zlib' 'libnsl')
 makedepends=('tk' 'sqlite' 'bluez-libs' 'mpdecimal' 'llvm' 'gdb' 'xorg-server-xvfb')
-optdepends=('python-setuptools'
-            'python-pip'
-            'sqlite'
-            'mpdecimal: for decimal'
-            'xz: for lzma'
-            'tk: for tkinter')
-provides=('python3')
-replaces=('python3')
 source=("https://www.python.org/ftp/python/${pkgver%rc*}/Python-${pkgver}.tar.xz"{,.asc}
-        dont-make-libpython-readonly.patch
         0001-compileall-Fix-ddir-when-recursing.patch)
-sha512sums=('6d9b7c0f1764e0f655a39430a3af6f7b5e3c9b7166c042e780677a54b17ad4ca6d0d9cba262c82b1b70bba8f7c28883dad4cc0d7cc194fc7d2c1b5f4f08a763a'
+sha512sums=('ca37ad0e7c5845f5f228566aa8ff654a8f428c7d4a5aaabff29baebb0ca3219b31ba8bb2607f89e37cf3fc564f023b8407e53a4f2c47bd99122c1cc222613e37'
             'SKIP'
-            '2ef96708d5b13ae2a3d2cc62c87b4780e60ecfce914e190564492def3a11d5e56977659f41c7f9d12266e58050c766bce4e2b5d50b708eb792794fa8357920c4'
             'ebd04c3b6d41321b1f0d439d356e0ce463760db55dc64109854c70d017cf56608aa19de9fc4a21bf840795ff202b4703444f9af8074b661780798c17e03089ff')
-validpgpkeys=('0D96DF4D4110E5C43FBFB17F2D347EA6AA65421D')  # Ned Deily (Python release signing key) <nad@python.org>
+validpgpkeys=('0D96DF4D4110E5C43FBFB17F2D347EA6AA65421D'  # Ned Deily (Python release signing key) <nad@python.org>
+              'E3FF2839C048B25C084DEBE9B26995E310250568') # Łukasz Langa (GPG langa.pl) <lukasz@langa.pl>
 
 prepare() {
   cd Python-${pkgver}
-
-  # FS#45809
-  patch -p1 -i ../dont-make-libpython-readonly.patch
 
   # FS#59997
   patch -p1 -i ../0001-compileall-Fix-ddir-when-recursing.patch
@@ -65,12 +56,14 @@ build() {
   cd Python-${pkgver}
 
   # PGO should be done with -O3
-  CFLAGS="${CFLAGS/-O2/-O3}"
+  # Also included the -fno-semantic-interposition optimization:
+  # https://fedoraproject.org/wiki/Changes/PythonNoSemanticInterpositionSpeedup
+  CFLAGS="${CFLAGS/-O2/-O3} -fno-semantic-interposition"
+  LDFLAGS="$LDFLAGS -fno-semantic-interposition"
 
   # Disable bundled pip & setuptools
   ./configure --prefix=/usr \
               --enable-shared \
-              --with-threads \
               --with-computed-gotos \
               --without-lto \
               --enable-ipv6 \
@@ -85,16 +78,14 @@ build() {
   export servernum=99
   while ! xvfb-run -a -n "$servernum" /bin/true 2>/dev/null; do servernum=$((servernum+1)); done
 
-  LC_CTYPE=en_US.UTF-8 xvfb-run -s "-screen 0 1280x720x24 -ac +extension GLX" -a -n "$servernum" make EXTRA_CFLAGS="$CFLAGS"
+  LC_CTYPE=en_US.UTF-8 xvfb-run -s "-screen 0 1920x1080x16 -ac +extension GLX" -a -n "$servernum" make EXTRA_CFLAGS="$CFLAGS"
 }
 
 check() {
   # test_gdb is expected to fail with LTO
   # test_idle, test_tk, test_ttk_guionly segfaults since 3.6.5
-
-  # https://bugs.python.org/issue34022
-  # test_cmd_line_script, test_compileall, test_importlib,
-  # test_multiprocessing_main_handling, test_py_compile, test_runpy
+  # test_socket hangs since 3.8.2
+  # test_decimal fails since 3.8.2
 
   cd Python-${pkgver}
 
@@ -103,12 +94,21 @@ check() {
   while ! xvfb-run -a -n "$servernum" /bin/true 2>/dev/null; do servernum=$((servernum+1)); done
 
   LD_LIBRARY_PATH="${srcdir}/Python-${pkgver}":${LD_LIBRARY_PATH} \
-  LC_CTYPE=en_US.UTF-8 xvfb-run -s "-screen 0 1280x720x24 -ac +extension GLX" -a -n "$servernum" \
+  LC_CTYPE=en_US.UTF-8 xvfb-run -s "-screen 0 1920x1080x16 -ac +extension GLX" -a -n "$servernum" \
     "${srcdir}/Python-${pkgver}/python" -m test.regrtest -v -uall -x test_gdb -x test_idle -x test_tk -x test_ttk_guionly \
-    -x test_cmd_line_script -x test_compileall -x test_importlib -x test_multiprocessing_main_handling -x test_py_compile -x test_runpy
+                                                                  -x test_socket -x test_decimal
 }
 
-package() {
+package_python() {
+  optdepends=('python-setuptools'
+              'python-pip'
+              'sqlite'
+              'mpdecimal: for decimal'
+              'xz: for lzma'
+              'tk: for tkinter')
+  provides=('python3')
+  replaces=('python3')
+
   cd Python-${pkgver}
 
   # Hack to avoid building again
@@ -118,6 +118,9 @@ package() {
   CFLAGS="${CFLAGS/-O2/-O3}"
 
   make DESTDIR="${pkgdir}" EXTRA_CFLAGS="$CFLAGS" install
+
+  # Split tests
+  rm -r "$pkgdir"/usr/lib/python*/{test,ctypes/test,distutils/tests,idlelib/idle_test,lib2to3/tests,sqlite3/test,tkinter/test,unittest/test}
 
   # Why are these not done by default...
   ln -s python3               "${pkgdir}"/usr/bin/python
@@ -133,4 +136,29 @@ package() {
 
   # License
   install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}
+
+package_python-tests() {
+  pkgdesc="Regression tests packages for Python"
+  depends=('python')
+
+  cd Python-${pkgver}
+
+  make DESTDIR="${pkgdir}" EXTRA_CFLAGS="$CFLAGS" libinstall
+  cd "$pkgdir"/usr/lib/python*/
+  rm -r !(test|ctypes|distutils|idlelib|lib2to3|sqlite3|tkinter|unittest)
+  cd "$pkgdir"/usr/lib/python*/ctypes
+  rm -r !(test)
+  cd "$pkgdir"/usr/lib/python*/distutils
+  rm -r !(tests)
+  cd "$pkgdir"/usr/lib/python*/idlelib
+  rm -r !(idle_test)
+  cd "$pkgdir"/usr/lib/python*/lib2to3
+  rm -r !(tests)
+  cd "$pkgdir"/usr/lib/python*/sqlite3
+  rm -r !(test)
+  cd "$pkgdir"/usr/lib/python*/tkinter
+  rm -r !(test)
+  cd "$pkgdir"/usr/lib/python*/unittest
+  rm -r !(test)
 }

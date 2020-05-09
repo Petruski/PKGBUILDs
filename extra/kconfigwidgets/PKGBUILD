@@ -6,18 +6,18 @@
 #  - drop clang makedepend to fix v5/v6 FTBFS
 
 pkgname=kconfigwidgets
-pkgver=5.56.0
+pkgver=5.69.0
 pkgrel=1
 pkgdesc='Widgets for KConfig'
 arch=(x86_64)
 url='https://community.kde.org/Frameworks'
 license=(LGPL)
 depends=(kauth kcodecs kconfig kguiaddons ki18n kwidgetsaddons)
-makedepends=(extra-cmake-modules kdoctools python-pyqt5 doxygen qt5-tools sip)
-optdepends=('python-pyqt5: for the Python bindings')
+makedepends=(extra-cmake-modules kdoctools python-pyqt5 doxygen qt5-tools qt5-doc sip)
+optdepends=('python-pyqt5: for the Python bindings' 'perl: for preparetips5')
 groups=(kf5)
 source=("https://download.kde.org/stable/frameworks/${pkgver%.*}/$pkgname-$pkgver.tar.xz"{,.sig})
-sha256sums=('c5cfcd8ba356563d83c11a2ebe78d163336df2ef3f97faed0f487ddc5f67a503'
+sha256sums=('6fcf93cf2a5c7f81a272f685d329e711a21d2ff314fe7737a52592a138c37473'
             'SKIP')
 validpgpkeys=(53E6B47B45CEA3E0D5B7457758D0EE648A48B3BB) # David Faure <faure@kde.org>
 
@@ -28,8 +28,6 @@ prepare() {
 build() {
   cd build
   cmake ../$pkgname-$pkgver \
-    -DCMAKE_INSTALL_PREFIX=/usr \
-    -DCMAKE_INSTALL_LIBDIR=lib \
     -DBUILD_TESTING=OFF \
     -DBUILD_QCH=ON
   make

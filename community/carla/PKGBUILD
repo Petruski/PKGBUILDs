@@ -1,4 +1,4 @@
-# Maintainer: David Runge <dave@sleepmap.de>
+# Maintainer: David Runge <dvzrv@archlinux.org>
 # Contributor: Llewelyn Trahaearn <WoefulDerelict [at] GMail [dot] com>
 # Contributor: falkTX <falktx [at] gmail [dot] com>
 
@@ -7,21 +7,28 @@
 
 _name=Carla
 pkgname=carla
-pkgver=2.0.0
+pkgver=2.1
 pkgrel=1
 pkgdesc="Audio Plugin Host"
 arch=('x86_64')
 url="https://kxstudio.linuxaudio.org/Applications:Carla"
 license=('GPL2')
 groups=('pro-audio')
-depends=('ffmpeg' 'file' 'fluidsynth' 'gtk2' 'gtk3' 'python-pyqt5'
-'python-pyliblo' 'python-rdflib' 'qt5-svg')
-makedepends=('qt5-tools')
+depends=('gcc-libs' 'glibc' 'libglvnd' 'libx11' 'python-pyqt5' 'python-pyliblo'
+'python-rdflib' 'qt5-base' 'qt5-svg')
+# libpulse is linked against in carla/libcarla_standalone2.so
+# liblo is linked against in carla/libcarla_standalone2.so,
+# carla/libcarla_native-plugin.so and the lv2 and vst plugins
+makedepends=('alsa-lib' 'file' 'fluidsynth' 'glib2' 'gtk2' 'gtk3' 'libsndfile'
+'liblo' 'libpulse' 'qt5-tools')
 source=("${pkgname}-${pkgver}.tar.gz::https://github.com/falkTX/${pkgname}/archive/v${pkgver}.tar.gz")
-sha512sums=('7cb1a8a6376e2fbb58a75fc2f60693984b5a8d03e47fe695f59f8a602ccd776ec3a578d93858faa704623fd3bf0521cb2f5e87600f6c55ff2df67f5451c35d5a')
+sha512sums=('b265e3150e12b42095e28ac30f72e211e96a769619a5ec56d574be8a17fb6ca282a504bb9759de312066202106b6e5234e006689b90edb1cc54f3e6919384509')
 
 prepare() {
   mv -v "${_name}-${pkgver}" "${pkgname}-${pkgver}"
+  cd $pkgname-$pkgver
+  # fixing file (libmagic.so) detection
+  sed -e 's/\\#include/#include/' -i source/Makefile.mk
 }
 
 build() {
@@ -31,6 +38,10 @@ build() {
 }
 
 package() {
+  depends+=('libasound.so' 'libfluidsynth.so' 'libgdk-3.so'
+  'libgdk-x11-2.0.so' 'libgobject-2.0.so' 'libglib-2.0.so' 'libgtk-3.so'
+  'libgtk-x11-2.0.so' 'liblo.so' 'libmagic.so' 'libpulse.so'
+  'libpulse-simple.so' 'libsndfile.so')
   cd "${pkgname}-${pkgver}"
   make NOOPT=true DEFAULT_QT=5 \
        DESTDIR="${pkgdir}/" \
@@ -38,5 +49,4 @@ package() {
        install
   install -vDm 644 README.md -t "${pkgdir}/usr/share/doc/${pkgname}/"
 }
-
 # vim:set ts=2 sw=2 et:

@@ -1,62 +1,74 @@
 # Maintainer: Sergej Pupykin <pupykin.s+arch@gmail.com>
+# Contributor: David Runge <dvzrv@archlinux.org>
 # Contributor: Stijn Segers <francesco dot borromini at gmail dot com>
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - define WITH_NEON and ARM_FP_ABI
 
+_name=FreeRDP
 pkgname=freerdp
-epoch=1
-pkgver=2.0.0_rc4
-#_commit=6001cb710dc67eb8811362b7bf383754257a902b
-_pkgver=${pkgver/_/-}
-_pkgver=${_pkgver/+/-}
-pkgrel=3
-pkgdesc="Free RDP client"
+epoch=2
+pkgver=2.1.0
+pkgrel=1
+pkgdesc="Free implementation of the Remote Desktop Protocol (RDP)"
 arch=('x86_64')
-url="http://freerdp.sourceforge.net"
-license=('GPL')
-depends=('openssl' 'libxcursor' 'libcups' 'alsa-lib' 'libxext' 'libxdamage'
-	 'ffmpeg' 'libxkbfile' 'libxinerama' 'libxv' 'libpulse' 'libxkbfile'
-	 'libxrender' 'libxfixes' 'gst-plugins-base-libs' 'dbus-glib'
-	 'libxkbcommon')
-makedepends=('krb5' 'cmake' 'damageproto' 'fixesproto' 'renderproto'
-	     'xmlto' 'docbook-xsl' 'git')
-provides=('libwinpr-tools2.so' 'libfreerdp-client2.so' 'libfreerdp2.so'
-          'libwinpr2.so')
-#source=("FreeRDP-${_pkgver}::git://github.com/FreeRDP/FreeRDP.git#commit=${_commit}")
-source=($pkgname-$pkgver.tar.gz::https://github.com/FreeRDP/FreeRDP/archive/${pkgver/_/-}.tar.gz
-	fix_nla-8cd156a-backport.patch)
-sha256sums=('3406f3bfab63f81c1533029a5bf73949ff60f22f6e155c5a08005b8b8afe6d49'
-            '2d449e0c1adee1ef131501e1613fc4c59fd122ca866d09f52eeff61236de81e4')
+url="https://www.freerdp.com/"
+license=('Apache')
+depends=('dbus-glib' 'glibc' 'gstreamer' 'gst-plugins-base-libs' 'libcups'
+'libjpeg-turbo' 'libgssglue' 'libx11' 'libxcursor' 'libxext' 'libxdamage'
+'libxfixes' 'libxkbcommon' 'libxi' 'libxinerama' 'libxkbfile' 'libxrandr'
+'libxrender' 'libxtst' 'openssl' 'pam' 'pcsclite' 'wayland')
+makedepends=('alsa-lib' 'cmake' 'docbook-xsl' 'ffmpeg' 'krb5' 'libpulse'
+'libusb' 'systemd-libs' 'xmlto' 'xorgproto')
+provides=('libfreerdp2.so' 'libfreerdp-client2.so' 'libfreerdp-server2'
+'libfreerdp-shadow2.so' 'libfreerdp-shadow-subsystem2.so' 'libwinpr2.so'
+'libwinpr-tools2.so' 'libuwac0.so')
+source=("$pkgname-$pkgver.tar.gz::https://github.com/${pkgname}/${pkgname}/archive/${pkgver}.tar.gz"
+        "$pkgname-2.0.0-manpage_formatting.patch")
+sha512sums=('afed8893128067b688bf5ba87e7d28296ece3b4848d84653ab0ad0c3723b6a8bc36733aca9649fb29a0d4a53b39fdd49d56d17e9b4eac8bf7b06fa4b27e66b14'
+            'd960e042d1527b5d5721136b6b20fc36f65beafd010581ea5b908668537fe9fe622de6689a29c0274b0d6f1e513615f0d02e56c1d1d1e613d093e145d39af8d7')
 
 prepare() {
- cd "$srcdir"/FreeRDP-${_pkgver}
-# patch -Np1 -i "${srcdir}/fix_nla-8cd156a-backport.patch"
+  mv -v "${_name}-${pkgver}" "${pkgname}-${pkgver}"
+  cd "${pkgname}-${pkgver}"
+  # fix man page formatting:
+  # https://bugs.archlinux.org/task/64814
+  patch -Np1 -i "../${pkgname}-2.0.0-manpage_formatting.patch"
 }
 
 build() {
-  cd "$srcdir"/FreeRDP-${_pkgver}
+  cd "${pkgname}-${pkgver}"
 
   [[ $CARCH == "arm" ]] && ABI="soft"
   [[ $CARCH == "armv6h" || $CARCH == "armv7h" ]] && ABI="hard"
 
-  cmake \
-	-DCMAKE_INSTALL_PREFIX=/usr \
-	-DCMAKE_INSTALL_LIBDIR=lib \
-	-DWITH_PULSE=ON \
-	-DWITH_CUPS=ON \
-	-DWITH_CHANNELS=ON \
-	-DWITH_CLIENT_CHANNELS=ON \
-	-DWITH_SERVER_CHANNELS=ON \
-	-DWITH_WAYLAND=ON \
-	-DCHANNEL_URBDRC_CLIENT=ON \
-	-DWITH_NEON=OFF \
-	-DARM_FP_ABI=${ABI} \
-	.
-  make
+  cmake -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_INSTALL_LIBDIR=lib \
+        -DWITH_NEON=OFF \
+        -DARM_FP_ABI=${ABI} \
+        -DWITH_DSP_FFMPEG=ON \
+        -DWITH_FFMPEG=ON \
+        -DWITH_PULSE=ON \
+        -DWITH_CUPS=ON \
+        -DWITH_PCSC=ON \
+        -DWITH_JPEG=ON \
+        -DWITH_SERVER=ON \
+        -DWITH_SWSCALE=ON \
+        -DWITH_CHANNELS=ON \
+        -DWITH_CLIENT_CHANNELS=ON \
+        -DWITH_SERVER_CHANNELS=ON \
+        -DCHANNEL_URBDRC_CLIENT=ON \
+        -DPROXY_PLUGINDIR=/usr/lib/freerdp2/server/proxy/plugins \
+        -B build \
+        -S .
+  make VERBOSE=1 -C build
 }
 
 package() {
-  cd "$srcdir"/FreeRDP-${_pkgver}
-  make DESTDIR="${pkgdir}" install
+  depends+=('libasound.so' 'libavcodec.so' 'libavutil.so' 'libpulse.so'
+  'libswscale.so' 'libswresample.so' 'libsystemd.so' 'libusb-1.0.so')
+  cd "${pkgname}-${pkgver}"
+  make DESTDIR="${pkgdir}" install -C build
+  install -vDm 644 {ChangeLog,README.md} \
+    -t "${pkgdir}/usr/share/doc/${pkgname}"
 }

@@ -3,35 +3,47 @@
 
 # ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
 #  - remove depends on libsmbios, efivar
-#  - remove makedepends on valgrind, gnu-efi-libs
+#  - remove makedepends on valgrind, gnu-efi-libs, tpm2-tss
 #  - meson with -Dplugin_dell=false (smbios dependency)
 #  - meson with -Dplugin_uefi=false -Dplugin_redfish=false -Dplugin_nvme=false (efivar, gnu-efi-libs dependency)
+#  - meson with -Dplugin_tpm=false (tpm2-tss dependency)
 
 pkgname=fwupd
-pkgver=1.2.6
+pkgver=1.4.0
 pkgrel=1
-pkgdesc="A simple daemon to allow session software to update firmware"
-arch=('x86_64')
-url="https://github.com/hughsie/fwupd"
-license=('LGPL')
-depends=('libxmlb' 'python' 'libgusb'
-         'libsoup' 'json-glib' 'gcab' 'libarchive' 'gpgme'
-         'libgudev' 'polkit' 'shared-mime-info' 'modemmanager')
-makedepends=('meson' 'gobject-introspection' 'gtk-doc'
-             'python-cairo' 'noto-fonts' 'noto-fonts-cjk' 'python-gobject' 'vala'
-             'bash-completion' 'python-pillow' 'help2man')
-optdepends=('tpm2-abrmd: TPM2 support'
-            'tpm2-tools: TPM2 support')
-checkdepends=('umockdev')
-backup=('etc/fwupd/daemon.conf' 'etc/fwupd/uefi.conf')
+pkgdesc="Simple daemon to allow session software to update firmware"
+arch=(x86_64)
+url="https://github.com/fwupd/fwupd"
+license=(LGPL)
+depends=(libxmlb python libgusb
+         libsoup json-glib gcab libarchive gpgme
+         libgudev polkit shared-mime-info
+         flashrom libjcat)
+optdepends=(
+    'modemmanager: modem firmware upgrade support'
+    'udisks2: UEFI firmware upgrade support'
+)
+makedepends=(meson gobject-introspection gtk-doc
+             python-cairo noto-fonts noto-fonts-cjk python-gobject vala
+             bash-completion python-pillow help2man)
+checkdepends=(umockdev)
+backup=('etc/fwupd/daemon.conf'
+        'etc/fwupd/redfish.conf'
+        'etc/fwupd/remotes.d/dell-esrt.conf'
+        'etc/fwupd/remotes.d/fwupd-tests.conf'
+        'etc/fwupd/remotes.d/lvfs-testing.conf'
+        'etc/fwupd/remotes.d/lvfs.conf'
+        'etc/fwupd/remotes.d/vendor-directory.conf'
+        'etc/fwupd/remotes.d/vendor.conf'
+        'etc/fwupd/uefi.conf'
+        'etc/fwupd/upower.conf')
 source=("https://people.freedesktop.org/~hughsient/releases/${pkgname}-${pkgver}.tar.xz"{,.asc})
-sha256sums=('36f53b652a0df9088c53311d0ab48dfff0b6cb79c56257fbd3034146b6979467'
-            'SKIP')
-validpgpkeys=('163EB50119225DB3DF8F49EA17ACBA8DFA970E17') # Richard Hughes <richard@hughsie.com>
+sha256sums=('575df5fe5d3914a6056af44c5d16a25b56d09130849fb313cb20fe6ea602954e' 'SKIP')
+validpgpkeys=(163EB50119225DB3DF8F49EA17ACBA8DFA970E17) # Richard Hughes <richard@hughsie.com>
 
 build() {
     cd ${pkgname}-${pkgver}
-    arch-meson -D b_lto=false -Dplugin_dell=false -Dplugin_uefi=false -Dplugin_redfish=false -Dplugin_nvme=false ../build
+    arch-meson -D b_lto=false -Dplugin_dell=false -Dplugin_uefi=false -Dplugin_redfish=false -Dplugin_nvme=false -Dplugin_tpm=false ../build
     ninja -v -C ../build
 }
 
@@ -44,9 +56,6 @@ package() {
     DESTDIR="${pkgdir}" ninja -C build install
     # Fixup mode to match polkit
     install -d -o root -g 102 -m 750 "${pkgdir}"/usr/share/polkit-1/rules.d
-    # Move D-BUS policy
-    mv "${pkgdir}"/{etc,usr/share}/dbus-1/system.d
-    rmdir "${pkgdir}"/etc/dbus-1
     # Remove the tests
     rm -r "${pkgdir}"/usr/share/installed-tests/
 }

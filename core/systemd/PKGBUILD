@@ -6,13 +6,13 @@
 #  - disable gold/LTO
 #  - removed makedepend on gnu-efi-libs, set -Dgnuefi=false
 #  - patch to whitelist cacheflush syscall
+#  - add 242-1 changes in systemd.install to fix systemd-timesyncd
 
 pkgbase=systemd
 pkgname=('systemd' 'systemd-libs' 'systemd-resolvconf' 'systemd-sysvcompat')
-# Can be from either systemd or systemd-stable
-_commit='cbf14c9500d5e6820fd7d96166ca0bf75c6850df'
-pkgver=241.67
-pkgrel=1
+_tag='a520e63382396661d79f630b2babe717a85b1209' # git rev-parse v${pkgver}
+pkgver=245.5
+pkgrel=2
 arch=('x86_64')
 url='https://www.github.com/systemd/systemd'
 makedepends=('acl' 'cryptsetup' 'docbook-xsl' 'gperf' 'lz4' 'xz' 'pam' 'libelf'
@@ -20,14 +20,14 @@ makedepends=('acl' 'cryptsetup' 'docbook-xsl' 'gperf' 'lz4' 'xz' 'pam' 'libelf'
              'libmicrohttpd' 'libxslt' 'util-linux' 'linux-api-headers'
              'python-lxml' 'quota-tools' 'shadow' 'git'
              'meson' 'libseccomp' 'pcre2' 'audit' 'kexec-tools' 'libxkbcommon'
-             'bash-completion')
+             'bash-completion' 'p11-kit')
 options=('strip')
 validpgpkeys=('63CDA1E5D3FC22B998D20DD6327F26951A015CC4'  # Lennart Poettering <lennart@poettering.net>
               '5C251B5FC54EB2F80F407AAAC54CA336CFEB557E') # Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl>
-source=(# fragment is latest tag for source verification, final merge in prepare()
-        "git+https://github.com/systemd/systemd-stable#tag=v${pkgver%.*}?signed"
+source=("git+https://github.com/systemd/systemd-stable#tag=${_tag}?signed"
         "git+https://github.com/systemd/systemd#tag=v${pkgver%.*}?signed"
         '0001-Use-Arch-Linux-device-access-groups.patch'
+        '0002-make-homed-userdbd-repart-services-installable.patch'
         '0001-seccomp-include-ARM-cacheflush-in-default.patch'
         'initcpio-hook-udev'
         'initcpio-install-systemd'
@@ -37,18 +37,19 @@ source=(# fragment is latest tag for source verification, final merge in prepare
         'splash-arch.bmp'
         'systemd-user.pam'
         'systemd-hook'
-        'systemd-binfmt.hook'
-        'systemd-catalog.hook'
-        'systemd-daemon-reload.hook'
-        'systemd-hwdb.hook'
-        'systemd-sysctl.hook'
-        'systemd-sysusers.hook'
-        'systemd-tmpfiles.hook'
-        'systemd-udev-reload.hook'
-        'systemd-update.hook')
+        '20-systemd-sysusers.hook'
+        '30-systemd-binfmt.hook'
+        '30-systemd-catalog.hook'
+        '30-systemd-daemon-reload.hook'
+        '30-systemd-hwdb.hook'
+        '30-systemd-sysctl.hook'
+        '30-systemd-tmpfiles.hook'
+        '30-systemd-udev-reload.hook'
+        '30-systemd-update.hook')
 sha512sums=('SKIP'
             'SKIP'
-            '9348683829190628e25b7b3300fd880c426d555bde330d5fc5150a9a54b3ad9d4d1f2e69ea1dc6d6f086693dacc53c5af30f1fa7ad9b479791fd77bcdafa430e'
+            '85d11bbbb5c10016e4a67eec051315e2e292939844f260bf698018c5bd1c516c28444f635eb15832a23e26891c4beda14bacfa57fdeda45c00f1b653abe3b123'
+            'e38c7c422c82953f9c2476a5ab8009d614cbec839e4088bff5db7698ddc84e3d8ed64f32ed323f57b1913c5c9703546f794996cb415ed7cdda930b627962a3c4'
             'df7ec8f840a54b404d1f3ab2708ae2a618820cb411b826128cf10b20ccdab057306446295c6b1c98a05ca0adb1b30d390dfb0156b52ea772978e1f1bf5135e09'
             'f0d933e8c6064ed830dec54049b0a01e27be87203208f6ae982f10fb4eddc7258cb2919d594cbfb9a33e74c3510cfd682f3416ba8e804387ab87d1a217eb4b73'
             '01de24951a05d38eca6b615a7645beb3677ca0e0f87638d133649f6dc14dcd2ea82594a60b793c31b14493a286d1d11a0d25617f54dbfa02be237652c8faa691'
@@ -57,18 +58,32 @@ sha512sums=('SKIP'
             'c416e2121df83067376bcaacb58c05b01990f4614ad9de657d74b6da3efa441af251d13bf21e3f0f71ddcb4c9ea658b81da3d915667dc5c309c87ec32a1cb5a5'
             '5a1d78b5170da5abe3d18fdf9f2c3a4d78f15ba7d1ee9ec2708c4c9c2e28973469bc19386f70b3cf32ffafbe4fcc4303e5ebbd6d5187a1df3314ae0965b25e75'
             'b90c99d768dc2a4f020ba854edf45ccf1b86a09d2f66e475de21fe589ff7e32c33ef4aa0876d7f1864491488fd7edb2682fc0d68e83a6d4890a0778dc2d6fe19'
-            '6b82386fc20619eefa911cd9cdac8efbd0c7137bba4955e8ae75a0ea378d19dbfccc1f7bde6684f03e5f2badefa4abf20623153d88a170d14499167319586db7'
-            '5a6b6beef8c31c79018884d948de840f4d3dfb07d9a87081ebf65e2b8fe595bc8c96dbd7742920ccf948c233213ed0026abc913650cefd77ad90c6f8c89bddb8'
-            '4cff2ebd962e26e2f516d8b4ac45c839dbfa54dd0588b423c224a328b9f7c62306ca7b2f6cb55240c564caf9972d5bcd2e0efaf2de49d64729aeb3bc1560c9eb'
-            '872de70325e9798f0b5a77e991c85bd2ab6de24d9b9ba4e35002d2dd5df15f8b30739a0042a624776177ffc14a838cde7ee98622016ed41df3efda9a659730b2'
-            '471342b8d0e05533908cda5d6a906050a51e3181beda1239e91d717029ee40a9eaed714996a445417d87c4e31b7f8522a665de176077fe0536d538369594996d'
-            'da783e3bfc6469b92dee4064a13e2b427520d3d96b57c95a4e07aaca3e844d95210a8b16122b022080f5452d65096f274dd1c1467725bbdb2e40ef304b78774a'
-            '08a590d08043a21f30f04252164b94df972b1ff1022a0469d6aef713e14484a3a037cce290a2a582851e6fac3e64add69d6cc8fc130bbeeaea08626ebf3e1763'
-            '577e33a1c50b4b41157a67f64162b035dd0c4a541e19cee55a100048bdb50cb2c82852741b1372989a0fe4c4782ba477522747fcc81d72aed99b3db512a86447'
-            'e4a9d7607fe93daf1d45270971c8d8455c4bfc2c0bea8bcad05aeb89847edee23cd1a41073a72042622acf417018fe254f5bfc137604fe2c71292680bf67a1c2'
-            '209b01b044877cc986757fa4009a92ea98f480306c2530075d153203c3cd2b3afccab6aacc1453dee8857991e04270572f1700310705d7a0f4d5bed27fab8c67')
+            '869dab2b1837c964add4019bb402e24e52dbb7f009850ca69fcc5deddd923eeb98eb8ee38601f6e31531f30322472fe7df09af84df27f0467708406c55885323'
+            '299dcc7094ce53474521356647bdd2fb069731c08d14a872a425412fcd72da840727a23664b12d95465bf313e8e8297da31259508d1c62cc2dcea596160e21c5'
+            '0d6bc3d928cfafe4e4e0bc04dbb95c5d2b078573e4f9e0576e7f53a8fab08a7077202f575d74a3960248c4904b5f7f0661bf17dbe163c524ab51dd30e3cb80f7'
+            '2b50b25e8680878f7974fa9d519df7e141ca11c4bfe84a92a5d01bb193f034b1726ea05b3c0030bad1fbda8dbb78bf1dc7b73859053581b55ba813c39b27d9dc'
+            '63e55b3acd14bc54320b6f2310b43398651ad4e262d4f4a0135e05d34a993e56ed673cc46e57f15b418371df5c4cef6f54486db96325e4abb1d33fb1a3946254'
+            'a1661ab946c6cd7d3c6251a2a9fd68afe231db58ce33c92c42594aedb5629be8f299ba08a34713327b373a3badd1554a150343d8d3e5dfb102999c281bd49154'
+            '9426829605bbb9e65002437e02ed54e35c20fdf94706770a3dc1049da634147906d6b98bf7f5e7516c84068396a12c6feaf72f92b51bdf19715e0f64620319de'
+            'da7a97d5d3701c70dd5388b0440da39006ee4991ce174777931fea2aa8c90846a622b2b911f02ae4d5fffb92680d9a7e211c308f0f99c04896278e2ee0d9a4dc'
+            'a50d202a9c2e91a4450b45c227b295e1840cc99a5e545715d69c8af789ea3dd95a03a30f050d52855cabdc9183d4688c1b534eaa755ebe93616f9d192a855ee3'
+            '825b9dd0167c072ba62cabe0677e7cd20f2b4b850328022540f122689d8b25315005fa98ce867cf6e7460b2b26df16b88bb3b5c9ebf721746dce4e2271af7b97')
 
 _backports=(
+  # systemd-resolved: use hostname for certificate validation in DoT
+  'eec394f10bbfcc3d2fc8504ad8ff5be44231abd5'
+
+  # unregister binary formats during shutdown #15566
+  # shared: add common helper for unregistering all binfmt entries
+  '965cc99416a3b5a2a71127e9e6d2e4a95ab3c432'
+  # shutdown: unregister all binfmt_misc entries before entering shutdown loop
+  '0282c0285a3e3c2e409305ce28555a6ad0489539'
+  # binfmt: modernize code a bit
+  'f3670df13e144c2f81bf6f9a0bea581e6d555bdd'
+  # binfmt: also unregister binfmt entries from unit
+  '846acb6798a63f35162f58e1146d1a1f40849e86'
+  # man: document binfmt's new --unregister switch
+  'cd9aa8f0f91b113acb079e79750c146c0529c2d7'
 )
 
 _reverts=(
@@ -79,18 +94,20 @@ prepare() {
 
   # add upstream repository for cherry-picking
   git remote add -f upstream ../systemd
-  # merge the latest stable commit (fast-foward only to make sure
-  # the verified tag is in)
-  git merge --ff-only "${_commit}"
 
-  local c
-  for c in "${_backports[@]}"; do
-    git cherry-pick -n "$c"
+  local _c
+  for _c in "${_backports[@]}"; do
+    git log --oneline -1 "${_c}"
+    git cherry-pick -n "${_c}"
   done
-  for c in "${_reverts[@]}"; do
-    git revert -n "$c"
+  for _c in "${_reverts[@]}"; do
+    git log --oneline -1 "${_c}"
+    git revert -n "${_c}"
   done
 
+
+  # Make homed/userdbd/repart services installable (to allow uninstalling)
+  patch -Np1 -i ../0002-make-homed-userdbd-repart-services-installable.patch
   # Replace cdrom/dialout/tape groups with optical/uucp/storage
   patch -Np1 -i ../0001-Use-Arch-Linux-device-access-groups.patch
 
@@ -98,44 +115,49 @@ prepare() {
   patch -Np1 -i ../0001-seccomp-include-ARM-cacheflush-in-default.patch
 }
 
-pkgver() {
-  local version count
-
-  cd "$pkgbase-stable"
-
-  version="$(git describe --abbrev=0 --tags)"
-  count="$(git rev-list --count ${version}..)"
-  printf '%s.%s' "${version#v}" "${count}"
-}
-
 build() {
-  local timeservers=({0..3}.arch.pool.ntp.org)
+  local _timeservers=({0..3}.arch.pool.ntp.org)
+  local _nameservers=(
+    # We use these public name services, ordered by their
+    # privacy policy (hopefully):
+    #  * Cloudflare (https://1.1.1.1/)
+    #  * Quad9 without filtering (https://www.quad9.net/)
+    #  * Google (https://developers.google.com/speed/public-dns/)
+    1.1.1.1
+    9.9.9.10
+    8.8.8.8
+    2606:4700:4700::1111
+    2620:fe::10
+    2001:4860:4860::8888
+  )
 
   LDFLAGS+=" -Wl,-fuse-ld=bfd"
   CFLAGS+=" -fno-lto"
   CXXFLAGS+=" -fno-lto"
 
-  local meson_options=(
+  local _meson_options=(
+    -Dversion-tag="${pkgver}-${pkgrel}-arch"
+
     -Dgnu-efi=false
     -Dima=false
     -Dlibidn2=true
-    -Dversion-tag="${pkgver}-${pkgrel}-arch"
-
     -Dlz4=true
+    -Dman=true
 
     -Ddbuspolicydir=/usr/share/dbus-1/system.d
-    -Ddefault-dnssec=no
     -Ddefault-hierarchy=hybrid
-    -Ddefault-locale=C
     -Ddefault-kill-user-processes=false
+    -Ddefault-locale=C
     -Dfallback-hostname='archlinux'
-    -Dntp-servers="${timeservers[*]}"
+    -Dnologin-path=/usr/bin/nologin
+    -Dntp-servers="${_timeservers[*]}"
+    -Ddns-servers="${_nameservers[*]}"
     -Drpmmacrosdir=no
     -Dsysvinit-path=
     -Dsysvrcnd-path=
   )
 
-  arch-meson "$pkgbase-stable" build "${meson_options[@]}"
+  arch-meson "$pkgbase-stable" build "${_meson_options[@]}"
 
   ninja -C build
 }
@@ -147,10 +169,9 @@ check() {
 package_systemd() {
   pkgdesc='system and service manager'
   license=('GPL2' 'LGPL2.1')
-  groups=('base-devel')
   depends=('acl' 'bash' 'cryptsetup' 'dbus' 'iptables' 'kbd' 'kmod' 'hwids' 'libcap'
            'libgcrypt' 'systemd-libs' 'libidn2' 'libidn2.so' 'lz4' 'pam' 'libelf'
-           'libseccomp' 'util-linux' 'xz' 'pcre2' 'audit')
+           'libseccomp' 'util-linux' 'xz' 'pcre2' 'audit' 'libp11-kit')
   provides=('nss-myhostname' "systemd-tools=$pkgver" "udev=$pkgver")
   replaces=('nss-myhostname' 'systemd-tools' 'udev')
   conflicts=('nss-myhostname' 'systemd-tools' 'udev')
@@ -176,10 +197,6 @@ package_systemd() {
 
   DESTDIR="$pkgdir" meson install -C build
 
-  # don't write units to /etc by default. some of these will be re-enabled on
-  # post_install.
-  rm -rv "$pkgdir"/etc/systemd/system/*
-
   # we'll create this on installation
   rmdir "$pkgdir"/var/log/journal/remote
 
@@ -197,8 +214,9 @@ package_systemd() {
   rm "$pkgdir"/usr/{bin/resolvconf,share/man/man1/resolvconf.1}
 
   # avoid a potential conflict with [core]/filesystem
-  rm "$pkgdir"/usr/share/factory/etc/nsswitch.conf
-  sed -i '/^C \/etc\/nsswitch\.conf/d' "$pkgdir"/usr/lib/tmpfiles.d/etc.conf
+  rm "$pkgdir"/usr/share/factory/etc/{issue,nsswitch.conf}
+  sed -i -e '/^C \/etc\/nsswitch\.conf/d' \
+    -e '/^C \/etc\/issue/d' "$pkgdir"/usr/lib/tmpfiles.d/etc.conf
 
   # add back tmpfiles.d/legacy.conf, normally omitted without sysv-compat
   install -m0644 $pkgbase-stable/tmpfiles.d/legacy.conf "$pkgdir"/usr/lib/tmpfiles.d
@@ -262,7 +280,6 @@ package_systemd-resolvconf() {
 package_systemd-sysvcompat() {
   pkgdesc='sysvinit compat for systemd'
   license=('GPL2')
-  groups=('base')
   conflicts=('sysvinit')
   depends=('systemd')
 

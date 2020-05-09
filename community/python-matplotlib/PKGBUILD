@@ -9,13 +9,13 @@
 #  - replace make/optdepends on python{,2}-cairocffi with python{,2}-cairo (cffi has haskell dep)
 
 pkgname=python-matplotlib
-pkgver=3.0.3
+pkgver=3.2.1
 pkgrel=1
 pkgdesc="A python plotting library, making publication quality plots"
-arch=('x86_64')
+arch=(x86_64)
 url="https://matplotlib.org"
-license=('custom')
-depends=('freetype2' 'libpng' 'python-numpy' 'python-cycler' 'python-dateutil' 'python-kiwisolver' 'python-pyparsing')
+license=(custom)
+depends=(freetype2 libpng python-numpy python-cycler python-dateutil python-kiwisolver python-pyparsing)
 optdepends=('tk: Tk{Agg,Cairo} backends'
             'python-pyqt5: Qt5{Agg,Cairo} backends'
             'python-gobject: for GTK3{Agg,Cairo} backend'
@@ -26,41 +26,35 @@ optdepends=('tk: Tk{Agg,Cairo} backends'
             'imagemagick: for saving animated gifs'
             'python-pillow: for reading/saving jpeg/bmp/tiff files'
             'ghostscript: usetex dependencies'
-            'texlive-bin: usetex dependencies')
-makedepends=('git' 'rsync' 'python-setuptools'
-             'tk' 'python-pyqt5' 'python-gobject'
-             'python-wxpython' 'python-cairo' 'python-tornado'
-             'python-pillow' 'ghostscript' 'texlive-bin')
-             # 'qhull' missing pkg-config file
-             # 'agg' missing some non-upstreamed patches?
-checkdepends=('python-pytest-xdist' 'python-pytest-runner' 'xorg-server-xvfb'
-              'texlive-core' 'texlive-latexextra' 'inkscape' 'mencoder'
-              'ffmpeg' 'imagemagick' 'ttf-freefont' 'python-pandas')
-source=($pkgname-$pkgver.tar.gz::"https://github.com/matplotlib/matplotlib/archive/v$pkgver.tar.gz"
-        setup.cfg)
-sha512sums=('9fe00b8d0ca6dcf2f1b907118b656353e115b73f8b21adeb4391c87e164c111a4994c3ac17cdd02e75b896d9aa26c279618132f9a7bfe995c0f7c62356ed85ad'
-            'f08c0b2e94599fdf2b736b8a655d862209934441d90f20ed872cfc128b8d2a6525763ab7cf64f2b3630e22a90798f4c52aa93b18087e9b48708d9bae34aada0b')
-
-prepare() {
-  cp -a matplotlib-$pkgver{,-test}
-
-  # Configure tests (FS#48175)
-  cp setup.cfg matplotlib-$pkgver-test/
-}
+            'texlive-bin: usetex dependencies'
+            'texlive-latexextra: usetex usage with pdflatex')
+makedepends=(git rsync python-setuptools
+             tk python-pyqt5 python-gobject
+             python-wxpython python-cairo python-tornado
+             python-pillow ghostscript texlive-bin)
+             # qhull missing pkg-config file
+             # agg missing some non-upstreamed patches?
+checkdepends=(python-pytest-xdist python-pytest-runner xorg-server-xvfb
+              texlive-core texlive-latexextra inkscape mencoder
+              ffmpeg imagemagick ttf-freefont python-pandas)
+source=("https://github.com/matplotlib/matplotlib/archive/v${pkgver}/${pkgname}-${pkgver}.tar.gz")
+sha512sums=('2725ebb2e3665f3f110354efab6a6ec20721667acbaf1dc22a9396dbdca096edaabe79b0e602970b1c0769a5eb849cd815774af00a366f3d4e2f336bce06208e')
 
 build() {
-  cd matplotlib-$pkgver
+  cd matplotlib-${pkgver}
   python setup.py build
 }
 
 check() {
-  cd matplotlib-$pkgver-test
+  cd matplotlib-${pkgver}
   xvfb-run -a -s "+extension GLX +extension RANDR +render -screen 0 1280x1024x24" \
     python setup.py pytest --addopts="-n auto" || warning "Tests failed" # Different font rendering details
 }
 
 package_python-matplotlib() {
-  cd matplotlib-$pkgver
-  python setup.py install --root "$pkgdir" --prefix=/usr --optimize=1 --skip-build
-  install -Dm644 doc/users/license.rst -t "$pkgdir"/usr/share/licenses/${pkgname}/
+  cd matplotlib-${pkgver}
+  python setup.py install --root "${pkgdir}" --prefix=/usr --optimize=1 --skip-build
+  install -Dm644 doc/users/license.rst -t "${pkgdir}"/usr/share/licenses/${pkgname}/
+  # Needed since https://github.com/matplotlib/matplotlib/pull/14170
+  rm -r "${pkgdir}"/usr/lib/python3.8/site-packages/{matplotlib,mpl_toolkits}/tests/
 }

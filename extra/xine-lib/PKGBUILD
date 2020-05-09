@@ -4,17 +4,18 @@
 #  - disabled vdpau
 
 pkgname=xine-lib
-pkgver=1.2.9
-pkgrel=8
-pkgdesc="A multimedia playback engine"
+pkgver=1.2.10
+pkgrel=3
+pkgdesc="Multimedia playback engine"
 arch=('x86_64')
-url="http://www.xine-project.org"
+url="https://www.xine-project.org"
 license=('LGPL' 'GPL')
 depends=('libxvmc' 'ffmpeg' 'libxinerama' 'libnsl')
-makedepends=('wavpack' 'faad2' 'libmng' 'libmagick' 'mesa' 'libmodplug'
+makedepends=('wavpack' 'faad2' 'libmng' 'imagemagick' 'mesa' 'libmodplug'
              'vcdimager' 'jack' 'aalib' 'libdca' 'a52dec' 'libmad' 'libdvdnav'
-             'libmpcdec' 'libcaca' 'libbluray' 'glu' 'gdk-pixbuf2')
-optdepends=('libmagick: for using the imagemagick plugin' \
+             'libmpcdec' 'libcaca' 'libbluray' 'glu' 'gdk-pixbuf2'
+             'dav1d')
+optdepends=('imagemagick: for using the imagemagick plugin' \
             'jack: for using the jack plugin' \
             'vcdimager: for using the vcd plugin' \
             'glu: for using the opengl plugin' \
@@ -31,21 +32,20 @@ optdepends=('libmagick: for using the imagemagick plugin' \
             'libcaca: for using the caca plugin' \
             'libbluray: for using the bluray plugin' \
             'smbclient: for using the samba plugin' \
+            'dav1d: for using the dav1d decoder' \
             'gdk-pixbuf2: for using the gdk-pixbuf plugin')
-source=(https://downloads.sourceforge.net/project/xine/xine-lib/$pkgver/xine-lib-$pkgver.tar.xz
-        xine-lib-imagemagick7.patch)
-sha1sums=('ad6e72b7d8ff6172a8a170ab1bc38577ae321371'
-          '7604ce72297f5b123a0bb53ebf5f1606e2ec0bad')
-
-prepare() {
-  cd $pkgname-$pkgver
-  patch -p1 -i ../xine-lib-imagemagick7.patch # PLD linux patch
-}
+source=(https://downloads.sourceforge.net/project/xine/xine-lib/$pkgver/xine-lib-$pkgver.tar.xz)
+sha512sums=('1cbe033da606d67a0a59f19968b2fe1cb46eaeb32c4b4aca7b91125b7230e15bd36d1e3e39e48e6eda56e556018f9f9bf84acb0012d3dd634306e7110fdc4c5f')
+b2sums=('e1bc088814c951ff56e55b626fe1f6f34c3da744e716de369a68e6c82a5adc414b452675ad19a5f82500bade6795b54efd503de8ffe4f1e65b534317ca0a26af')
 
 build() {
   cd ${pkgname}-${pkgver}
-  ./configure --prefix=/usr --with-wavpack --disable-vdpau --with-external-dvdnav \
-    --disable-optimizations 
+  ./configure \
+      --prefix=/usr \
+      --with-wavpack \
+      --disable-vdpau \
+      --with-external-dvdnav
+  sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0/g' libtool
   make
 }
 

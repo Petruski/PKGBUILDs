@@ -5,15 +5,15 @@ buildarch=28
 pkgbase=raspberrypi-bootloader
 pkgname=('raspberrypi-bootloader'
          'raspberrypi-bootloader-x')
-pkgver=20190327
+pkgver=20200503
 pkgrel=1
-_commit=3dde44c13f17cb34697ef8f867bab147125d5a25
+_commit=7eff9f6774bb43bfd61e749a0b45ffddc98c2311
 arch=('any')
 url="https://github.com/raspberrypi/firmware"
 license=('custom')
 options=(!strip)
 source=("https://github.com/raspberrypi/firmware/archive/${_commit}.tar.gz")
-md5sums=('90d8ac395b448f98c3a40370a72142a1')
+md5sums=('05cd161dca5a6f02684794960913e04c')
 
 package_raspberrypi-bootloader() {
   pkgdesc="Bootloader files for Raspberry Pi"
@@ -21,7 +21,7 @@ package_raspberrypi-bootloader() {
 
   mkdir -p "${pkgdir}"/boot
   cp "${srcdir}"/firmware-${_commit}/boot/{*.dat,*.bin,*.elf} "${pkgdir}"/boot
-  rm "${pkgdir}"/boot/{start_x.elf,fixup_x.dat}
+  rm "${pkgdir}"/boot/{start{_,4}x.elf,fixup{_,4}x.dat}
 }
 
 package_raspberrypi-bootloader-x() {
@@ -30,5 +30,5 @@ package_raspberrypi-bootloader-x() {
   replaces=('raspberrypi-firmware-bootloader-x')
 
   mkdir -p "${pkgdir}"/boot
-  cp "${srcdir}"/firmware-${_commit}/boot/{start_x.elf,fixup_x.dat} "${pkgdir}"/boot
+  cp "${srcdir}"/firmware-${_commit}/boot/{start{_,4}x.elf,fixup{_,4}x.dat} "${pkgdir}"/boot
 }
